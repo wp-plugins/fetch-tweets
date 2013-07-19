@@ -1,0 +1,37 @@
+.fetch-tweets-item {
+	display:inline-block; 
+	clear: both; 
+	width: 100%; 
+	margin-bottom: 12px;
+}
+.fetch-tweets-retweet {
+}
+.fetch-tweets-heading {
+	line-height: 1em;
+}
+.fetch-tweets-profile-image {
+	float:left;
+	clear: left;
+	margin: 0 12px 0 0;
+}
+.fetch-tweets-user-name a {
+	text-decoration: none;
+}
+.fetch-tweets-tweet-created-at {
+	float: right; 
+	font-size: smaller; 
+	padding-top: 2px;
+}
+.fetch-tweets-tweet-created-at a {
+	text-decoration: none;
+}
+.fetch-tweets-text {
+	margin-bottom: 0;
+}
+.fetch-tweets-retweet-credit {
+	float: right;
+	font-size: smaller;
+}
+.fetch-tweets-retweet-credit a {
+	text-decoration: none;
+}
