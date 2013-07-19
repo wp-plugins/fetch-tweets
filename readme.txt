@@ -65,7 +65,7 @@ The following parameters can be used for the shortcode or the PHP function of th
 == Frequently Asked Questions ==
 
 = Where can I get the API keys? =
-First you need to create an application to access the Twitter API here[https://dev.twitter.com/apps]. And create *consumer key*, *consumer secret*, *access token*, and *access token secret*. Without these, you won't be able to fetch tweets.
+First you need to create an application to access the Twitter API [here](https://dev.twitter.com/apps). Then create *consumer key*, *consumer secret*, *access token*, and *access token secret*. Without these, you won't be able to fetch tweets.
 
 = How can I create my own template file? =
 Edit the file named *show_tweets.php* in the *template* directory of the plugin. Create a directory named *fetch-tweets* under the current theme directory and put the modified file there. If you use, for instance, Twenty Twelve, place the file as follows:
