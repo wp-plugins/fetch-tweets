@@ -74,6 +74,9 @@ Edit the file named *show_tweets.php* in the *template* directory of the plugin.
 
 == Screenshots ==
 
+1. ***Tweets Displayed in Page and Sidebar***
+
+
 == Changelog ==
 
 = 1.0.0 =
