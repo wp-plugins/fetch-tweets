@@ -42,6 +42,7 @@ Go to the [Other Notes](http://wordpress.org/extend/plugins/fetch-tweets/other_n
 
 = Shortcode and Function Parameters =
 The following parameters can be used for the shortcode or the PHP function of the plugin, <code>fetchTweets()</code>
+
 * **id** - the ID of the rule set. This cannot be used with the `ids` and `tag` parameters. e.g.
 
 `[fetch_tweets id="123"]`
@@ -70,7 +71,7 @@ First you need to create an application to access the Twitter API [here](https:/
 = How can I create my own template file? =
 Edit the file named *show_tweets.php* in the *template* directory of the plugin. Create a directory named *fetch-tweets* under the current theme directory and put the modified file there. If you use, for instance, Twenty Twelve, place the file as follows:
 
-`wp-content\themes\twentytwelve\fetch-tweets\show_tweets.php`
+`.../wp-content/themes/twentytwelve/fetch-tweets/show_tweets.php`
 
 == Screenshots ==
 
