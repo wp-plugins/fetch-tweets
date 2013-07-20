@@ -68,7 +68,11 @@ The following parameters can be used for the shortcode or the PHP function of th
 
 `<?php fetchTweets( array( 'ids' => 456, 567, 'count' => 10 ) ); ?>`
 
+* **avatar_size** - the size of the profile image in pixel. e.g.
 
+`[fetch_tweets id="678" count="8" avatar_size="96" ]`
+
+`<?php fetchTweets( array( 'id' => 678, 'count' => 8, 'avatar_size' => 96 ) ); ?>`
 
 == Frequently Asked Questions ==
 
