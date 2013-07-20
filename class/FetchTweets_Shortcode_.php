@@ -20,21 +20,23 @@ abstract class FetchTweets_Shortcode_ {
 			return $this->oFetch->getTweets( 
 				$arrArgs['id'],
 				isset( $arrArgs['count'] ) ? $arrArgs['count'] : null, 
-				isset( $arrArgs['sort'] ) ? $arrArgs['sort'] : null
+				isset( $arrArgs['sort'] ) ? $arrArgs['sort'] : null,
+				isset( $arrArgs['avatar_size'] ) ? $arrArgs['avatar_size'] : null
 			);	
 		else if ( isset( $arrArgs['ids'] ) )	
 			return $this->oFetch->getTweets( 
 				is_array( $arrArgs['ids'] ) ? $arrArgs['ids'] : preg_split( "/[,]\s*/", trim( ( string ) $arrArgs['ids'] ), 0, PREG_SPLIT_NO_EMPTY ),
 				isset( $arrArgs['count'] ) ? $arrArgs['count'] : null, 
-				isset( $arrArgs['sort'] ) ? $arrArgs['sort'] : null
+				isset( $arrArgs['sort'] ) ? $arrArgs['sort'] : null,
+				isset( $arrArgs['avatar_size'] ) ? $arrArgs['avatar_size'] : null
 			);
 		else if ( isset( $arrArgs['tag'] ) ) 
 			return $this->oFetch->getTweetsByTag( 
 				$arrArgs['tag'], 
 				isset( $arrArgs['count'] ) ? $arrArgs['count'] : null, 
-				isset( $arrArgs['sort'] ) ? $arrArgs['sort'] : null
+				isset( $arrArgs['sort'] ) ? $arrArgs['sort'] : null,
+				isset( $arrArgs['avatar_size'] ) ? $arrArgs['avatar_size'] : null
 			);
-				
 	}	
 
 }

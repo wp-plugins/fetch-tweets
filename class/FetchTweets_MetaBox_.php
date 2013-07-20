@@ -83,6 +83,7 @@ class FetchTweets_MetaBox_ extends AdminPageFramework_MetaBox {
 			post_tags_meta_box( 
 				get_post( $GLOBALS['post_ID'] ), 
 				array(
+					'title' => __( 'Tags', 'fetch-tweets' ),
 					'args' => array(
 						'taxonomy' => FetchTweets_Commons::Tag,
 					)

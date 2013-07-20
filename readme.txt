@@ -1,13 +1,13 @@
 ﻿=== Fetch Tweets ===
 Contributors: Michael Uno, miunosoft
 Donate link: http://en.michaeluno.jp/donate
-Tags: twitter, tweets, tweet, widget, widgets, post, posts, API, oAuth
+Tags: twitter, tweets, tweet, widget, widgets, post, posts, API, oAuth, shortcode, sidebar, plugin
 Requires at least: 3.2
 Tested up to: 3.5.2
 Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Fetches tweets from twitter.com with the Twitter API.
+Fetches tweets from twitter.com with the Twitter API and displays them in posts, pages, and sidebars.
 
 == Description ==
 
@@ -16,8 +16,9 @@ Fetches tweets from twitter.com with the Twitter API.
 * **Search Results** - by specifying the search keyword, the results can be fetched.
 * **Widget** - tweets can be displayed in the widget that the plugin provides.
 * **Shortcode** - with the shortcode, the fetched tweets can be displayed in posts and pages.
+* **Mashups** - you can get the combined results from multiple users or by tag.
 * **PHP Code** - with the PHP function, the fetched tweets can be embeded in the templates.
-* **Custom Templates** - the user can change how the results get shown by modifying/creating the template file.
+* **Custom Templates** - you can change the design by modifying/creating the template file.
 * **Background Cache Renewal** - it renews the caches in the background so it will prevent the page load from suddenly getting stuck for fetching external sources. 
  
 == Installation ==
@@ -47,21 +48,27 @@ The following parameters can be used for the shortcode or the PHP function of th
 
 `[fetch_tweets id="123"]`
 
-`fetchTweets( array( 'id' => 123 ) )`
+`<?php fetchTweets( array( 'id' => 123 ) ); ?>`
 
 * **ids** - the IDs of the rule set separated by commas. This cannot be used with the `id` and `tag` parameters. e.g.
 
 `[fetch_tweets ids="123, 234, 345"]`
 
-`fetchTweets( array( 'ids' => 123, 234, 345 ) )`
+`<?php fetchTweets( array( 'ids' => 123, 234, 345 ) ); ?>`
 
 * **tag** - the tag associated with the rule sets. This cannot be used with the `id` and `ids` parameters. e.g.
 
 `[fetch_tweets tag="WordPress"]`
 
-`fetchTweets( array( 'tag' => 'WordPress' ) )`
+`<?php fetchTweets( array( 'tag' => 'WordPress' ) ); ?>`
 
-* **count** - the maximum number of tweets to display.
+* **count** - the maximum number of tweets to display. e.g.
+
+`[fetch_tweets ids="456, 567" count="10" ]`
+
+`<?php fetchTweets( array( 'ids' => 456, 567, 'count' => 10 ) ); ?>`
+
+
 
 == Frequently Asked Questions ==
 
@@ -80,5 +87,12 @@ Edit the file named *show_tweets.php* in the *template* directory of the plugin.
 
 == Changelog ==
 
-= 1.0.0 =
-* Initial Release
+= 1.0.0.1 - 07/21/2013 =
+* Added the *avater_size* parameter for the *fetchTweets()* function and the shortcode.
+* Added the ability to specify the profile image size as well as the visibility of the image.
+* Fixed a bug that caused a warning in the background, "PHP Notice: Undefined index: title in ...\wp-admin\includes\meta-boxes.php on line 352"
+* Fixed a bug that some transients did not get renewed. 
+* Tweaked the precision of converting urls, hashtags, and user mentions to the hyper-links.
+
+= 1.0.0 - 07/20/2013 =
+* Initial Release.

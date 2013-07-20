@@ -24,17 +24,16 @@ abstract class FetchTweets_WidgetByID_ extends WP_Widget {
 		$arrInstance = $arrInstance + array(
 			'selected_ids' => null,
 			'count'	=> null,
+			'avatar_size' => null,
 		);
 		
 		echo fetchTweets( 
 			array( 
 				'ids'	=> $arrInstance['selected_ids'],
 				'count' => $arrInstance['count'],
+				'avatar_size' => $arrInstance['avatar_size'],
 			) 
 		);
-		// echo "<p>Coming Soon!</p>";
-		// echo $this->getArray( $arrWidgetInfo );
-		// echo $this->getArray( $arrInstance );
 		
 		echo $arrWidgetInfo['after_widget'];
 		
@@ -46,6 +45,7 @@ abstract class FetchTweets_WidgetByID_ extends WP_Widget {
 		$arrInstance = $arrInstance + array(
 			'selected_ids' => null,
 			'count'	=> 20,	// default
+			'avatar_size' => 48,
 		);
 		
 		$arrIDs = array();
@@ -54,6 +54,8 @@ abstract class FetchTweets_WidgetByID_ extends WP_Widget {
 		$arrNames['selected_ids'] = $this->get_field_name( 'selected_ids' );	
 		$arrIDs['count'] = $this->get_field_id( 'count' );	
 		$arrNames['count'] = $this->get_field_name( 'count' );	
+		$arrIDs['avatar_size'] = $this->get_field_id( 'avatar_size' );	
+		$arrNames['avatar_size'] = $this->get_field_name( 'avatar_size' );	
 		
 		?>
 		<label for="<?php echo $arrIDs['selected_ids']; ?>">
@@ -80,11 +82,24 @@ abstract class FetchTweets_WidgetByID_ extends WP_Widget {
 		<p class="description" style="margin-top: 10px;">
 			<?php _e( 'Hold down the Ctrl (windows) / Command (Mac) key to select multiple items.', 'fetch-tweets' ); ?>
 		</p>	 
+		
 		<label for="<?php echo $arrIDs['count']; ?>">
 			<?php _e( 'The maximum number of tweets to show', 'fetch-tweets' ); ?>:
 		</label>
 		<br />
+		<p>
 		<input type="number" id="<?php echo $arrIDs['count']; ?>" name="<?php echo $arrNames['count']; ?>" min="1" value="<?php echo $arrInstance['count']?>"/>
+		</p>
+		
+		<label for="<?php echo $arrIDs['avatar_size']; ?>">
+			<?php _e( 'The profile image size in pixel.', 'fetch-tweets' ); ?>:
+		</label>
+		<p>
+			<input type="number" id="<?php echo $arrIDs['avatar_size']; ?>" name="<?php echo $arrNames['avatar_size']; ?>" min="0" value="<?php echo $arrInstance['avatar_size']?>"/>
+		</p>
+		<p class="description" style="margin-top: 10px;">	
+			<?php _e( 'Set 0 for no avatar.', 'fetch-tweets' ); ?> <?php _e( 'Default', 'fetch-tweets' ); ?>: 48
+		</p>
 		<?php
 		
 	}

@@ -2,19 +2,22 @@
 
 	<?php foreach ( $arrTweets as $arrDetail ) : ?>
 	<?php 
-		// If necessary key is set,
-		if ( ! isset( $arrTweet['user']) ) continue;
+		// If the necessary key is set,
+		if ( ! isset( $arrDetail['user'] ) ) continue;
 		
 		// Chewck if it's a retweet.
 		$arrTweet = isset( $arrDetail['retweeted_status']['text'] ) ? $arrDetail['retweeted_status'] : $arrDetail;
 		$strRetweetClassProperty = isset( $arrDetail['retweeted_status']['text'] ) ? 'fetch-tweets-retweet' : '';
+		
 	?>
     <div class='fetch-tweets-item <?php echo $strRetweetClassProperty; ?>' >
-		<div class='fetch-tweets-profile-image'>
+		<?php if ( $intProfileImageSize > 0 ) : ?>
+		<div class='fetch-tweets-profile-image' style="max-width:<?php echo $intProfileImageSize;?>px;">
 			<a href='https://twitter.com/<?php echo $arrTweet['user']['screen_name']; ?>' target='_blank'>
 				<img src='<?php echo $arrTweet['user']['profile_image_url']; ?>' />
 			</a>
 		</div>
+		<?php endif; ?>
 		<div class='fetch-tweets-heading'>
 			<span class='fetch-tweets-user-name'>
 				<strong>

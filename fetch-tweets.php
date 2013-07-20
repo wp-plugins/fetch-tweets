@@ -5,7 +5,7 @@
 	Description: Fetches and displays tweets from Twitter with the the Twitter REST API v1.1.
 	Author: miunosoft (Michael Uno)
 	Author URI: http://michaeluno.jp
-	Version: 1.0.0
+	Version: 1.0.0.1
 	Requirements: PHP 5.2.4 or above, WordPress 3.2 or above.
 */ 
 
@@ -14,11 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 include_once( dirname( __FILE__ ) . '/class_final/FetchTweets_InitialLoader.php' );
 new FetchTweets_InitialLoader( __FILE__ );
-
-// Include the libraries manually.
-// if ( ! class_exists( 'AdminPageFramework' ) )
-    // include_once( dirname( __FILE__ ) . '/library/admin-page-framework.php' );
-
 
 final class FetchTweets_Commons {
 	
@@ -59,19 +54,22 @@ function fetchTweets( $arrArgs ) {
 		$oFetch->drawTweets( 
 			$arrArgs['id'],
 			isset( $arrArgs['count'] ) ? $arrArgs['count'] : null, 
-			isset( $arrArgs['sort'] ) ? $arrArgs['sort'] : null
+			isset( $arrArgs['sort'] ) ? $arrArgs['sort'] : null,
+			isset( $arrArgs['avatar_size'] ) ? $arrArgs['avatar_size'] : null
 		);	
 	else if ( isset( $arrArgs['ids'] ) )	
 		$oFetch->drawTweets( 
 			is_array( $arrArgs['ids'] ) ? $arrArgs['ids'] : preg_split( "/[,]\s*/", trim( ( string ) $arrArgs['ids'] ), 0, PREG_SPLIT_NO_EMPTY ),
 			isset( $arrArgs['count'] ) ? $arrArgs['count'] : null, 
-			isset( $arrArgs['sort'] ) ? $arrArgs['sort'] : null
+			isset( $arrArgs['sort'] ) ? $arrArgs['sort'] : null,
+			isset( $arrArgs['avatar_size'] ) ? $arrArgs['avatar_size'] : null
 		);
 	else if ( isset( $arrArgs['tag'] ) ) 
 		$oFetch->drawTweetsByTag( 
 			trim( $arrArgs['tag'] ), 
 			isset( $arrArgs['count'] ) ? $arrArgs['count'] : null, 
-			isset( $arrArgs['sort'] ) ? $arrArgs['sort'] : null
+			isset( $arrArgs['sort'] ) ? $arrArgs['sort'] : null,
+			isset( $arrArgs['avatar_size'] ) ? $arrArgs['avatar_size'] : null
 		);
 
 }

@@ -49,7 +49,7 @@ abstract class FetchTweets_Event_ {
 		
 	}
 	
-	public function renewSimplePieCaches() {
+	public function renewSimplePieCaches( $vURLs ) {
 		
 		// Setup Caches
 		$oFeed = new FetchTweets_SimplePie();

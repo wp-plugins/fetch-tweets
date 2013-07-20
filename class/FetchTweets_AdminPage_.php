@@ -108,6 +108,13 @@ abstract class FetchTweets_AdminPage_ extends AdminPageFramework {
 			)
 		);
 				
+		$this->addLinkToPluginDescription(  
+			array(
+				'<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J4UJHETVAZX34">' . __( 'Donate', 'fetch-tweets' ) . '</a>',
+				'<a href="http://en.michaeluno.jp/contact/custom-order/?lang=' . ( WPLANG ? WPLANG : 'en' ) . '">' . __( 'Order custom plugin', 'fetch-tweets' ) . '</a>',
+			) 
+		);						
+		
 	}
 	protected function checkAPIKeys() {
 		
