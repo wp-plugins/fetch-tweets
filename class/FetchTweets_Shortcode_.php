@@ -35,8 +35,17 @@ abstract class FetchTweets_Shortcode_ {
 				$arrArgs['tag'], 
 				isset( $arrArgs['count'] ) ? $arrArgs['count'] : null, 
 				isset( $arrArgs['sort'] ) ? $arrArgs['sort'] : null,
-				isset( $arrArgs['avatar_size'] ) ? $arrArgs['avatar_size'] : null
+				isset( $arrArgs['avatar_size'] ) ? $arrArgs['avatar_size'] : null,
+				isset( $arrArgs['operator'] ) ? $arrArgs['operator'] : null
 			);
+		else if ( isset( $arrArgs['tags'] ) ) 
+			return $this->oFetch->getTweetsByTag( 
+				is_array( $arrArgs['tags'] ) ? $arrArgs['tags'] : preg_split( "/[,]\s*/", trim( ( string ) $arrArgs['tags'] ), 0, PREG_SPLIT_NO_EMPTY ),
+				isset( $arrArgs['count'] ) ? $arrArgs['count'] : null, 
+				isset( $arrArgs['sort'] ) ? $arrArgs['sort'] : null,
+				isset( $arrArgs['avatar_size'] ) ? $arrArgs['avatar_size'] : null,
+				isset( $arrArgs['operator'] ) ? $arrArgs['operator'] : null
+			);			
 	}	
 
 }

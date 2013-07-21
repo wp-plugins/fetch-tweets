@@ -35,38 +35,58 @@ abstract class FetchTweets_Fetch_ {
 		
 	}
 	
-	public function getTweetsByTag( $strTag, $intTotalCount=null, $strOrderedBy=null, $intProfileImageSize=48 ) {
-		
+	public function getTweetsByTag( $vTags, $intTotalCount=null, $strOrderedBy=null, $intProfileImageSize=48, $strOperator='AND' ) {
+	
 		// Capture the output buffer
 		ob_start(); // start buffer
-		$this->drawTweetsByTag( $strTag, $intTotalCount, $strOrderedBy, $intProfileImageSize );
+		$this->drawTweetsByTag( $vTags, $intTotalCount, $strOrderedBy, $intProfileImageSize, $strOperator );
 		$strContent = ob_get_contents(); // assign the content buffer to a variable
 		ob_end_clean(); // end buffer and remove the buffer		
 		return $strContent;
 		
 	}	
-	public function drawTweetsByTag( $strTag, $intTotalCount=null, $strOrderedBy=null, $intProfileImageSize=48  ) {
-		
+	public function drawTweetsByTag( $vTags, $intTotalCount=null, $strOrderedBy=null, $intProfileImageSize=48, $strOperator='AND'  ) {
+
+		$arrPostIDs = isset( $vTags['strFieldType'] ) && in_array( strtolower( $vTags['strFieldType'] ), array( 'id', 'slug' ) )
+			? $this->getPostIDsByTag( $vTags, $strOperator )
+			: $this->getPostIDsByTagName( $vTags, $strOperator );
+	
 		$this->drawTweets( 
-			$this->getPostIDsByTag( $strTag ), 
+			$arrPostIDs, 	
 			$intTotalCount, 
 			$strOrderedBy,
-			$intProfileImageSize,
-			$strTag
+			isset( $intProfileImageSize ) ? $intProfileImageSize : 48,	// if null is passed to the parameter, PHP does not assign the default value.
+			$vTags
 		);
 			
 	}
-	private function getPostIDsByTag( $strTermName ) {
+	private function getPostIDsByTagName( $vTermNames, $strOperator='AND' ) {
 		
-		$arrTerm = get_term_by( 'name', $strTermName, FetchTweets_Commons::Tag, ARRAY_A );
+		$arrTermSlugs = array();
+		foreach( ( array ) $vTermNames as $strTermName ) {
+			
+			$arrTerm = get_term_by( 'name', $strTermName, FetchTweets_Commons::Tag, ARRAY_A );
+			$arrTermSlugs[] = $arrTerm['slug'];
+			
+		}
+		return $this->getPostIDsByTag( $arrTermSlugs, $strOperator );
+				
+	}
+	private function getPostIDsByTag( $arrTermSlugs, $strOperator='AND' ) {
+		
+		$strFieldType = isset( $arrTermSlugs['strFieldType'] ) ? $this->sanitizeFieldKey( $arrTermSlugs['strFieldType'] ) : 'slug';
+		unset( $arrTermSlugs['strFieldType'] );	// if it's set, remove it.
+
 		$arrPostObjects = get_posts( 
 			array(
 				'post_type' => FetchTweets_Commons::PostTypeSlug,	// fetch_tweets
+				'posts_per_page' => -1, // ALL posts
 				'tax_query' => array(
 					array(
 						'taxonomy' => FetchTweets_Commons::Tag,	// fetch_tweets_tag
-						'field' => 'slug',
-						'terms' => $arrTerm['slug'],
+						'field' => $strFieldType,	// id or slug
+						'terms' => $arrTermSlugs,	// the array of term slugs
+						'operator' => $this->sanitizeOperator( $strOperator ),	// 'IN', 'NOT IN', 'AND. If the item is only one, use AND.
 					)
 				)
 			)
@@ -74,8 +94,28 @@ abstract class FetchTweets_Fetch_ {
 		$arrIDs = array();
 		foreach( $arrPostObjects as $oPost )
 			$arrIDs[] = $oPost->ID;
-		return $arrIDs;
+		return array_unique( $arrIDs );
 		
+	}
+	private function sanitizeFieldKey( $strField ) {
+		switch( strtoupper( trim( $strField ) ) ) {
+			case 'id':
+				return 'id';
+			default:
+			case 'slug':
+				return 'slug';
+		}		
+	}
+	private function sanitizeOperator( $strOperator ) {
+		switch( strtoupper( trim( $strOperator ) ) ) {
+			case 'NOT IN':
+				return 'NOT IN';
+			case 'IN':
+				return 'IN';
+			default:
+			case 'AND':
+				return 'AND';
+		}
 	}
 	
 	public function getTweets( $vPostIDs, $intTotalCount=null, $strOrderedBy=null, $intProfileImageSize=48 ) {
@@ -88,10 +128,10 @@ abstract class FetchTweets_Fetch_ {
 		return $strContent;
 		
 	}
-	public function drawTweets( $vPostIDs, $intTotalCount=null, $strOrderedBy=null, $intProfileImageSize=48, $strTag=null ) {
+	public function drawTweets( $vPostIDs, $intTotalCount=null, $strOrderedBy=null, $intProfileImageSize=48, $vTags=null ) {
 
 		/*
-		 * $strTag is only used to pass it to the template path filter to tell it it is a call of a tag.
+		 * $vTags is only used to pass it to the template path filter to tell it it is a call of a tag.
 		 * */
 		
 		$arrTweets = $this->getTweetsAsArray( $vPostIDs );
@@ -116,7 +156,7 @@ abstract class FetchTweets_Fetch_ {
 // return;
 		
 		// Include the template to render the output - this function is for filters but go ahead and render the output.
-		include( apply_filters( "fetch_tweets_template_path", $this->strTemplatePath, isset( $strTag ) ? $strTag : $vPostIDs ) );
+		include( apply_filters( "fetch_tweets_template_path", $this->strTemplatePath, isset( $vTags ) ? $vTags : $vPostIDs ) );
 		
 	}
 	private function getTweetsAsArray( $vPostIDs ) {
@@ -213,10 +253,10 @@ abstract class FetchTweets_Fetch_ {
 		}
 	}	
 	public function sortByTimeDescending( $a, $b ) {	// callback for the uasort() method.
-		return $b['created_at'] - $a['created_at'];
+		return ( int ) $b['created_at'] - ( int ) $a['created_at'];
 	}			
 	public function sortByTimeAscending( $a, $b ) {	// callback for the uasort() method.
-		return $a['created_at'] - $b['created_at'];
+		return ( int ) $a['created_at'] - ( int ) $b['created_at'];
 	}		
 	
 	private function getTweetsBySearch( $strKeyword, $intCount, $strLang='en', $fIncludeRetweets=false, $strResultType='mixed', $intCacheDuration=600 ) {
@@ -231,8 +271,7 @@ abstract class FetchTweets_Fetch_ {
 			. ( $strLang == 'none' ? "" : "&lang={$strLang}" )
 			. "&include_rts=" . ( $fIncludeRetweets ? 1 : 0 )
 			. "&include_entities=" . ( $fIncludeEntities ? 1 : 0 );
-			
-// echo "URL: {$strRequestURI}<br />";			
+				
 		// Create an ID from the URI.
 		$strRequestID = 'FTWS_' . md5( $strRequestURI );
 		
@@ -245,14 +284,11 @@ abstract class FetchTweets_Fetch_ {
 		) {
 			
 			// Check the cache expiration.
-			if ( $arrTransient['mod'] + $intCacheDuration < time() ) {	// expired
+			if ( $arrTransient['mod'] + $intCacheDuration < time() ) 	// expired
 				$this->arrExpiredTransientsRequestURIs[] = array( 
 					'URI'	=> $strRequestURI, 
 					'type'	=> 'search',
 				);
-// $oDebug	= new FetchTweets_Debug;
-// $oDebug->getArray( $strRequestURI, dirname( __FILE__ ) . '/expired_request.txt' );
-			}
 			return $arrTransient['data'];
 			
 		}
@@ -283,7 +319,7 @@ abstract class FetchTweets_Fetch_ {
 	private function getTweetsByScreenName( $strUser, $intCount, $fIncludeRetweets=false, $fExcludeReplies=false, $intCacheDuration=600 ) {
 		
 		// Compose the request URI.
-		$intCount = $intCount > 100 ? 100 : $intCount;
+		$intCount = $intCount > 200 ? 200 : $intCount;
 		$strRequestURI = "https://api.twitter.com/1.1/statuses/user_timeline.json"
 			. "?screen_name={$strUser}"
 			. "&count={$intCount}"
@@ -302,15 +338,12 @@ abstract class FetchTweets_Fetch_ {
 		) {
 			
 			// Check the cache expiration.
-			if ( $arrTransient['mod'] + $intCacheDuration < time() ) {	// expired
+			if ( $arrTransient['mod'] + $intCacheDuration < time() ) 	// expired
 				$this->arrExpiredTransientsRequestURIs[] = array( 
 					'URI'	=> $strRequestURI, 
 					'type'	=> 'screen_name',
 				);
-// $oDebug	= new FetchTweets_Debug;
-// $oDebug->getArray( $strRequestURI, dirname( __FILE__ ) . '/expired_request.txt' );
-
-			}				
+			
 			return $arrTransient['data'];
 			
 		}
@@ -335,7 +368,7 @@ abstract class FetchTweets_Fetch_ {
 	
 	private function makeClickableLinks( $strText, $arrURLs ) {
 		
-		// There are urls in the tweet text. So we need to convert them into hyper links.
+		// There are urls in the tweet text. So they need to be converted into hyper links.
 		foreach( ( array ) $arrURLs as $arrURLDetails ) {
 			
 			$arrURLDetails = $arrURLDetails + array(	// avoid undefined index warnings.
@@ -376,7 +409,7 @@ abstract class FetchTweets_Fetch_ {
 	}
 	private function makeClickableUsers( $strText, $arrMentions ) {
 		
-		// There are urls in the tweet text. So we need to convert them into hyper links.
+		// There are urls in the tweet text. So they need to be converted into hyper links.
 		foreach( ( array ) $arrMentions as $arrDetails ) {
 			
 			$arrDetails = $arrDetails + array(	// avoid undefined index warnings.
@@ -412,16 +445,13 @@ abstract class FetchTweets_Fetch_ {
 		
 		// reference: https://dev.twitter.com/docs/user-profile-images-and-banners
 		// url example: 
-		// http://a0.twimg.com/profile_images/3563567571/2bed89e7015546efbd3f67c530eb5d74_normal.jpeg
-		// https://si0.twimg.com/profile_images/3563567571/2bed89e7015546efbd3f67c530eb5d74_normal.jpeg		
+		// http://a0.twimg.com/profile_images/.../..._normal.jpeg
+		// https://si0.twimg.com/profile_images/../..._normal.jpeg		
 		
 		if ( empty( $strURL ) ) return $strURL;
 		
 		$intImageSize = ! is_numeric( $intImageSize ) ? 48 : $intImageSize;
 		
-// echo '[inside] image size: ' . $intImageSize . '<br />';		
-// echo '[inside] original: ' . $strURL . '<br />';	
-// echo '[inside] replaced: ' . preg_replace( '/\/.+\K(_normal)(?=(\..+$)|$)/', '', $strURL ) . '<br />';	
 		$strNeedle = '/\/.+\K(_normal)(?=(\..+$)|$)/';
 		if ( $intImageSize <= 24 )
 			return preg_replace( $strNeedle, '_mini', $strURL );
@@ -440,7 +470,7 @@ abstract class FetchTweets_Fetch_ {
 		
 		if ( empty( $this->arrExpiredTransientsRequestURIs ) ) return;
 		
-		// multi-dimensional array_unique
+		// Perform multi-dimensional array_unique()
 		$this->arrExpiredTransientsRequestURIs = array_map( "unserialize", array_unique( array_map( "serialize", $this->arrExpiredTransientsRequestURIs ) ) );
 				
 		// Schedules the action to run in the background with WP Cron.

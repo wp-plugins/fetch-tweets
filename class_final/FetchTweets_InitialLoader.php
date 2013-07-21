@@ -177,7 +177,7 @@ final class FetchTweets_InitialLoader {
 	
 		// 7. Widget
 		add_action( 'widgets_init', 'FetchTweets_WidgetByID::registerWidget' );
-		// add_action( 'widgets_init', 'FetchTweets_WidgetByTag::registerWidget' );
+		add_action( 'widgets_init', 'FetchTweets_WidgetByTag::registerWidget' );
 		
 		// 8. Events
 		new FetchTweets_Event;	

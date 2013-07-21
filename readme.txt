@@ -1,22 +1,22 @@
 ﻿=== Fetch Tweets ===
 Contributors: Michael Uno, miunosoft
 Donate link: http://en.michaeluno.jp/donate
-Tags: twitter, tweets, tweet, widget, widgets, post, posts, API, oAuth, shortcode, sidebar, plugin
+Tags: twitter, tweets, tweet, widget, widgets, post, posts, page, pages, custom post type, API, Twitter API, oAuth, shortcode, sidebar, plugin
 Requires at least: 3.2
 Tested up to: 3.5.2
 Stable tag: 1.0.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Fetches tweets from twitter.com with the Twitter API and displays them in posts, pages, and sidebars.
+Fetches and display tweets from twitter.com with the Twitter API.
 
 == Description ==
 
 <h4>Features</h4>
-* **User Timeline** - by specifying the user name, the time line can be fetched.
-* **Search Results** - by specifying the search keyword, the results can be fetched.
-* **Widget** - tweets can be displayed in the widget that the plugin provides.
+* **User Timeline** - by specifying the user name, the timeline can be fetched and displayed.
+* **Search Results** - by specifying the search keyword, the results can be fetched and displayed.
+* **Widget** - tweets can be displayed in the widgets that the plugin provides.
 * **Shortcode** - with the shortcode, the fetched tweets can be displayed in posts and pages.
-* **Mashups** - you can get the combined results from multiple users or by tag.
+* **Mashups** - you can display the combined results from multiple rule sets of your choosing.
 * **PHP Code** - with the PHP function, the fetched tweets can be embeded in the templates.
 * **Custom Templates** - you can change the design by modifying/creating the template file.
 * **Background Cache Renewal** - it renews the caches in the background so it will prevent the page load from suddenly getting stuck for fetching external sources. 
@@ -44,23 +44,39 @@ Go to the [Other Notes](http://wordpress.org/extend/plugins/fetch-tweets/other_n
 = Shortcode and Function Parameters =
 The following parameters can be used for the shortcode or the PHP function of the plugin, <code>fetchTweets()</code>
 
-* **id** - the ID of the rule set. This cannot be used with the `ids` and `tag` parameters. e.g.
+* **id** - the ID of the rule set. This cannot be used with the `ids`, `tag`, and `tags` parameters. e.g.
 
 `[fetch_tweets id="123"]`
 
 `<?php fetchTweets( array( 'id' => 123 ) ); ?>`
 
-* **ids** - the IDs of the rule set separated by commas. This cannot be used with the `id` and `tag` parameters. e.g.
+* **ids** - the IDs of the rule set separated by commas. This cannot be used with the `id`, `tag`, and `tags` parameters. e.g.
 
 `[fetch_tweets ids="123, 234, 345"]`
 
 `<?php fetchTweets( array( 'ids' => 123, 234, 345 ) ); ?>`
 
-* **tag** - the tag associated with the rule sets. This cannot be used with the `id` and `ids` parameters. e.g.
+* **tag** - the tag associated with the rule sets. This cannot be used with the `id`, `ids`, and `tag` parameters. e.g.
 
 `[fetch_tweets tag="WordPress"]`
 
 `<?php fetchTweets( array( 'tag' => 'WordPress' ) ); ?>`
+
+* **tags** - the tags associated with the rule sets. This cannot be used with the `id`, `ids`, and `tags` parameters. e.g.
+
+`[fetch_tweets tags="WordPress, developer"]`
+
+`<?php fetchTweets( array( 'tags' => 'WordPress, developer' ) ); ?>`
+
+* **operator** - the database query operator that works with the *tag* and *tags* parameters. Either **AND**, **NOT IN**, or **IN** can be used. If this parameter is not set, AND will be used as the default value. e.g.
+
+`[fetch_tweets tags="WordPress, PHP, JavaScript" operator="IN" ]`
+
+`<?php fetchTweets( array( 'tags' => 'WordPress, PHP, JavaScript', 'operator' => 'IN' ) ); ?>`
+
+`[fetch_tweets tags="developer" operator="NOT IN" ]`
+
+`<?php fetchTweets( array( 'tags' => 'developer', 'operator' => 'NOT IN' ) ); ?>`
 
 * **count** - the maximum number of tweets to display. e.g.
 
@@ -73,6 +89,7 @@ The following parameters can be used for the shortcode or the PHP function of th
 `[fetch_tweets id="678" count="8" avatar_size="96" ]`
 
 `<?php fetchTweets( array( 'id' => 678, 'count' => 8, 'avatar_size' => 96 ) ); ?>`
+
 
 == Frequently Asked Questions ==
 
@@ -87,9 +104,17 @@ Edit the file named *show_tweets.php* in the *template* directory of the plugin.
 == Screenshots ==
 
 1. ***Tweets Displayed in Page and Sidebar***
-
+2. ***Fetching Rule List***
+3. ***Widget Settings***
 
 == Changelog ==
+
+= 1.0.0.2 - 07/22/2013 =
+* Added the *operator* parameter for the *tag* and *tags* parameters that specifies the use of *AND*, *IN*, or *NOT IN* for the database query.
+* Added the *tags* parameter that enables to fetch tweets with multiple tags.
+* Added a widget that fetches tweets by tag.
+* Fixed a bug that profile images get lost with the *tag* parameter since 1.0.0.1.
+* Fixed a bug that caused a warning in the background, "PHP Warning:  in_array(): Wrong datatype for second argument in ...\wp-content\plugins\fetch-tweets\class\FetchTweets_WidgetByID_.php on line 76"
 
 = 1.0.0.1 - 07/21/2013 =
 * Added the *avater_size* parameter for the *fetchTweets()* function and the shortcode.

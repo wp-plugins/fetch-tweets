@@ -10,9 +10,13 @@
 	line-height: 1em;
 }
 .fetch-tweets-profile-image {
-	float:left;
+	float: left;
 	clear: left;
-	margin: 0 12px 0 0;
+	margin: 0 8px 0 0;
+}
+.fetch-tweets-user-name {
+	display: inline-block; 
+	vertical-align: top;
 }
 .fetch-tweets-user-name a {
 	text-decoration: none;
@@ -20,7 +24,7 @@
 .fetch-tweets-tweet-created-at {
 	float: right; 
 	font-size: smaller; 
-	padding-top: 2px;
+	
 }
 .fetch-tweets-tweet-created-at a {
 	text-decoration: none;

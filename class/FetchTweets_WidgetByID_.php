@@ -43,7 +43,7 @@ abstract class FetchTweets_WidgetByID_ extends WP_Widget {
 					
 		// Aboid undefined index warnings.
 		$arrInstance = $arrInstance + array(
-			'selected_ids' => null,
+			'selected_ids' => array(),
 			'count'	=> 20,	// default
 			'avatar_size' => 48,
 		);
@@ -88,7 +88,10 @@ abstract class FetchTweets_WidgetByID_ extends WP_Widget {
 		</label>
 		<br />
 		<p>
-		<input type="number" id="<?php echo $arrIDs['count']; ?>" name="<?php echo $arrNames['count']; ?>" min="1" value="<?php echo $arrInstance['count']?>"/>
+			<input type="number" id="<?php echo $arrIDs['count']; ?>" name="<?php echo $arrNames['count']; ?>" min="1" value="<?php echo $arrInstance['count']?>"/>
+		</p>
+		<p class="description" style="margin-top: 10px;">	
+			<?php _e( 'Default', 'fetch-tweets' ); ?>: 20
 		</p>
 		
 		<label for="<?php echo $arrIDs['avatar_size']; ?>">
@@ -105,12 +108,20 @@ abstract class FetchTweets_WidgetByID_ extends WP_Widget {
 	}
 	
 	public function update( $arrNewInstance, $arrOldInstance ) {
-// $oDebug = new FetchTweets_Debug;
-// $oDebug->getArray( $arrNewInstance, dirname( __FILE__ ) . '/widget_form_submitted_array.txt' );
-// $oDebug->getArray( $_POST, dirname( __FILE__ ) . '/post.txt' );
+		
+		$arrNewInstance['count'] = $this->fixNumber( $arrNewInstance['count'], 20, 1 );
+		$arrNewInstance['avatar_size'] = $this->fixNumber( $arrNewInstance['avatar_size'], 48, 0 );
+
         return $arrNewInstance;
-	
     }
+	protected function fixNumber( $numToFix, $numDefault, $numMin="", $numMax="" ) {
+			
+		if ( ! is_numeric( trim( $numToFix ) ) ) return $numDefault;
+		if ( $numMin !== "" && $numToFix < $numMin ) return $numMin;
+		if ( $numMax !== "" && $numToFix > $numMax ) return $numMax;
+		return $numToFix;
+		
+	}	
 	
 	/*
 	 * Methods for Debug
