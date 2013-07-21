@@ -1,7 +1,7 @@
 ﻿=== Fetch Tweets ===
 Contributors: Michael Uno, miunosoft
 Donate link: http://en.michaeluno.jp/donate
-Tags: twitter, tweets, tweet, widget, widgets, post, posts, page, pages, custom post type, API, Twitter API, oAuth, shortcode, sidebar, plugin
+Tags: twitter, tweets, tweet, widget, widgets, post, posts, page, pages, custom post type, API, Twitter API, REST, oAuth, shortcode, sidebar, plugin
 Requires at least: 3.2
 Tested up to: 3.5.2
 Stable tag: 1.0.0.2
