@@ -64,7 +64,7 @@ abstract class FetchTweets_WidgetByTag_ extends WP_Widget {
 		
 		?>
 		<label for="<?php echo $arrIDs['selected_tag_slugs']; ?>">
-			<?php _e( 'Select Rules', 'fetch-tweets' ); ?>:
+			<?php _e( 'Select Tags', 'fetch-tweets' ); ?>:
 		</label>
 		<br />
 		<select name="<?php echo $arrNames['selected_tag_slugs']; ?>[]" id="<?php echo $arrIDs['selected_tag_slugs']; ?>"  multiple style="min-width: 220px;">
