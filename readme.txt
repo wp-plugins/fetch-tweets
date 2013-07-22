@@ -109,6 +109,9 @@ Edit the file named *show_tweets.php* in the *template* directory of the plugin.
 
 == Changelog ==
 
+= 1.0.0.3 - 07/23/2013 =
+* Added the title field for the widget form.
+
 = 1.0.0.2 - 07/22/2013 =
 * Added the *operator* parameter for the *tag* and *tags* parameters that specifies the use of *AND*, *IN*, or *NOT IN* for the database query.
 * Added the *tags* parameter that enables to fetch tweets with multiple tags.

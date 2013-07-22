@@ -32,17 +32,19 @@
 				</a>			
 			</span>
 		</div>
-		<p class='fetch-tweets-text'>
-			<?php echo $arrTweet['text']; ?> 			
-			<?php if ( isset( $arrDetail['retweeted_status']['text'] ) ) : ?>
-			<span class='fetch-tweets-retweet-credit'>
-				<?php echo _e( 'Retweeted by', 'fetch-tweets' ) . ' '; ?>
-				<a href='https://twitter.com/<?php echo $arrDetail['user']['screen_name']; ?>' target='_blank'>
-					<?php echo $arrDetail['user']['name']; ?>
-				</a>
-			</span>
-			<?php endif; ?>
-		</p>
+		<div class='fetch-tweets-body'>
+			<p class='fetch-tweets-text'>
+				<?php echo $arrTweet['text']; ?> 			
+				<?php if ( isset( $arrDetail['retweeted_status']['text'] ) ) : ?>
+				<span class='fetch-tweets-retweet-credit'>
+					<?php echo _e( 'Retweeted by', 'fetch-tweets' ) . ' '; ?>
+					<a href='https://twitter.com/<?php echo $arrDetail['user']['screen_name']; ?>' target='_blank'>
+						<?php echo $arrDetail['user']['name']; ?>
+					</a>
+				</span>
+				<?php endif; ?>
+			</p>
+		</div>
     </div>
 	<?php endforeach; ?>	
 </div>

@@ -2,6 +2,13 @@
 
 abstract class FetchTweets_WidgetByID_ extends WP_Widget {
 
+	protected $arrStructure_FormElements = array(
+		'title'			=> null,
+		'selected_ids'	=> array(),
+		'count'			=> 20,	// default
+		'avatar_size'	=> 48,
+	);
+	
 	public static function registerWidget() {
 		return register_widget( 'FetchTweets_WidgetByID' );	// the class name - get_class( self ) does not work.
 	}	
@@ -20,12 +27,11 @@ abstract class FetchTweets_WidgetByID_ extends WP_Widget {
 		
 		echo $arrWidgetInfo['before_widget']; 
 		
-		// Aboid undefined index warnings.
-		$arrInstance = $arrInstance + array(
-			'selected_ids' => null,
-			'count'	=> null,
-			'avatar_size' => null,
-		);
+		// Avoid undefined index warnings.
+		$arrInstance = $arrInstance + $this->arrStructure_FormElements;
+		
+		if ( $arrInstance['title'] )
+			echo "<h3 class='etch-tweets-widget'>{$arrInstance['title']}</h3>";
 		
 		echo fetchTweets( 
 			array( 
@@ -38,26 +44,22 @@ abstract class FetchTweets_WidgetByID_ extends WP_Widget {
 		echo $arrWidgetInfo['after_widget'];
 		
 	}	
-	
+
 	public function form( $arrInstance ) {	
-					
-		// Aboid undefined index warnings.
-		$arrInstance = $arrInstance + array(
-			'selected_ids' => array(),
-			'count'	=> 20,	// default
-			'avatar_size' => 48,
-		);
 		
-		$arrIDs = array();
-		$arrNames = array();
-		$arrIDs['selected_ids'] = $this->get_field_id( 'selected_ids' );	
-		$arrNames['selected_ids'] = $this->get_field_name( 'selected_ids' );	
-		$arrIDs['count'] = $this->get_field_id( 'count' );	
-		$arrNames['count'] = $this->get_field_name( 'count' );	
-		$arrIDs['avatar_size'] = $this->get_field_id( 'avatar_size' );	
-		$arrNames['avatar_size'] = $this->get_field_name( 'avatar_size' );	
+		// Avoid undefined index warnings.
+		$arrInstance = $arrInstance + $this->arrStructure_FormElements;
+		$arrIDs = $this->getFieldValues( 'id' );
+		$arrNames = $this->getFieldValues( 'name' );
 		
 		?>
+		<label for="<?php echo $arrIDs['title']; ?>">
+			<?php _e( 'Title', 'fetch-tweets' ); ?>:
+		</label>
+		<p>
+			<input type="text" name="<?php echo $arrNames['title']; ?>" id="<?php echo $arrIDs['title']; ?>" value="<?php echo $arrInstance['title']?>"/>
+		</p>
+		
 		<label for="<?php echo $arrIDs['selected_ids']; ?>">
 			<?php _e( 'Select Rules', 'fetch-tweets' ); ?>:
 		</label>
@@ -105,6 +107,18 @@ abstract class FetchTweets_WidgetByID_ extends WP_Widget {
 		</p>
 		<?php
 		
+	}
+	protected function getFieldValues( $strField='id' ) {
+		
+		// Returns an array of filed values by a specified field.
+		// $strField can be either name or id.
+		$arrFields = array();
+		foreach( $this->arrStructure_FormElements as $strFieldKey => $v )  
+			$arrFields[ $strFieldKey ] = $strField == 'id' 
+				? $this->get_field_id( $strFieldKey )
+				: $this->get_field_name( $strFieldKey );
+	
+		return $arrFields;
 	}
 	
 	public function update( $arrNewInstance, $arrOldInstance ) {
