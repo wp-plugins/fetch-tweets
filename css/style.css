@@ -6,29 +6,31 @@
 .fetch-tweets-retweet {
 }
 .fetch-tweets-heading {
-text-align: right;
-width: auto;
+	vertical-align: text-top;
+	text-align: right;
 	line-height: 1em;
 }
 .fetch-tweets-profile-image {
+	display: table-column;
 	float: left;
 	clear: left;
 	margin: 0 8px 0 0;
 }
 .fetch-tweets-user-name {
-float: left;
+	margin-bottom: 0.2em;
 	display: inline-block; 
-	vertical-align: top;
+	float: left;
+	clear: right;
 }
 .fetch-tweets-user-name a {
 	text-decoration: none;
 }
 .fetch-tweets-tweet-created-at {
-
+	display: inline;
+	margin-bottom: 0.2em;
 	float: right; 
-
 	font-size: smaller; 
-	
+	margin-left: 1em;
 }
 .fetch-tweets-tweet-created-at a {
 	text-decoration: none;
@@ -37,7 +39,6 @@ float: left;
 	clear: right;
 }
 .fetch-tweets-text {
-
 	margin-bottom: 0;
 }
 .fetch-tweets-retweet-credit {

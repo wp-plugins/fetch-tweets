@@ -12,7 +12,7 @@
 	?>
     <div class='fetch-tweets-item <?php echo $strRetweetClassProperty; ?>' >
 		<?php if ( $intProfileImageSize > 0 ) : ?>
-		<div class='fetch-tweets-profile-image' style="max-width:<?php echo $intProfileImageSize;?>px;">
+		<div class='fetch-tweets-profile-image' style="width:<?php echo $intProfileImageSize;?>px;">
 			<a href='https://twitter.com/<?php echo $arrTweet['user']['screen_name']; ?>' target='_blank'>
 				<img src='<?php echo $arrTweet['user']['profile_image_url']; ?>' />
 			</a>
@@ -33,8 +33,7 @@
 			</span>
 		</div>
 		<div class='fetch-tweets-body'>
-			<p class='fetch-tweets-text'>
-				<?php echo $arrTweet['text']; ?> 			
+			<p class='fetch-tweets-text'><?php echo trim( $arrTweet['text'] ); ?>				
 				<?php if ( isset( $arrDetail['retweeted_status']['text'] ) ) : ?>
 				<span class='fetch-tweets-retweet-credit'>
 					<?php echo _e( 'Retweeted by', 'fetch-tweets' ) . ' '; ?>
