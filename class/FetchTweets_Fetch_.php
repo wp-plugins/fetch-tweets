@@ -151,7 +151,6 @@ abstract class FetchTweets_Fetch_ {
 			array_splice( $arrTweets, $intTotalCount );
 	
 // For debug
-// echo $intProfileImageSize . '<br />';
 // echo "<pre>" . htmlspecialchars( print_r( $arrTweets, true ) ) . "</pre>";		
 // return;
 		
@@ -217,6 +216,7 @@ abstract class FetchTweets_Fetch_ {
 			'symbols' => null,
 			'urls' => null,
 			'user_mentions' => null,
+			'media'	=> null,
 		);
 		$arrTweet['user'] = $arrTweet['user'] + array(
 			'profile_image_url' => null, 		
@@ -225,6 +225,7 @@ abstract class FetchTweets_Fetch_ {
 				
 		// Make the urls in the text hyper-links.
 		$arrTweet['text'] = $this->makeClickableLinks( $arrTweet['text'], $arrTweet['entities']['urls'] );	// $arrTweet['text'] = $this->makeClickableLinksByRegex( $arrTweet['text'] );
+		$arrTweet['text'] = $this->makeClickableMedia( $arrTweet['text'], $arrTweet['entities']['media'] );	
 		$arrTweet['text'] = $this->makeClickableHashTags( $arrTweet['text'], $arrTweet['entities']['hashtags'] );	
 		$arrTweet['text'] = $this->makeClickableUsers( $arrTweet['text'], $arrTweet['entities']['user_mentions'] );	
 					
@@ -381,8 +382,34 @@ abstract class FetchTweets_Fetch_ {
 				$arrURLDetails['url'],	// needle 
 				"<a href='{$arrURLDetails['expanded_url']}' target='_blank' rel='nofollow'>{$arrURLDetails['display_url']}</a>", 	// replace
 				$strText 	// haystack
+			);	
+		}
+		return $strText;
+		
+	}
+	private function makeClickableMedia( $strText, $arrMedia ) {
+		
+		// This method converts media links in the tweet text.
+		foreach( ( array ) $arrMedia as $arrDetails ) {
+			
+			$arrDetails = $arrDetails + array(	// avoid undefined index warnings.
+				'media_url' => null,
+				'media_url_https' => null,
+				'url' => null,
+				'display_url' => null,
+				'expanded_url' => null,
+				'type' => null,
+				'sizes' => null,	// array()
+				'id' => null,
+				'id_str' => null,
+				'indices' => null,	// array()
 			);
 			
+			$strText = str_replace( 
+				$arrDetails['url'],	// needle 
+				"<a href='{$arrDetails['expanded_url']}' target='_blank' rel='nofollow'>{$arrDetails['display_url']}</a>", 	// replace
+				$strText 	// haystack
+			);	
 		}
 		return $strText;
 		

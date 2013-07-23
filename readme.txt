@@ -110,7 +110,8 @@ Edit the file named *show_tweets.php* in the *template* directory of the plugin.
 == Changelog ==
 
 = 1.0.0.3 - 07/23/2013 =
-* Tweaked the default template.
+* Added the ability to convert media links to the hyper links.
+* Tweaked the default template style.
 * Added the title field for the widget form.
 
 = 1.0.0.2 - 07/22/2013 =

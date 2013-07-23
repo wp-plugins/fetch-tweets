@@ -7,7 +7,6 @@
 }
 .fetch-tweets-heading {
 	vertical-align: text-top;
-	text-align: right;
 	line-height: 1em;
 }
 .fetch-tweets-profile-image {
@@ -19,8 +18,7 @@
 .fetch-tweets-user-name {
 	margin-bottom: 0.2em;
 	display: inline-block; 
-	float: left;
-	clear: right;
+
 }
 .fetch-tweets-user-name a {
 	text-decoration: none;
