@@ -14,9 +14,9 @@ Fetches and display tweets from twitter.com with the Twitter API.
 <h4>Features</h4>
 * **User Timeline** - by specifying the user name, the timeline can be fetched and displayed.
 * **Search Results** - by specifying the search keyword, the results can be fetched and displayed.
+* **Mashups** - you can display the combined results from multiple rule sets of your choosing.
 * **Widget** - tweets can be displayed in the widgets that the plugin provides.
 * **Shortcode** - with the shortcode, the fetched tweets can be displayed in posts and pages.
-* **Mashups** - you can display the combined results from multiple rule sets of your choosing.
 * **PHP Code** - with the PHP function, the fetched tweets can be embeded in the templates.
 * **Custom Templates** - you can change the design by modifying/creating the template file.
 * **Background Cache Renewal** - it renews the caches in the background so it will prevent the page load from suddenly getting stuck for fetching external sources. 
