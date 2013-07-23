@@ -16,7 +16,7 @@
 	margin: 0 8px 0 0;
 }
 .fetch-tweets-user-name {
-	margin-bottom: 0.2em;
+	margin-bottom: 0.3em;
 	display: inline-block; 
 
 }
@@ -25,7 +25,7 @@
 }
 .fetch-tweets-tweet-created-at {
 	display: inline;
-	margin-bottom: 0.2em;
+
 	float: right; 
 	font-size: smaller; 
 	margin-left: 1em;
