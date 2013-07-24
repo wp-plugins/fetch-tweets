@@ -14,10 +14,16 @@ abstract class FetchTweets_Option_ {
 	
 	public $arrStructure_DefaultParams = array(
 		'id'				=> null,
+		'ids'				=> null,	// deprecated as of 1.0.1 
 		'tag'				=> null,
-		'count'				=> null,
+		'tags'				=> null,	// deprecated as of 1.0.1
+		'count'				=> 20,
+		'avatar_size'		=> 48,
+		'operator'			=> 'AND',
+		'tag_field_type'	=> 'slug',				// used internally. slug or id.
+		'sort'				=> 'descending',		//  ascending, descending, or random 
 	);
-	
+		 
 	public function __construct( $strOptionKey ) {
 		
 		$this->arrOptions = $this->setOption( $strOptionKey );

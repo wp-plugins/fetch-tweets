@@ -48,7 +48,7 @@ class FetchTweets_MetaBox_ extends AdminPageFramework_MetaBox {
 		
 		// The wider tag meta box.
 		add_meta_box( 
-			'tagsdiv-' . FetchTweets_Commons::Tag . '-2', 		// id
+			'tagsdiv-' . FetchTweets_Commons::TagSlug . '-2', 		// id
 			__( 'Tags', 'fetch-tweets' ), 	// title
 			array( $this, 'drawTagBox' ), 	// callback
 			FetchTweets_Commons::PostTypeSlug,		// post type
@@ -85,7 +85,7 @@ class FetchTweets_MetaBox_ extends AdminPageFramework_MetaBox {
 				array(
 					'title' => __( 'Tags', 'fetch-tweets' ),
 					'args' => array(
-						'taxonomy' => FetchTweets_Commons::Tag,
+						'taxonomy' => FetchTweets_Commons::TagSlug,
 					)
 				)
 			);
@@ -97,7 +97,7 @@ class FetchTweets_MetaBox_ extends AdminPageFramework_MetaBox {
 	public function removeDefaultMetaBoxes() {
 		
 		// Remove 'Keywords' (like tags) metabox
-		$strTaxonomySlug = FetchTweets_Commons::Tag;
+		$strTaxonomySlug = FetchTweets_Commons::TagSlug;
 		remove_meta_box( "tagsdiv-{$strTaxonomySlug}", FetchTweets_Commons::PostTypeSlug, 'side' );
 		
 		// Remove 'Groups' (like categories) metabox

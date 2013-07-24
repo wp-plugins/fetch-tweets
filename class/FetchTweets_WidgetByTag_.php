@@ -37,8 +37,8 @@ abstract class FetchTweets_WidgetByTag_ extends WP_Widget {
 
 		echo fetchTweets( 
 			array( 	
-				// this argument takes term 'name' if the strFieldType key is not specified.
-				'tags'	=> $arrInstance['selected_tag_slugs'] + array( 'strFieldType' => 'slug' ),	// strFieldType can be either slug or id.	
+				'tags'	=> $arrInstance['selected_tag_slugs'],
+				'tag_field_type' => 'slug',
 				'count' => $arrInstance['count'],
 				'avatar_size' => $arrInstance['avatar_size'],
 				'operator'	=> $arrInstance['operator'],
@@ -156,7 +156,7 @@ abstract class FetchTweets_WidgetByTag_ extends WP_Widget {
 	protected function getTagSlugArrays() {
 		$arrTagSlugs = array();
 		$arrTagObjects = get_terms( 
-			FetchTweets_Commons::Tag,			// taxonomy slug
+			FetchTweets_Commons::TagSlug,			// taxonomy slug
 			array(
 				'hide_empty' => true,
 			) 

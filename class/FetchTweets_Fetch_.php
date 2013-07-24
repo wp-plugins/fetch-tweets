@@ -11,11 +11,11 @@ abstract class FetchTweets_Fetch_ {
 	public function __construct() {
 	
 		// Set up the connection.
-		$oOption = & $GLOBALS['oFetchTweets_Option'];
-		$this->strConsumerKey = $oOption->getConsumerKey();
-		$this->strConsumerSecret = $oOption->getConsumerSecret();
-		$this->strAccessToken = $oOption->getAccessToken();
-		$this->strAccessTokenSecret = $oOption->getAccessTokenSecret();
+		$this->oOption = & $GLOBALS['oFetchTweets_Option'];
+		$this->strConsumerKey = $this->oOption->getConsumerKey();
+		$this->strConsumerSecret = $this->oOption->getConsumerSecret();
+		$this->strAccessToken = $this->oOption->getAccessToken();
+		$this->strAccessTokenSecret = $this->oOption->getAccessTokenSecret();
 		
 		$this->oTwitterOAuth =  new WP_TwitterOAuth( 
 			$this->strConsumerKey, 
@@ -35,29 +35,27 @@ abstract class FetchTweets_Fetch_ {
 		
 	}
 	
-	public function getTweetsByTag( $vTags, $intTotalCount=null, $strOrderedBy=null, $intProfileImageSize=48, $strOperator='AND' ) {
-	
+	public function getTweetsOutputByTag( $arrArgs ) {
+		
+		// Called from the shortcode callback.
 		// Capture the output buffer
 		ob_start(); // start buffer
-		$this->drawTweetsByTag( $vTags, $intTotalCount, $strOrderedBy, $intProfileImageSize, $strOperator );
+		$this->drawTweetsByTag( $arrArgs );
 		$strContent = ob_get_contents(); // assign the content buffer to a variable
 		ob_end_clean(); // end buffer and remove the buffer		
 		return $strContent;
 		
 	}	
-	public function drawTweetsByTag( $vTags, $intTotalCount=null, $strOrderedBy=null, $intProfileImageSize=48, $strOperator='AND'  ) {
-
-		$arrPostIDs = isset( $vTags['strFieldType'] ) && in_array( strtolower( $vTags['strFieldType'] ), array( 'id', 'slug' ) )
-			? $this->getPostIDsByTag( $vTags, $strOperator )
-			: $this->getPostIDsByTagName( $vTags, $strOperator );
+	public function drawTweetsByTag( $arrArgs ) {
+		
+		// Called from either the above getTweetsOutputByTag() method for the shortcode callbeck or fetchTweets() function.
+		$arrArgs['tag'] = isset( $arrArgs['tags'] ) && ! empty( $arrArgs['tags'] ) ? $arrArgs['tags'] : $arrArgs['tag'];	// backward compatibility
+		$arrArgs['tag'] = is_array( $arrArgs['tag'] ) ? $arrArgs['tag'] : preg_split( "/[,]\s*/", trim( ( string ) $arrArgs['tag'] ), 0, PREG_SPLIT_NO_EMPTY );
+		$arrArgs['id'] = isset( $arrArgs['tag_field_type'] ) && in_array( strtolower( $arrArgs['tag_field_type'] ), array( 'id', 'slug' ) )
+			? $this->getPostIDsByTag( $arrArgs['tag'], $arrArgs['tag_field_type'], trim( $arrArgs['operator'] ) )
+			: $this->getPostIDsByTagName( $arrArgs['tag'], trim( $arrArgs['operator'] ) );
 	
-		$this->drawTweets( 
-			$arrPostIDs, 	
-			$intTotalCount, 
-			$strOrderedBy,
-			isset( $intProfileImageSize ) ? $intProfileImageSize : 48,	// if null is passed to the parameter, PHP does not assign the default value.
-			$vTags
-		);
+		$this->drawTweets( $arrArgs );
 			
 	}
 	private function getPostIDsByTagName( $vTermNames, $strOperator='AND' ) {
@@ -65,17 +63,16 @@ abstract class FetchTweets_Fetch_ {
 		$arrTermSlugs = array();
 		foreach( ( array ) $vTermNames as $strTermName ) {
 			
-			$arrTerm = get_term_by( 'name', $strTermName, FetchTweets_Commons::Tag, ARRAY_A );
+			$arrTerm = get_term_by( 'name', $strTermName, FetchTweets_Commons::TagSlug, ARRAY_A );
 			$arrTermSlugs[] = $arrTerm['slug'];
 			
 		}
-		return $this->getPostIDsByTag( $arrTermSlugs, $strOperator );
+		return $this->getPostIDsByTag( $arrTermSlugs, 'slug', $strOperator );
 				
 	}
-	private function getPostIDsByTag( $arrTermSlugs, $strOperator='AND' ) {
+	private function getPostIDsByTag( $arrTermSlugs, $strFieldType='slug', $strOperator='AND' ) {
 		
-		$strFieldType = isset( $arrTermSlugs['strFieldType'] ) ? $this->sanitizeFieldKey( $arrTermSlugs['strFieldType'] ) : 'slug';
-		unset( $arrTermSlugs['strFieldType'] );	// if it's set, remove it.
+		$strFieldType = $this->sanitizeFieldKey( $strFieldType );
 
 		$arrPostObjects = get_posts( 
 			array(
@@ -83,7 +80,7 @@ abstract class FetchTweets_Fetch_ {
 				'posts_per_page' => -1, // ALL posts
 				'tax_query' => array(
 					array(
-						'taxonomy' => FetchTweets_Commons::Tag,	// fetch_tweets_tag
+						'taxonomy' => FetchTweets_Commons::TagSlug,	// fetch_tweets_tag
 						'field' => $strFieldType,	// id or slug
 						'terms' => $arrTermSlugs,	// the array of term slugs
 						'operator' => $this->sanitizeOperator( $strOperator ),	// 'IN', 'NOT IN', 'AND. If the item is only one, use AND.
@@ -118,47 +115,57 @@ abstract class FetchTweets_Fetch_ {
 		}
 	}
 	
-	public function getTweets( $vPostIDs, $intTotalCount=null, $strOrderedBy=null, $intProfileImageSize=48 ) {
+	public function getTweetsOutput( $arrArgs ) {	// called from the shortcode callback.
 		
-		// Capture the output buffer
-		ob_start(); // start buffer
-		$this->drawTweets( $vPostIDs, $intTotalCount, $strOrderedBy, $intProfileImageSize );
-		$strContent = ob_get_contents(); // assign the content buffer to a variable
-		ob_end_clean(); // end buffer and remove the buffer		
+		// Capture the output buffer.
+		ob_start(); // Start buffer.
+		$this->drawTweets( $arrArgs );
+		$strContent = ob_get_contents(); // Assign the content buffer to a variable.
+		ob_end_clean(); // End buffer and remove the buffer.
 		return $strContent;
 		
 	}
-	public function drawTweets( $vPostIDs, $intTotalCount=null, $strOrderedBy=null, $intProfileImageSize=48, $vTags=null ) {
+
+	public function drawTweets( $arrArgs ) {
 
 		/*
-		 * $vTags is only used to pass it to the template path filter to tell it it is a call of a tag.
+		 * $arrArgs 
+		 * 	id - default: null. e.g. 125  or 124, 235
+		 * 	tag - default: null. e.g. php or php, WordPress. In this method this tag is only used to pass the argument to the template filter.
+		 *  sort - default: descending. Either ascending, descending, or random can be used.
+		 * 	count - default: 20
+		 *  avatar_size - default: 48
+		 * 	operator - default: AND. Either AND or IN or NOT IN is used.
 		 * */
-		
-		$arrTweets = $this->getTweetsAsArray( $vPostIDs );
+		$arrArgs = ( array ) $arrArgs + $this->oOption->arrStructure_DefaultParams;
+		$arrArgs['id'] = isset( $arrArgs['ids'] ) && ! empty( $arrArgs['ids'] ) ? $arrArgs['ids'] : $arrArgs['id'];	// backward compatibility
+		$arrArgs['id'] = is_array( $arrArgs['id'] ) ? $arrArgs['id'] : preg_split( "/[,]\s*/", trim( ( string ) $arrArgs['id'] ), 0, PREG_SPLIT_NO_EMPTY );
+	
+		$arrTweets = $this->getTweetsAsArray( $arrArgs['id'] );
 		if ( empty( $arrTweets ) ) {
 			_e( 'No result has been fetched.', 'fetch-tweets' );
 			return;
 		}
 
 		// Format the array.
-		$this->formatTweetArrays( $arrTweets, $intProfileImageSize );	// the array is passed as reference.
+		$this->formatTweetArrays( $arrTweets, $arrArgs['avatar_size'] ); // the array is passed as reference.
 	
 		// Sort by time.
-		$this->sortTweetArrays( $arrTweets, $strOrderedBy ); // the array is passed as reference.
+		$this->sortTweetArrays( $arrTweets, $arrArgs['sort'] ); // the array is passed as reference.
 
 		// Truncate the array.
-		if ( $intTotalCount && is_numeric( $intTotalCount ) ) 
-			array_splice( $arrTweets, $intTotalCount );
+		if ( $arrArgs['count'] && is_numeric( $arrArgs['count'] ) ) 
+			array_splice( $arrTweets, $arrArgs['count'] );
 	
 // For debug
 // echo "<pre>" . htmlspecialchars( print_r( $arrTweets, true ) ) . "</pre>";		
 // return;
 		
-		// Include the template to render the output - this function is for filters but go ahead and render the output.
-		include( apply_filters( "fetch_tweets_template_path", $this->strTemplatePath, isset( $vTags ) ? $vTags : $vPostIDs ) );
+		// Include the template to render the output - this function is for filters( which requires a return value ) but go ahead and render the output.
+		include( apply_filters( "fetch_tweets_template_path", $this->strTemplatePath, $arrArgs ) );
 		
 	}
-	private function getTweetsAsArray( $vPostIDs ) {
+	public function getTweetsAsArray( $vPostIDs, $intMaxCount=null ) {	// this is public as the feed extension uses it.
 		
 		$arrTweets = array();
 		foreach( ( array ) $vPostIDs as $intPostID ) {
@@ -193,7 +200,7 @@ abstract class FetchTweets_Fetch_ {
 		
 		foreach( $arrTweets as $intIndex => &$arrTweet ) {
 							
-			// Check if it is a retweet.
+			// Check if it is a re-tweet.
 			if ( isset( $arrTweet['retweeted_status']['text'] ) ) 				
 				$arrTweet['retweeted_status'] = $this->formatTweetArray( $arrTweet['retweeted_status'], $intProfileImageSize );
 			

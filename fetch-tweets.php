@@ -5,7 +5,7 @@
 	Description: Fetches and displays tweets from Twitter with the the Twitter REST API v1.1.
 	Author: miunosoft (Michael Uno)
 	Author URI: http://michaeluno.jp
-	Version: 1.0.0.3
+	Version: 1.0.0.4
 	Requirements: PHP 5.2.4 or above, WordPress 3.2 or above.
 */ 
 
@@ -24,7 +24,7 @@ final class FetchTweets_Commons {
 	const TextDomain = 'fetch-tweets';
 	const PluginName = 'Fetch Tweets';
 	const PostTypeSlug = 'fetch_tweets';
-	const Tag = 'fetch_tweets_tag';
+	const TagSlug = 'fetch_tweets_tag';
 	
 	public static function getPluginKey() {
 		return self::$strPluginKey;
@@ -50,35 +50,10 @@ final class FetchTweets_Commons {
 function fetchTweets( $arrArgs ) {
 	
 	$oFetch = new FetchTweets_Fetch();
-	if ( isset( $arrArgs['id'] ) ) 
-		$oFetch->drawTweets( 
-			$arrArgs['id'],
-			isset( $arrArgs['count'] ) ? $arrArgs['count'] : null, 
-			isset( $arrArgs['sort'] ) ? $arrArgs['sort'] : null,
-			isset( $arrArgs['avatar_size'] ) ? $arrArgs['avatar_size'] : null
-		);	
-	else if ( isset( $arrArgs['ids'] ) )	
-		$oFetch->drawTweets( 
-			is_array( $arrArgs['ids'] ) ? $arrArgs['ids'] : preg_split( "/[,]\s*/", trim( ( string ) $arrArgs['ids'] ), 0, PREG_SPLIT_NO_EMPTY ),
-			isset( $arrArgs['count'] ) ? $arrArgs['count'] : null, 
-			isset( $arrArgs['sort'] ) ? $arrArgs['sort'] : null,
-			isset( $arrArgs['avatar_size'] ) ? $arrArgs['avatar_size'] : null
-		);
-	else if ( isset( $arrArgs['tag'] ) ) 
-		$oFetch->drawTweetsByTag( 
-			trim( $arrArgs['tag'] ), 
-			isset( $arrArgs['count'] ) ? $arrArgs['count'] : null, 
-			isset( $arrArgs['sort'] ) ? $arrArgs['sort'] : null,
-			isset( $arrArgs['avatar_size'] ) ? $arrArgs['avatar_size'] : null
-		);
-	else if ( isset( $arrArgs['tags'] ) ) 
-		$oFetch->drawTweetsByTag( 
-			is_array( $arrArgs['tags'] ) ? $arrArgs['tags'] : preg_split( "/[,]\s*/", trim( ( string ) $arrArgs['tags'] ), 0, PREG_SPLIT_NO_EMPTY ),
-			isset( $arrArgs['count'] ) ? $arrArgs['count'] : null, 
-			isset( $arrArgs['sort'] ) ? $arrArgs['sort'] : null,
-			isset( $arrArgs['avatar_size'] ) ? $arrArgs['avatar_size'] : null,
-			isset( $arrArgs['operator'] ) ? $arrArgs['operator'] : null
-		);		
+	if ( isset( $arrArgs['id'] ) || isset( $arrArgs['ids'] ) ) 
+		$oFetch->drawTweets( $arrArgs );
+	else if ( isset( $arrArgs['tag'] ) || isset( $arrArgs['tags'] ) ) 
+		$oFetch->drawTweetsByTag( $arrArgs );
 
 }
 

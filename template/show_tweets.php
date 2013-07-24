@@ -1,3 +1,12 @@
+<?php
+/*
+ * Available variables passed from the caller script
+ * - $arrTweets : the fetched tweet arrays.
+ * - $arrArgs	: the passed arguments such as avatar size, item count etc.
+ * 
+ * */
+?>
+
 <div class='fetch-tweets'>
 
 	<?php foreach ( $arrTweets as $arrDetail ) : ?>
@@ -11,8 +20,8 @@
 		
 	?>
     <div class='fetch-tweets-item <?php echo $strRetweetClassProperty; ?>' >
-		<?php if ( $intProfileImageSize > 0 ) : ?>
-		<div class='fetch-tweets-profile-image' style="width:<?php echo $intProfileImageSize;?>px;">
+		<?php if ( $arrArgs['avatar_size'] > 0 ) : ?>
+		<div class='fetch-tweets-profile-image' style="width:<?php echo $arrArgs['avatar_size'];?>px;">
 			<a href='https://twitter.com/<?php echo $arrTweet['user']['screen_name']; ?>' target='_blank'>
 				<img src='<?php echo $arrTweet['user']['profile_image_url']; ?>' />
 			</a>

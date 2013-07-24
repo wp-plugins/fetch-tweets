@@ -44,47 +44,47 @@ Go to the [Other Notes](http://wordpress.org/extend/plugins/fetch-tweets/other_n
 = Shortcode and Function Parameters =
 The following parameters can be used for the shortcode or the PHP function of the plugin, <code>fetchTweets()</code>
 
-* **id** - the ID of the rule set. This cannot be used with the `ids`, `tag`, and `tags` parameters. e.g.
+* **id** - the ID(s) of the rule set. This cannot be used with the `tag` parameter. e.g.
 
 `[fetch_tweets id="123"]`
 
 `<?php fetchTweets( array( 'id' => 123 ) ); ?>`
 
-* **ids** - the IDs of the rule set separated by commas. This cannot be used with the `id`, `tag`, and `tags` parameters. e.g.
+In order to set multiple IDs, pass them with commas as the delimiter. e.g.
 
-`[fetch_tweets ids="123, 234, 345"]`
+`[fetch_tweets id="123, 234, 345"]`
 
-`<?php fetchTweets( array( 'ids' => 123, 234, 345 ) ); ?>`
+`<?php fetchTweets( array( 'id' => 123, 234, 345 ) ); ?>`
 
-* **tag** - the tag associated with the rule sets. This cannot be used with the `id`, `ids`, and `tag` parameters. e.g.
+* **tag** - the tag(s) associated with the rule sets. This cannot be used with the `id` parameter. e.g.
 
 `[fetch_tweets tag="WordPress"]`
 
 `<?php fetchTweets( array( 'tag' => 'WordPress' ) ); ?>`
 
-* **tags** - the tags associated with the rule sets. This cannot be used with the `id`, `ids`, and `tags` parameters. e.g.
+In order to set mutiple tags, pass them with commas as the delimiter. e.g.
 
-`[fetch_tweets tags="WordPress, developer"]`
+`[fetch_tweets tag="WordPress, developer"]`
 
-`<?php fetchTweets( array( 'tags' => 'WordPress, developer' ) ); ?>`
+`<?php fetchTweets( array( 'tag' => 'WordPress, developer' ) ); ?>`
 
-* **operator** - the database query operator that works with the *tag* and *tags* parameters. Either **AND**, **NOT IN**, or **IN** can be used. If this parameter is not set, AND will be used as the default value. e.g.
+* **operator** - the database query operator that is performed with the *tag* parameters. Either **AND**, **NOT IN**, or **IN** can be used. If this parameter is not set, AND will be used as the default value. For more information about this operator, refer to the [Taxonomy Parameter](http://codex.wordpress.org/Class_Reference/WP_Query#Taxonomy_Parameters) section of Codex. e.g.
 
-`[fetch_tweets tags="WordPress, PHP, JavaScript" operator="IN" ]`
+`[fetch_tweets tag="WordPress, PHP, JavaScript" operator="IN" ]`
 
-`<?php fetchTweets( array( 'tags' => 'WordPress, PHP, JavaScript', 'operator' => 'IN' ) ); ?>`
+`<?php fetchTweets( array( 'tag' => 'WordPress, PHP, JavaScript', 'operator' => 'IN' ) ); ?>`
 
-`[fetch_tweets tags="developer" operator="NOT IN" ]`
+`[fetch_tweets tag="developer" operator="NOT IN" ]`
 
-`<?php fetchTweets( array( 'tags' => 'developer', 'operator' => 'NOT IN' ) ); ?>`
+`<?php fetchTweets( array( 'tag' => 'developer', 'operator' => 'NOT IN' ) ); ?>`
 
 * **count** - the maximum number of tweets to display. e.g.
 
-`[fetch_tweets ids="456, 567" count="10" ]`
+`[fetch_tweets id="456, 567" count="10" ]`
 
-`<?php fetchTweets( array( 'ids' => 456, 567, 'count' => 10 ) ); ?>`
+`<?php fetchTweets( array( 'id' => 456, 567, 'count' => 10 ) ); ?>`
 
-* **avatar_size** - the size of the profile image in pixel. e.g.
+* **avatar_size** - the size( max-width ) of the profile image in pixel. e.g.
 
 `[fetch_tweets id="678" count="8" avatar_size="96" ]`
 
@@ -108,6 +108,11 @@ Edit the file named *show_tweets.php* in the *template* directory of the plugin.
 3. ***Widget Settings***
 
 == Changelog ==
+
+= 1.0.0.4 - 07/24/2013 =
+* Changed the *ids* and *tags* parameters to be obsolete. These will be removed in near updates.
+* Changed the *id* and *tag* parameters to accept comma-delimited elements like the *ids* and *tags* parameters. 
+* Changed the variables passed to the template file. ( ***Breaking Change*** )
 
 = 1.0.0.3 - 07/23/2013 =
 * Added the ability to convert media links to the hyper links.

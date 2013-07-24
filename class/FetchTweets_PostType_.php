@@ -89,10 +89,7 @@ abstract class FetchTweets_PostType_ extends AdminPageFramework_PostType {
 	
 		global $post;
 		if ( ! isset( $post->post_type ) || $post->post_type != $this->strPostType ) return $strContent;
-		
-		$oFetch = new FetchTweets_Fetch;
-		$oFetch->drawTweets( $post->ID );
-		unset( $oFetch );
+		fetchTweets( array( 'id' => $post->ID ) );
 		return $strContent;
 	
 	}
@@ -108,7 +105,7 @@ abstract class FetchTweets_PostType_ extends AdminPageFramework_PostType {
 			'tweettype'			=> __( 'Tweet Type', 'fetch-tweets' ),
 			// 'author'			=> __( 'Author', 'fetch-tweets' ),		// Post author.
 			'fetch_tweets_tag'	=> __( 'Tags', 'fetch-tweets' ),	// Tags for the post. 
-			'code'				=> __( 'Code Examples', 'fetch-tweets' ),
+			'code'				=> __( 'Shortcode / PHP Code', 'fetch-tweets' ),
 			// 'date'			=> __( 'Date', 'fetch-tweets' ), 	// The date and publish status of the post. 
 		);		
 		// return array_merge( $arrColumnHeader, $this->arrColumnHeaders );
@@ -123,7 +120,7 @@ abstract class FetchTweets_PostType_ extends AdminPageFramework_PostType {
 	public function cell_fetch_tweets_fetch_tweets_tag( $strCell, $intPostID ) {
 		
 		// Get the genres for the post.
-		$arrTerms = get_the_terms( $intPostID, 'fetch_tweets_tag' );
+		$arrTerms = get_the_terms( $intPostID, FetchTweets_Commons::TagSlug );
 	
 		// If no tag is assigned to the post,
 		if ( empty( $arrTerms ) ) return '—';
@@ -135,8 +132,8 @@ abstract class FetchTweets_PostType_ extends AdminPageFramework_PostType {
 		// Loop through each term, linking to the 'edit posts' page for the specific term. 
 		foreach ( $arrTerms as $oTerm ) {
 			$arrOutput[] = sprintf( '<a href="%s">%s</a>',
-				esc_url( add_query_arg( array( 'post_type' => $post->post_type, 'fetch_tweets_tag' => $oTerm->slug ), 'edit.php' ) ),
-				esc_html( sanitize_term_field( 'name', $oTerm->name, $oTerm->term_id, 'fetch_tweets_tag', 'display' ) )
+				esc_url( add_query_arg( array( 'post_type' => $post->post_type, FetchTweets_Commons::TagSlug => $oTerm->slug ), 'edit.php' ) ),
+				esc_html( sanitize_term_field( 'name', $oTerm->name, $oTerm->term_id, FetchTweets_Commons::TagSlug, 'display' ) )
 			);
 		}
 
