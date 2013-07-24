@@ -14,14 +14,23 @@ abstract class FetchTweets_Option_ {
 	
 	public $arrStructure_DefaultParams = array(
 		'id'				=> null,
-		'ids'				=> null,	// deprecated as of 1.0.1 
+		'ids'				=> null,	// deprecated as of 1.0.0.4 - but extension plugins may use it
 		'tag'				=> null,
-		'tags'				=> null,	// deprecated as of 1.0.1
+		'tags'				=> null,	// deprecated as of 1.0.0.4 - but extension plugins may use it
 		'count'				=> 20,
 		'avatar_size'		=> 48,
 		'operator'			=> 'AND',
 		'tag_field_type'	=> 'slug',				// used internally. slug or id.
 		'sort'				=> 'descending',		//  ascending, descending, or random 
+		
+		// for custom function calls
+		'q'					=> null,	
+		'screen_name'		=> null,	// 
+		'include_rts'		=> 0,		// 
+		'exclude_replies'	=> 0,		// 
+		'cache'				=> 1200,	// Cache lifespan in seconds.
+		'lang'				=> null,	// 
+		'result_type'		=> 'mixed',	// 
 	);
 		 
 	public function __construct( $strOptionKey ) {

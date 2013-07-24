@@ -136,12 +136,20 @@ abstract class FetchTweets_Fetch_ {
 		 * 	count - default: 20
 		 *  avatar_size - default: 48
 		 * 	operator - default: AND. Either AND or IN or NOT IN is used.
+		 *  q - default: null e.g. WordPress
+		 *  screen_name - default: null e.g. miunosoft
+		 *  include_rts - default: 0. Either 1 or 0.
+		 *  exclude_replies - default: 0. Either 1 or 0.
+		 *  cache - default: 1200
+		 *	lang - default: null.  
+		 *	result_type - default: mixed
+		 * 
 		 * */
 		$arrArgs = ( array ) $arrArgs + $this->oOption->arrStructure_DefaultParams;
 		$arrArgs['id'] = isset( $arrArgs['ids'] ) && ! empty( $arrArgs['ids'] ) ? $arrArgs['ids'] : $arrArgs['id'];	// backward compatibility
 		$arrArgs['id'] = is_array( $arrArgs['id'] ) ? $arrArgs['id'] : preg_split( "/[,]\s*/", trim( ( string ) $arrArgs['id'] ), 0, PREG_SPLIT_NO_EMPTY );
-	
-		$arrTweets = $this->getTweetsAsArray( $arrArgs['id'] );
+		
+		$arrTweets = $this->getTweetsAsArray( $arrArgs );
 		if ( empty( $arrTweets ) ) {
 			_e( 'No result has been fetched.', 'fetch-tweets' );
 			return;
@@ -165,7 +173,17 @@ abstract class FetchTweets_Fetch_ {
 		include( apply_filters( "fetch_tweets_template_path", $this->strTemplatePath, $arrArgs ) );
 		
 	}
-	public function getTweetsAsArray( $vPostIDs, $intMaxCount=null ) {	// this is public as the feed extension uses it.
+	public function getTweetsAsArray( $arrArgs ) {	// this is public as the feed extension uses it.
+	
+		if ( isset( $arrArgs['q'] ) )	// custom call by search keyword
+			return $this->getTweetsBySearch( $arrArgs['q'], $arrArgs['count'], $arrArgs['lang'], $arrArgs['include_rts'], $arrArgs['result_type'], $arrArgs['cache'] );
+		else if ( isset( $arrArgs['screen_name'] ) )	// custom call by screen name
+			return $this->getTweetsByScreenName( $arrArgs['screen_name'], $arrArgs['count'], $arrArgs['include_rts'], $arrArgs['exclude_replies'], $arrArgs['cache'] );
+		else	// normal
+			return $this->getTweetsAsArrayByPostID( $arrArgs['id'] );
+		
+	}
+	private function getTweetsAsArrayByPostID( $vPostIDs, $intMaxCount=null ) {	
 		
 		$arrTweets = array();
 		foreach( ( array ) $vPostIDs as $intPostID ) {
@@ -324,7 +342,7 @@ abstract class FetchTweets_Fetch_ {
 		return $arrTweets['statuses'];
 			
 	}
-	private function getTweetsByScreenName( $strUser, $intCount, $fIncludeRetweets=false, $fExcludeReplies=false, $intCacheDuration=600 ) {
+	private function getTweetsByScreenName( $strUser, $intCount, $fIncludeRetweets=false, $fExcludeReplies=false, $intCacheDuration=1200 ) {
 		
 		// Compose the request URI.
 		$intCount = $intCount > 200 ? 200 : $intCount;
@@ -355,7 +373,7 @@ abstract class FetchTweets_Fetch_ {
 			return $arrTransient['data'];
 			
 		}
-		
+	
 		// Perform the API request.
 		// reference: https://dev.twitter.com/docs/api/1.1/get/search/tweets
 		$arrTweets =  $this->oTwitterOAuth->get( $strRequestURI );		
