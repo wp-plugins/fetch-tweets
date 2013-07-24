@@ -58,7 +58,7 @@ abstract class FetchTweets_Fetch_ {
 		$this->drawTweets( $arrArgs );
 			
 	}
-	private function getPostIDsByTagName( $vTermNames, $strOperator='AND' ) {
+	public function getPostIDsByTagName( $vTermNames, $strOperator='AND' ) {	// public as the feeder extension uses it.
 		
 		$arrTermSlugs = array();
 		foreach( ( array ) $vTermNames as $strTermName ) {
