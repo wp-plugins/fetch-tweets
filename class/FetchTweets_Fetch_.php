@@ -70,7 +70,7 @@ abstract class FetchTweets_Fetch_ {
 		return $this->getPostIDsByTag( $arrTermSlugs, 'slug', $strOperator );
 				
 	}
-	private function getPostIDsByTag( $arrTermSlugs, $strFieldType='slug', $strOperator='AND' ) {
+	public function getPostIDsByTag( $arrTermSlugs, $strFieldType='slug', $strOperator='AND' ) {	// public as the feeder extension uses it.
 		
 		$strFieldType = $this->sanitizeFieldKey( $strFieldType );
 
@@ -95,7 +95,7 @@ abstract class FetchTweets_Fetch_ {
 		
 	}
 	private function sanitizeFieldKey( $strField ) {
-		switch( strtoupper( trim( $strField ) ) ) {
+		switch( strtolower( trim( $strField ) ) ) {
 			case 'id':
 				return 'id';
 			default:
