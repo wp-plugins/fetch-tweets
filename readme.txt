@@ -109,7 +109,11 @@ Edit the file named *show_tweets.php* in the *template* directory of the plugin.
 
 == Changelog ==
 
-= 1.0.0.4 - 07/24/2013 =
+= 1.0.1 - 07/29/2013 =
+* Added the ability for other plugins to override the registering classes of this plugin.
+* Supported third party extensions to be added.
+* Added the *widget-title* class selector to the widget title output.
+* Changed the sub-menu positions and the menu name of the rule listing table page to Manage Rule from the plugin name.
 * Changed the *ids* and *tags* parameters to be obsolete. These will be removed in near updates.
 * Changed the *id* and *tag* parameters to accept comma-delimited elements like the *ids* and *tags* parameters. 
 * Changed the variables passed to the template file. ( ***Breaking Change*** )

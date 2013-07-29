@@ -105,7 +105,17 @@ abstract class FetchTweets_AdminPage_ extends AdminPageFramework {
 				'strAfterField' => '<p class="description">' 
 					. sprintf( __( 'You can obtain those keys by logging in to <a href="%1$s" target="_blank">Twitter Developers</a>', 'fetch-tweets' ), 'https://dev.twitter.com/apps' )
 					. '</p>',
-			)
+			),
+			array(  // single button
+				'strFieldID' => 'submit_authentication_keys',
+				'strSectionID' => 'authentication_keys',
+				'strType' => 'submit',
+				'strBeforeField' => "<div class='right-button'>",
+				'strAfterField' => "</div>",
+				'vLabelMinWidth' => 0,
+				'vLabel' => __( 'Authenticate', 'fetch-tweets' ),
+				'vClassAttribute' => 'button button-primary',
+			)		
 		);
 				
 		$this->addLinkToPluginDescription(  
@@ -202,8 +212,17 @@ abstract class FetchTweets_AdminPage_ extends AdminPageFramework {
 	
 	public function do_fetch_tweets_settings () {	// do_ + page slug
 		
-		submit_button();
-		
+		// submit_button();
+// $arrOptions = get_option( FetchTweets_Commons::AdminOptionKey );
+// echo "<h3>Options</h3>";
+// echo $this->oDebug->getArray( $arrOptions );
+
+// echo "<h3>Registered Pages</h3>";
+// echo $this->oDebug->getArray( $this->oProps->arrPages );
+// echo "<h3>Registered Tabs</h3>";
+// echo $this->oDebug->getArray( $this->oProps->arrInPageTabs[ 'fetch_tweets_settings' ] );
+
+
 	}
 	
 	public function buildMenus() {
@@ -211,15 +230,273 @@ abstract class FetchTweets_AdminPage_ extends AdminPageFramework {
 		parent::buildMenus();
 		
 		// Remove the default post type menu item.
-		foreach ( $GLOBALS['submenu'][ $this->oProps->arrRootMenu['strPageSlug'] ] as $intIndex => $arrSubMenu ) 
-			if ( $arrSubMenu[ 2 ] == 'post-new.php?post_type=fetch_tweets' )
-				unset( $GLOBALS['submenu'][ $this->oProps->arrRootMenu['strPageSlug'] ][ $intIndex ] );
-					
-	}
+		$strPageSlug = $this->oProps->arrRootMenu['strPageSlug'];
+		foreach ( $GLOBALS['submenu'][ $strPageSlug ] as $intIndex => $arrSubMenu ) {
+						
+			if ( ! isset( $arrSubMenu[ 2 ] ) ) continue;
+			
+			// Remove the default Add New entry.
+			if ( $arrSubMenu[ 2 ] == 'post-new.php?post_type=' . FetchTweets_Commons::PostTypeSlug ) {
+				unset( $GLOBALS['submenu'][ $strPageSlug ][ $intIndex ] );
+				continue;
+			}
+			
+			// Edit the first item
+			if ( $arrSubMenu[ 2 ] == 'edit.php?post_type=' . FetchTweets_Commons::PostTypeSlug ) {
+				$GLOBALS['submenu'][ $strPageSlug ][ $intIndex ][ 0 ] = __( 'Manage Rules', 'fetch-tweets' );
+				continue;
+			}
 
-	public function do_fetch_tweets_extensions() {
-		echo "<h3>Coming Soon...</h3>";
+			// Copy and remove the Tag menu element to change the position. 
+			if ( $arrSubMenu[ 2 ] == 'edit-tags.php?taxonomy=' . FetchTweets_Commons::TagSlug . '&amp;post_type=' . FetchTweets_Commons::PostTypeSlug ) {
+				$arrMenuEntry_Tag = array( $GLOBALS['submenu'][ $strPageSlug ][ $intIndex ] );
+				unset( $GLOBALS['submenu'][ $strPageSlug ][ $intIndex ] );
+				continue;				
+			}
+
+		}
+		
+		// Second iteration.
+		$intMenuPos_Setting = -1;
+		foreach ( $GLOBALS['submenu'][ $strPageSlug ] as $intIndex => $arrSubMenu ) {
+			
+			$intMenuPos_Setting++;	
+			if (  isset( $arrSubMenu[ 2 ] ) && $arrSubMenu[ 2 ] == 'fetch_tweets_settings' ) 
+				break;	// the position variable will now contain the position of the Setting menu item.
+	
+		}
+	
+		// Insert the Tag menu item before the Setting menu item.
+		array_splice( 
+			$GLOBALS['submenu'][ $strPageSlug ], // original array
+			$intMenuPos_Setting, 	// position
+			0, 	// offset - should be 0
+			$arrMenuEntry_Tag 	// replacement array
+		);		
+
+		// Unfortunately array_splica() will loose all the associated keys(index).
+		
 	}
+	
+	protected $arrColumnOption = array (
+		'strClassAttr' 				=>	'fetch_tweets_multiple_columns',
+		'strClassAttrGroup' 		=>	'fetch_tweets_multiple_columns_box',
+		'strClassAttrRow' 			=>	'fetch_tweets_multiple_columns_row',
+		'strClassAttrCol' 			=>	'fetch_tweets_multiple_columns_col',
+		'strClassAttrFirstCol' 		=>	'fetch_tweets_multiple_columns_first_col',
+	);	
+	protected $arrColumnInfoDefault = array (	// this will be modified as the items get rendered
+		'fIsRowTagClosed'	=>	False,
+		'numCurrRowPos'		=>	0,
+		'numCurrColPos'		=> 	0,
+	);	
+	public function do_fetch_tweets_extensions() {
+				
+		$oExtensionLoader = new FetchTweets_Extensions();
+		$arrFeedItems = $oExtensionLoader->fetchFeed( 'http://feeds.feedburner.com/MiunosoftFetchTweetsExtension' );
+		if ( empty( $arrFeedItems ) ) {
+			echo "<h3>" . __( 'No extension has been found.', 'fetch-tweets' ) . "</h3>";
+			return;
+		}
+		
+		$arrOutput = array();
+		$intMaxCols = 4;
+		$this->arrColumnInfo = $this->arrColumnInfoDefault;
+		foreach( $arrFeedItems as $strTitle => $arrItem ) {
+			
+			// Increment the position
+			$this->arrColumnInfo['numCurrColPos']++;
+			
+			// Enclose the item buffer into the item container
+			$strItem = '<div class="' . $this->arrColumnOption['strClassAttrCol'] 
+				. ' ftws_col_element_of_' . $intMaxCols . ' '
+				. ' ftws_extension '
+				. ( ( $this->arrColumnInfo['numCurrColPos'] == 1 ) ?  $this->arrColumnOption['strClassAttrFirstCol']  : '' )
+				. '"'
+				. '>' 
+				. '<div class="ftws_extension_item">' 
+					. "<h4>{$arrItem['strTitle']}</h4>"
+					. $arrItem['strDescription'] 
+					. "<div class='get-now'><a href='{$arrItem['strLink']}' target='_blank' rel='nofollow'>" 
+						. "<input class='button button-secondary' type='submit' value='" . __( 'Get it Now', 'fetch-tweets' ) . "' />"
+					. "</a></div>"
+				. '</div>'
+				. '</div>';	
+				
+			// If it's the first item in the row, add the class attribute. 
+			// Be aware that at this point, the tag will be unclosed. Therefore, it must be closed somewhere. 
+			if ( $this->arrColumnInfo['numCurrColPos'] == 1 ) 
+				$strItem = '<div class="' . $this->arrColumnOption['strClassAttrRow']  . '">' . $strItem;
+		
+			// If the current column position reached the set max column, increment the current position of row
+			if ( $this->arrColumnInfo['numCurrColPos'] % $intMaxCols == 0 ) {
+				$this->arrColumnInfo['numCurrRowPos']++;		// increment the row number
+				$this->arrColumnInfo['numCurrColPos'] = 0;		// reset the current column position
+				$strItem .= '</div>';  // close the section(row) div tag
+				$this->arrColumnInfo['fIsRowTagClosed'] = 	True;
+			}		
+			
+			$arrOutput[] = $strItem;
+		
+		}
+		
+		// if the section(row) tag is not closed, close it
+		if ( ! $this->arrColumnInfo['fIsRowTagClosed'] ) $arrOutput[] .= '</div>';	
+		$this->arrColumnInfo['fIsRowTagClosed'] = true;
+		
+		// enclose the output in the group tag
+		$strOut = '<div class="' . $this->arrColumnOption['strClassAttr'] . ' '
+				.  $this->arrColumnOption['strClassAttrGroup'] . ' '
+				. '"'
+				// . ' style="min-width:' . 200 * $intMaxCols . 'px;"'
+				. '>'
+				. implode( '', $arrOutput )
+				. '</div>';
+		
+		echo '<div class="ftws_extension_container">' . $strOut . '</div>';
+		
+	}
+	public function style_fetch_tweets_settings( $strStyle ) {
+		
+		return $strStyle . PHP_EOL
+			. " .right-button {
+					float: right;
+				}
+				input.read-only {
+					background-color: #F6F6F6;
+				}			
+			";
+		
+	}
+	public function style_fetch_tweets_extensions( $strStyle ) {
+		return $strStyle . PHP_EOL	
+			. ' .ftws_extension_container{
+				padding-right: 30px;
+				padding-left: 10px;
+				margin-top: 10px;
+				text-align: center;
+			}
+			.ftws_extension { 
+				
+			}
+			.get-now {
+				margin-bottom: 10px;
+			}
+			.ftws_extension_item {
+				margin-right: 10px;
+				padding: 20px 20px 20px 20px;
+				background-color: #FAFAFA;
+				border: 1px solid;
+				border-color: #DDD;
+				
+			}
+			.ftws_extension_item h4 {
+				margin: 0.6em 0;	
+			}
+			.ftws_extension_item img {
+				width: 100%;
+				height: 100%;
+				max-width: 200px;
+				max-height: 200px;
+			}
+			'
+			. '.fetch_tweets_multiple_columns {
+				padding: 4px;
+				line-height: 1.5em;
+			}
+			.fetch_tweets_multiple_columns_first_col {
+				margin-left: 0px;
+				clear: left;
+			}
+			/*  SECTIONS  ============================================================================= */
+			.fetch_tweets_multiple_columns_row {
+				clear: both;
+				padding: 0px;
+				margin: 0px;
+			}
+			/*  GROUPING  ============================================================================= */
+			.fetch_tweets_multiple_columns_box:before,
+			.fetch_tweets_multiple_columns_box:after {
+				content:"";
+				display:table;
+			}
+			.fetch_tweets_multiple_columns_box:after {
+				clear:both;
+			}
+			.fetch_tweets_multiple_columns_box {
+				float: none;
+				width: 100%;		
+				zoom:1; /* For IE 6/7 (trigger hasLayout) */
+			}
+			/*  GRID COLUMN SETUP   ==================================================================== */
+			.fetch_tweets_multiple_columns_col {
+				display: block;
+				float:left;
+				margin: 1% 0 1% 1.6%;
+			}
+			.fetch_tweets_multiple_columns_col:first-child { margin-left: 0; } /* all browsers except IE6 and lower */
+			/*  REMOVE MARGINS AS ALL GO FULL WIDTH AT 800 PIXELS */
+			@media only screen and (max-width: 800px) {
+				.fetch_tweets_multiple_columns_col { 
+					margin: 1% 0 1% 0%;
+				}
+			}
+			/*  GRID OF TWO   ============================================================================= */
+			.ftws_col_element_of_1 {
+				width: 100%;
+			}
+			.ftws_col_element_of_2 {
+				width: 49.2%;
+			}
+			.ftws_col_element_of_3 {
+				width: 32.2%; 
+			}
+			.ftws_col_element_of_4 {
+				width: 23.8%;
+			}
+			.ftws_col_element_of_5 {
+				width: 18.72%;
+			}
+			.ftws_col_element_of_6 {
+				width: 15.33%;
+			}
+			.ftws_col_element_of_7 {
+				width: 12.91%;
+			}
+			.ftws_col_element_of_8 {
+				width: 11.1%; 
+			}
+			.ftws_col_element_of_9 {
+				width: 9.68%; 
+			}
+			.ftws_col_element_of_10 {
+				width: 8.56%; 
+			}
+			.ftws_col_element_of_11 {
+				width: 7.63%; 
+			}
+			.ftws_col_element_of_12 {
+				width: 6.86%; 
+			}
+
+			/*  GO FULL WIDTH AT LESS THAN 800 PIXELS */
+			@media only screen and (max-width: 800px) {
+				.ftws_col_element_of_2,
+				.ftws_col_element_of_3,
+				.ftws_col_element_of_4,
+				.ftws_col_element_of_5,
+				.ftws_col_element_of_6,
+				.ftws_col_element_of_7,
+				.ftws_col_element_of_8,
+				.ftws_col_element_of_9,
+				.ftws_col_element_of_10,
+				.ftws_col_element_of_11,
+				.ftws_col_element_of_12
+				{	width: 49.2%;  }			
+			}
+		';		
+	}
+	
 	public function do_fetch_tweets_test() {
 		
 

@@ -10,6 +10,7 @@ abstract class FetchTweets_PostType_ extends AdminPageFramework_PostType {
 				'labels' => array(
 					'name' => __( 'Fetch Tweets', 'fetch-tweets' ),
 					'singular_name' => __( 'Fetch Tweets Rule', 'fetch-tweets' ),
+					'menu_name' => __( 'Fetch Tweets', 'fetch-tweets' ),	// this changes the root menu name 
 					'add_new' => __( 'Fetch Tweets by Screen Name', 'fetch-tweets' ),
 					'add_new_item' => __( 'Add New Rule', 'fetch-tweets' ),
 					'edit' => __( 'Edit', 'fetch-tweets' ),
@@ -46,9 +47,9 @@ abstract class FetchTweets_PostType_ extends AdminPageFramework_PostType {
 				'show_ui' => true,
 				'show_tagcloud' => false,
 				'hierarchical' => false,
-				'show_admin_column' => false,
+				'show_admin_column' => true,
 				'show_in_nav_menus' => false,
-				'show_table_filter' => true,	// framework specific key
+				'show_table_filter' => true,		// framework specific key
 				'show_in_sidebar_menus' => true,	// framework specific key
 			)
 		);
@@ -61,7 +62,7 @@ abstract class FetchTweets_PostType_ extends AdminPageFramework_PostType {
 			
 			add_filter( 'enter_title_here', array( $this, 'changeTitleMetaBoxFieldLabel' ) );	// add_filter( 'gettext', array( $this, 'changeTitleMetaBoxFieldLabel' ) );
 			add_action( 'edit_form_after_title', array( $this, 'addTextAfterTitle' ) );	
-												
+			// add_action( 'admin_menu', array( $this, 'editSidebarSubMenuLabel' ) );
 		}
 		
 		add_filter( 'the_content', array( $this, 'previewTweets' ) );	
@@ -78,7 +79,15 @@ abstract class FetchTweets_PostType_ extends AdminPageFramework_PostType {
 		
 		// Text links will be inserted here.
 	}
-
+	
+	public function editSidebarSubMenuLabel() {
+		
+		// Changes the menu label of the first item.
+		// foreach () {
+			
+			
+		// }
+	}
 	
 	/*
 	 * Methods to print out the fetched tweets.

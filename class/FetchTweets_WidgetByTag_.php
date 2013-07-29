@@ -33,7 +33,7 @@ abstract class FetchTweets_WidgetByTag_ extends WP_Widget {
 		$arrInstance = $arrInstance + $this->arrStructure_FormElements;
 
 		if ( $arrInstance['title'] )
-			echo "<h3 class='fetch-tweets-widget'>{$arrInstance['title']}</h3>";
+			echo "<h3 class='fetch-tweets-widget widget-title'>{$arrInstance['title']}</h3>";
 
 		echo fetchTweets( 
 			array( 	

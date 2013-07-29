@@ -606,6 +606,9 @@ abstract class AdminPageFramework_Pages {
 				"{$this->oProps->strClassName}_{$strPageSlug}_tabs",
 				$this->oProps->arrInPageTabs[ $strPageSlug ]			
 			);	
+			// Added in-page arrays may be missing necessary keys so merge them with the default array strucure.
+			foreach( $this->oProps->arrInPageTabs[ $strPageSlug ] as &$arrInPageTab ) 
+				$arrInPageTab = $arrInPageTab + self::$arrStructure_InPageTabElements;
 						
 			// Sort the in-page tab array.
 			uasort( $this->oProps->arrInPageTabs[ $strPageSlug ], array( $this->oProps, 'sortByOrder' ) );
@@ -1195,7 +1198,7 @@ abstract class AdminPageFramework_SettingsAPI extends AdminPageFramework_Menu {
 
 		// for tab
 		if ( $strTabSlug && $strPageSlug )	{
-			$arrRegisteredSectionKeysForThisTab = array_keys( $arrInput );
+			$arrRegisteredSectionKeysForThisTab = array_keys( $arrInput[ $strPageSlug ] );
 			$arrInput = $this->oUtil->addAndApplyFilter( $this, "validation_{$strPageSlug}_{$strTabSlug}", $arrInput, $arrStoredPageOptions );	
 			$arrInput = $this->oUtil->uniteArraysRecursive( $arrInput, $this->getOtherTabOptions( $strPageSlug, $arrRegisteredSectionKeysForThisTab ) );
 		}

@@ -27,10 +27,10 @@ final class FetchTweets_InitialLoader {
 		$this->loadClasses( $this->strFilePath );
 		
 		// 4. Set up activation hook.
-		$this->doWhenPluginActivates();
+		register_activation_hook( $this->strFilePath, array( $this, 'doWhenPluginActivates' ) );
 		
 		// 5. Set up deactivation hook.
-		$this->doWhenPluginDeactivates();
+		register_deactivation_hook( $this->strFilePath, array( $this, 'doWhenPluginDeactivates' ) );
 		
 		// 6. Set up localization.
 		$this->localize();
@@ -44,69 +44,66 @@ final class FetchTweets_InitialLoader {
 	
 	private function setGlobals() {
 		
-		global $oFetchTweets_Option;
+		$GLOBALS['oFetchTweets_Option'] = null;	// stores the option object
+		
+		// Stores custom registering class paths
+		$GLOBALS['arrFetchTweets_FinalClasses'] = isset( $GLOBALS['arrFetchTweets_FinalClasses'] ) && is_array( $GLOBALS['arrFetchTweets_FinalClasses'] ) ? $GLOBALS['arrFetchTweets_FinalClasses'] : array();
+		$GLOBALS['arrFetchTweets_Classes'] = isset( $GLOBALS['arrFetchTweets_Classes'] ) && is_array( $GLOBALS['arrFetchTweets_Classes'] ) ? $GLOBALS['arrFetchTweets_Classes'] : array();
 				
 	}
 	
 	private function loadClasses( $strFilePath ) {
 		
+		$strPluginDir =  dirname( $strFilePath );
+		
 		// Auto-loads classes placed in the finals folder.
 		if ( ! class_exists( 'FetchTweets_RegisterClasses' ) ) 
-			include_once( dirname( $strFilePath ) . '/class_final/FetchTweets_RegisterClasses.php' );		
+			include_once( $strPluginDir . '/class_final/FetchTweets_RegisterClasses.php' );		
 		
 		// Register finalized classes right away.
-		$oRC = new FetchTweets_RegisterClasses( dirname( $strFilePath ) . '/class_final' );
+		$oRC = new FetchTweets_RegisterClasses( $strPluginDir . '/class_final', $GLOBALS['arrFetchTweets_FinalClasses'] );
 		$oRC->registerClasses();
 		
-		// Register regular classes when all the plugins are loaded. This allows other scripts to modify the loading class files.
-		add_action( 'plugins_loaded', array( new FetchTweets_RegisterClasses( dirname( $strFilePath ) . '/class' ), 'registerClasses' ) );
+		// Schedule to register regular classes when all the plugins are loaded. This allows other scripts to modify the loading class files.
+		add_action( 'plugins_loaded', array( new FetchTweets_RegisterClasses( $strPluginDir . '/class', $GLOBALS['arrFetchTweets_Classes'] ), 'registerClasses' ) );
 		
 	}
 
-	private function doWhenPluginActivates() {
+	public function doWhenPluginActivates() {
 		
-		register_activation_hook( 
+		// Requirement Check
+		$oRequirement = new FetchTweets_Requirements( 
 			$this->strFilePath,
-			array( 
-				new FetchTweets_Requirements( 
-					$this->strFilePath,
-					array(
-						'php' => array(
-							'version' => '5.2.4',
-							'error' => 'The plugin requires the PHP version %1$s or higher.',
-						),
-						'wordpress' => array(
-							'version' => '3.2',
-							'error' => 'The plugin requires the WordPress version %1$s or higher.',
-						),
-						'functions' => array(
-							'curl_version' => sprintf( __( 'The plugin requires the %1$s to be installed.', 'fetch-tweets' ), 'the cURL library' ),
-						),
-						// 'classes' => array(
-							// 'DOMDocument' => sprintf( __( 'The plugin requires the <a href="%1$s">libxml</a> extension to be activated.', 'pseudo-image' ), 'http://www.php.net/manual/en/book.libxml.php' ),
-						// ),
-						'constants'	=> array(),
-					),
-					True, 			// if it fails it will deactivate the plugin
-					null			// do not hook
+			array(
+				'php' => array(
+					'version' => '5.2.4',
+					'error' => 'The plugin requires the PHP version %1$s or higher.',
 				),
-				'checkRequirements'
-			)
-		);		
-		
-		register_activation_hook( $this->strFilePath, array( $this, 'scheduleSetupTransients' ) );
-		
-	}
-	public function scheduleSetupTransients() {	// for the activation hook.
+				'wordpress' => array(
+					'version' => '3.2',
+					'error' => 'The plugin requires the WordPress version %1$s or higher.',
+				),
+				'functions' => array(
+					'curl_version' => sprintf( __( 'The plugin requires the %1$s to be installed.', 'fetch-tweets' ), 'the cURL library' ),
+				),
+				// 'classes' => array(
+					// 'DOMDocument' => sprintf( __( 'The plugin requires the <a href="%1$s">libxml</a> extension to be activated.', 'pseudo-image' ), 'http://www.php.net/manual/en/book.libxml.php' ),
+				// ),
+				'constants'	=> array(),
+			),
+			True, 			// if it fails it will deactivate the plugin
+			null			// do not hook
+		);
+		$oRequirement->checkRequirements();
+	
+		// Schedule transient set-ups
 		wp_schedule_single_event( time(), 'FTWS_action_setup_transients' );		
+		
 	}
 	
-	private function doWhenPluginDeactivates() {
+	public function doWhenPluginDeactivates() {
 		
-		register_deactivation_hook( 
-			$this->strFilePath,
-			array( $this, 'cleanTransients' )
-		);
+		$this->cleanTransients();
 		
 	}	
 	public function cleanTransients( $arrPrefixes=array( 'FTWS' ) ) {	// for the deactivation hook.

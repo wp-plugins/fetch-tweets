@@ -1,0 +1,398 @@
+# Copyright (C) 2013 Fetch Tweets
+# This file is distributed under the same license as the Fetch Tweets package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Fetch Tweets 1.0.0.4\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/fetch-tweets\n"
+"POT-Creation-Date: 2013-07-29 05:12:14+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2013-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: class/FetchTweets_AdminPage_.php:18
+msgid "Add Rule by User Name"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:25
+msgid "Add Rule by Keyword Search"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:31 library/admin-page-framework.php:2432
+msgid "Settings"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:36
+msgid "Extensions"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:55
+msgid "Authentication"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:106
+msgid ""
+"You can obtain those keys by logging in to <a href=\"%1$s\" target=\"_blank"
+"\">Twitter Developers</a>"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:113
+msgid "Donate"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:114
+msgid "Order custom plugin"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:142
+msgid ""
+"<a href=\"%1$s\">The API authentication keys need to be set</a> in order to "
+"use this plugin."
+msgstr ""
+
+#: class/FetchTweets_Fetch_.php:154
+msgid "No result has been fetched."
+msgstr ""
+
+#: class/FetchTweets_ImageHandler.php:122
+msgid "The image data is empty."
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:19
+msgid "Include Retweets"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:20
+msgid "Retweets will be included."
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:25
+msgid "Cache Duration"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:26
+msgid "The cache lifespan in seconds. For no cache, set 0."
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:26
+msgid "Default:"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:52 class/FetchTweets_MetaBox_.php:86
+#: class/FetchTweets_PostType_.php:42 class/FetchTweets_PostType_.php:107
+msgid "Tags"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:63
+msgid "Information"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:129 class/FetchTweets_PostType_.php:150
+msgid "User Name"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:130
+msgid ""
+"The user name (screen name) that is used after the @ mark or the end of the "
+"twitter url."
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:135 class/FetchTweets_MetaBox_.php:208
+msgid "Item Count"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:136 class/FetchTweets_MetaBox_.php:209
+msgid "Set how many items should be fetched."
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:137 class/FetchTweets_MetaBox_.php:210
+msgid "Max"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:138 class/FetchTweets_MetaBox_.php:211
+#: class/FetchTweets_WidgetByID_.php:96 class/FetchTweets_WidgetByID_.php:106
+#: class/FetchTweets_WidgetByTag_.php:110
+#: class/FetchTweets_WidgetByTag_.php:120
+msgid "Default"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:159
+msgid "This prevents replies from appearing in the returned timeline."
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:201
+msgid "Search Keyword"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:202
+msgid ""
+"The keyword to search. For a complex combination of terms and operators, "
+"refer to the <strong>Search Operators</strong> section of <a href=\"%1$s\" "
+"target=\"_blank\">Using the Twitter Search API</a>."
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:221 class/FetchTweets_WidgetByTag_.php:96
+msgid "None"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:222
+msgid "Portuguese"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:223
+msgid "Italian"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:224
+msgid "Spanish"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:225
+msgid "Turkish"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:226
+msgid "English"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:227
+msgid "Korean"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:228
+msgid "French"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:229
+msgid "Russian"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:230
+msgid "German"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:231
+msgid "Japanese"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:240
+msgid "includes both popular and real time results in the response."
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:241
+msgid "returns only the most recent results in the response."
+msgstr ""
+
+#: class/FetchTweets_MetaBox_.php:242
+msgid "return only the most popular results in the response."
+msgstr ""
+
+#. #-#-#-#-#  plugin.pot (Fetch Tweets 1.0.0.4)  #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: class/FetchTweets_PostType_.php:11
+msgid "Fetch Tweets"
+msgstr ""
+
+#: class/FetchTweets_PostType_.php:12
+msgid "Fetch Tweets Rule"
+msgstr ""
+
+#: class/FetchTweets_PostType_.php:13
+msgid "Fetch Tweets by Screen Name"
+msgstr ""
+
+#: class/FetchTweets_PostType_.php:14
+msgid "Add New Rule"
+msgstr ""
+
+#: class/FetchTweets_PostType_.php:15
+msgid "Edit"
+msgstr ""
+
+#: class/FetchTweets_PostType_.php:16
+msgid "Edit Rule"
+msgstr ""
+
+#: class/FetchTweets_PostType_.php:17
+msgid "New Rule"
+msgstr ""
+
+#: class/FetchTweets_PostType_.php:18
+msgid "View"
+msgstr ""
+
+#: class/FetchTweets_PostType_.php:19
+msgid "View Fetched Tweets"
+msgstr ""
+
+#: class/FetchTweets_PostType_.php:20
+msgid "Search Rules"
+msgstr ""
+
+#: class/FetchTweets_PostType_.php:21
+msgid "No rule found for fetching tweets"
+msgstr ""
+
+#: class/FetchTweets_PostType_.php:22
+msgid "No Rule Found for Fetching Tweets in Trash"
+msgstr ""
+
+#: class/FetchTweets_PostType_.php:43
+msgid "Add New Tag"
+msgstr ""
+
+#: class/FetchTweets_PostType_.php:44
+msgid "New Tag"
+msgstr ""
+
+#: class/FetchTweets_PostType_.php:72
+msgid "Set the rule name here."
+msgstr ""
+
+#: class/FetchTweets_PostType_.php:104
+msgid "Rule Name"
+msgstr ""
+
+#: class/FetchTweets_PostType_.php:105
+msgid "Tweet Type"
+msgstr ""
+
+#: class/FetchTweets_PostType_.php:108
+msgid "Shortcode / PHP Code"
+msgstr ""
+
+#: class/FetchTweets_PostType_.php:148
+msgid "Search"
+msgstr ""
+
+#: class/FetchTweets_WidgetByID_.php:21
+msgid "A widget that fetches tweets by rule set."
+msgstr ""
+
+#: class/FetchTweets_WidgetByID_.php:57 class/FetchTweets_WidgetByTag_.php:62
+#: library/admin-page-framework.php:3315
+msgid "Title"
+msgstr ""
+
+#: class/FetchTweets_WidgetByID_.php:64
+msgid "Select Rules"
+msgstr ""
+
+#: class/FetchTweets_WidgetByID_.php:85 class/FetchTweets_WidgetByTag_.php:83
+msgid ""
+"Hold down the Ctrl (windows) / Command (Mac) key to select multiple items."
+msgstr ""
+
+#: class/FetchTweets_WidgetByID_.php:89 class/FetchTweets_WidgetByTag_.php:103
+msgid "The maximum number of tweets to show"
+msgstr ""
+
+#: class/FetchTweets_WidgetByID_.php:100
+#: class/FetchTweets_WidgetByTag_.php:114
+msgid "The profile image size in pixel."
+msgstr ""
+
+#: class/FetchTweets_WidgetByID_.php:106
+#: class/FetchTweets_WidgetByTag_.php:120
+msgid "Set 0 for no avatar."
+msgstr ""
+
+#: class/FetchTweets_WidgetByTag_.php:23
+msgid "A widget that fetches tweets by tag."
+msgstr ""
+
+#: class/FetchTweets_WidgetByTag_.php:69
+msgid "Select Tags"
+msgstr ""
+
+#: class/FetchTweets_WidgetByTag_.php:87
+msgid "Apply the rule sets that have:"
+msgstr ""
+
+#: class/FetchTweets_WidgetByTag_.php:90
+msgid "All"
+msgstr ""
+
+#: class/FetchTweets_WidgetByTag_.php:93
+msgid "Any"
+msgstr ""
+
+#: class/FetchTweets_WidgetByTag_.php:99
+msgid "of the selected tags."
+msgstr ""
+
+#: class_final/FetchTweets_InitialLoader.php:83
+msgid "The plugin requires the %1$s to be installed."
+msgstr ""
+
+#: class_final/FetchTweets_InitialLoader.php:165
+msgid "Options"
+msgstr ""
+
+#: class_final/FetchTweets_Requirements.php:117
+msgid "Deactivating the plugin."
+msgstr ""
+
+#: library/admin-page-framework.php:969 library/admin-page-framework.php:3646
+msgid "Upload Image"
+msgstr ""
+
+#: library/admin-page-framework.php:970 library/admin-page-framework.php:1521
+#: library/admin-page-framework.php:3647 library/admin-page-framework.php:3748
+msgid "Use This Image"
+msgstr ""
+
+#: library/admin-page-framework.php:2275
+msgid "Manage"
+msgstr ""
+
+#: library/admin-page-framework.php:2301 library/admin-page-framework.php:2422
+msgid "Powered by"
+msgstr ""
+
+#: library/admin-page-framework.php:2941
+msgid "Submit"
+msgstr ""
+
+#: library/admin-page-framework.php:3106
+msgid "Select Image"
+msgstr ""
+
+#: library/admin-page-framework.php:3316
+msgid "Author"
+msgstr ""
+
+#: library/admin-page-framework.php:3320
+msgid "Date"
+msgstr ""
+
+#: library/admin-page-framework.php:3496
+msgid "Show All"
+msgstr ""
+
+#: template/show_tweets.php:40
+msgid "ago"
+msgstr ""
+
+#: template/show_tweets.php:48
+msgid "Retweeted by"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://en.michaeluno.jp/fetch-tweets"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Fetches and displays tweets from Twitter with the the Twitter REST API v1.1."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "miunosoft (Michael Uno)"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://michaeluno.jp"
+msgstr ""

@@ -150,7 +150,7 @@ abstract class FetchTweets_Fetch_ {
 		$arrArgs['id'] = is_array( $arrArgs['id'] ) ? $arrArgs['id'] : preg_split( "/[,]\s*/", trim( ( string ) $arrArgs['id'] ), 0, PREG_SPLIT_NO_EMPTY );
 		
 		$arrTweets = $this->getTweetsAsArray( $arrArgs );
-		if ( empty( $arrTweets ) ) {
+		if ( empty( $arrTweets ) || ! is_array( $arrTweets ) ) {
 			_e( 'No result has been fetched.', 'fetch-tweets' );
 			return;
 		}
