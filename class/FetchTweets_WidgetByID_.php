@@ -1,14 +1,8 @@
 <?php
 
-abstract class FetchTweets_WidgetByID_ extends WP_Widget {
+abstract class FetchTweets_WidgetByID_ extends FetchTweets_Widget_ {
 
-	protected $arrStructure_FormElements = array(
-		'title'			=> null,
-		'selected_ids'	=> array(),
-		'count'			=> 20,	// default
-		'avatar_size'	=> 48,
-	);
-	
+
 	public static function registerWidget() {
 		return register_widget( 'FetchTweets_WidgetByID' );	// the class name - get_class( self ) does not work.
 	}	
@@ -23,36 +17,26 @@ abstract class FetchTweets_WidgetByID_ extends WP_Widget {
 		
 	}
 
-	public function widget( $arrWidgetInfo, $arrInstance ) {	// must be public, the protected scope will cause fatal error.
-		
-		echo $arrWidgetInfo['before_widget']; 
-		
-		// Avoid undefined index warnings.
-		$arrInstance = $arrInstance + $this->arrStructure_FormElements;
-		
-		if ( $arrInstance['title'] )
-			echo "<h3 class='fetch-tweets-widget widget-title'>{$arrInstance['title']}</h3>";
+	protected function echoTweets( $arrInstance ) {
 		
 		echo fetchTweets( 
-			array( 
+			array( 	// $arrArgs
 				'ids'	=> $arrInstance['selected_ids'],
 				'count' => $arrInstance['count'],
+				// Template Options
+				'template' => $arrInstance['template'],
 				'avatar_size' => $arrInstance['avatar_size'],
-			) 
+				'height' => $arrInstance['height'],
+				'height_unit' => $arrInstance['height_unit'],
+				'width' => $arrInstance['width'],
+				'width_unit' => $arrInstance['width_unit'],			
+			)
 		);
 		
-		echo $arrWidgetInfo['after_widget'];
-		
-	}	
-
-	public function form( $arrInstance ) {	
-		
-		// Avoid undefined index warnings.
-		$arrInstance = $arrInstance + $this->arrStructure_FormElements;
-		$arrIDs = $this->getFieldValues( 'id' );
-		$arrNames = $this->getFieldValues( 'name' );
-		
-		?>
+	}
+	
+	protected function echoFormElements( $arrInstance, $arrIDs, $arrNames ) {
+	?>
 		<label for="<?php echo $arrIDs['title']; ?>">
 			<?php _e( 'Title', 'fetch-tweets' ); ?>:
 		</label>
@@ -96,6 +80,23 @@ abstract class FetchTweets_WidgetByID_ extends WP_Widget {
 			<?php _e( 'Default', 'fetch-tweets' ); ?>: 20
 		</p>
 		
+		<p>
+			<label for="<?php echo $arrIDs['template']; ?>">
+				<?php _e( 'Select a Template', 'fetch-tweets' ); ?>:
+			</label>
+			<br />
+			<select name="<?php echo $arrNames['template']; ?>" id="<?php echo $arrIDs['template']; ?>" >
+				<?php 
+				foreach( $GLOBALS['oFetchTweets_Templates']->getTemplateArrayForSelectLabel() as $strTemplateSlug => $strTemplateName ) 
+					echo "<option value='{$strTemplateSlug}' "				
+						. ( $arrInstance['template'] == $strTemplateSlug ? 'selected="Selected"' : '' )
+						. ">"
+						. $strTemplateName
+						. "</option>";
+				?>
+			</select>
+		</p>
+				
 		<label for="<?php echo $arrIDs['avatar_size']; ?>">
 			<?php _e( 'The profile image size in pixel.', 'fetch-tweets' ); ?>:
 		</label>
@@ -105,20 +106,47 @@ abstract class FetchTweets_WidgetByID_ extends WP_Widget {
 		<p class="description" style="margin-top: 10px;">	
 			<?php _e( 'Set 0 for no avatar.', 'fetch-tweets' ); ?> <?php _e( 'Default', 'fetch-tweets' ); ?>: 48
 		</p>
-		<?php
-		
-	}
-	protected function getFieldValues( $strField='id' ) {
-		
-		// Returns an array of filed values by a specified field.
-		// $strField can be either name or id.
-		$arrFields = array();
-		foreach( $this->arrStructure_FormElements as $strFieldKey => $v )  
-			$arrFields[ $strFieldKey ] = $strField == 'id' 
-				? $this->get_field_id( $strFieldKey )
-				: $this->get_field_name( $strFieldKey );
-	
-		return $arrFields;
+
+		<label for="<?php echo $arrIDs['width']; ?>">
+			<?php _e( 'The width of the output.', 'fetch-tweets' ); ?>:
+		</label>
+		<p>
+			<input type="number" id="<?php echo $arrIDs['width']; ?>" name="<?php echo $arrNames['width']; ?>" min="0" value="<?php echo $arrInstance['width']?>"/>
+			<select name="<?php echo $arrNames['width_unit']; ?>" id="<?php echo $arrIDs['width_unit']; ?>" >
+				<?php 
+				foreach( array( 'px' => 'px', '%' => '%', 'em' => 'em' ) as $strUnitKey => $strUnitName ) 
+					echo "<option value='{$strUnitKey}' "				
+						. ( $arrInstance['width_unit'] == $strUnitKey ? 'selected="Selected"' : '' )
+						. ">"
+						. $strUnitName
+						. "</option>";
+				?>
+			</select>						
+		</p>
+		<p class="description" style="margin-top: 10px;">	
+			<?php _e( 'Set 0 for no limit.', 'fetch-tweets' ); ?> <?php _e( 'Default', 'fetch-tweets' ); ?>: <code>100 %</code>.
+		</p>		
+			
+		<label for="<?php echo $arrIDs['height']; ?>">
+			<?php _e( 'The height of the output.', 'fetch-tweets' ); ?>:
+		</label>
+		<p>
+			<input type="number" id="<?php echo $arrIDs['height']; ?>" name="<?php echo $arrNames['height']; ?>" min="0" value="<?php echo $arrInstance['height']?>"/>
+			<select name="<?php echo $arrNames['height_unit']; ?>" id="<?php echo $arrIDs['height_unit']; ?>" >
+				<?php 
+				foreach( array( 'px' => 'px', '%' => '%', 'em' => 'em' ) as $strUnitKey => $strUnitName ) 
+					echo "<option value='{$strUnitKey}' "				
+						. ( $arrInstance['height_unit'] == $strUnitKey ? 'selected="Selected"' : '' )
+						. ">"
+						. $strUnitName
+						. "</option>";
+				?>
+			</select>						
+		</p>
+		<p class="description" style="margin-top: 10px;">	
+			<?php _e( 'Set 0 for no limit.', 'fetch-tweets' ); ?> <?php _e( 'Default', 'fetch-tweets' ); ?>: <code>400 px</code>.
+		</p>			
+	<?php
 	}
 	
 	public function update( $arrNewInstance, $arrOldInstance ) {
@@ -128,21 +156,5 @@ abstract class FetchTweets_WidgetByID_ extends WP_Widget {
 
         return $arrNewInstance;
     }
-	protected function fixNumber( $numToFix, $numDefault, $numMin="", $numMax="" ) {
-			
-		if ( ! is_numeric( trim( $numToFix ) ) ) return $numDefault;
-		if ( $numMin !== "" && $numToFix < $numMin ) return $numMin;
-		if ( $numMax !== "" && $numToFix > $numMax ) return $numMax;
-		return $numToFix;
-		
-	}	
 	
-	/*
-	 * Methods for Debug
-	 * */
-	function getArray( $arr ) {
-		
-		return '<pre>' . htmlspecialchars( print_r( $arr, true ) ) . '</pre>';
-		
-	}		
 }

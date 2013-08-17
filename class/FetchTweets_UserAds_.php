@@ -126,7 +126,7 @@ abstract class FetchTweets_UserAds_ {
 		
 	}
 	public function get160xNTopRight( $numItems=1 ) {		
-		return '<div style="float: right; margin-left: auto; margin-right: auto; width: 160px; clear:right;">' 
+		return '<div style="float: right; margin-left: 20px; margin-right: auto; width: 160px; clear:right;">' 
 			. $this->fetchItems( $this->arrURLFeed160xNTopRight, $numItems )
 			. "</div>";			
 	}
@@ -141,7 +141,7 @@ abstract class FetchTweets_UserAds_ {
 			. "</div>";				
 	}
 	public function get160xN( $numItems=10 ) {
-		return '<div style="float: right; margin-left: auto; margin-right: auto; width: 160px; clear:right;">' 
+		return '<div style="float: right; margin-left: 20px; margin-right: auto; width: 160px; clear:right;">' 
 			. $this->fetchItems( $this->arrURLFeed160xN, $numItems )
 			. "</div>";					
 	}	

@@ -7,7 +7,10 @@
  * @authorurl	http://michaeluno.jp
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  * @since		1.0.0
- * 
+ * @actionhooks
+ *  - fetch_tweets_action_setup_transients
+ *  - fetch_tweets_action_simplepie_renew_cache
+ *  - fetch_tweets_action_transient_renewal
 	
 */
 abstract class FetchTweets_Event_ {
@@ -16,11 +19,11 @@ abstract class FetchTweets_Event_ {
 		
 		// For transient (cache) renewal events
 		if ( isset( $_GET['doing_wp_cron'] ) )	// if WP Cron is the one which loaded the page,
-			add_action( 'FTWS_action_transient_renewal', array( $this, 'renewTransients' ) );	
+			add_action( 'fetch_tweets_action_transient_renewal', array( $this, 'renewTransients' ) );	
 			
 		// For SimplePie cache renewal events 
 		if ( isset( $_GET['doing_wp_cron'] ) )	// if WP Cron is the one which loaded the page,
-			add_action( 'FTWS_action_simplepie_renew_cache', array( $this, 'renewSimplePieCaches' ) );
+			add_action( 'fetch_tweets_action_simplepie_renew_cache', array( $this, 'renewSimplePieCaches' ) );
 				
 		// Redirects
 		if ( isset( $_GET['fetch_tweets_link'] ) && $_GET['fetch_tweets_link'] ) {			
@@ -38,7 +41,14 @@ abstract class FetchTweets_Event_ {
 		}			
 		
 		// For the activation hook
-		add_action( 'FTWS_action_setup_transients', array( $this, 'setUpTransients' ) );
+		add_action( 'fetch_tweets_action_setup_transients', array( $this, 'setUpTransients' ) );
+		
+		// Load styles of templates
+		add_action( 'wp_enqueue_scripts', array( $GLOBALS['oFetchTweets_Templates'], 'enqueueActiveTemplateStyles' ) );
+		if ( isset( $_GET['fetch_tweets_style'] ) )
+			$GLOBALS['oFetchTweets_Templates']->loadStyle( $_GET['fetch_tweets_style'] );
+			
+		// add_action( 'admin_enqueue_scripts', array( $GLOBALS['oFetchTweets_Templates'], 'enqueueActiveTemplateStyles' ) );
 		
 	}
 

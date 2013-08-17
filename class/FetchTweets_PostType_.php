@@ -98,8 +98,9 @@ abstract class FetchTweets_PostType_ extends AdminPageFramework_PostType {
 	
 		global $post;
 		if ( ! isset( $post->post_type ) || $post->post_type != $this->strPostType ) return $strContent;
+
 		fetchTweets( array( 'id' => $post->ID ) );
-		return $strContent;
+		return $strContent;	// should be an empty string.
 	
 	}
 

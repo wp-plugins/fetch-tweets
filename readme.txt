@@ -1,13 +1,13 @@
 ﻿=== Fetch Tweets ===
 Contributors: Michael Uno, miunosoft
 Donate link: http://en.michaeluno.jp/donate
-Tags: twitter, tweets, tweet, widget, widgets, post, posts, page, pages, custom post type, API, Twitter API, REST, oAuth, shortcode, sidebar, plugin
+Tags: twitter, tweets, tweet, widget, widgets, post, posts, page, pages, custom post type, API, Twitter API, REST, oAuth, shortcode, sidebar, plugin, template
 Requires at least: 3.2
 Tested up to: 3.5.2
 Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Fetches and display tweets from twitter.com with the Twitter API.
+Fetches and displays tweets from twitter.com with the Twitter API.
 
 == Description ==
 
@@ -90,6 +90,54 @@ In order to set mutiple tags, pass them with commas as the delimiter. e.g.
 
 `<?php fetchTweets( array( 'id' => 678, 'count' => 8, 'avatar_size' => 96 ) ); ?>`
 
+= How to Create Own Template =
+**Step 1**
+Copy the folder named ***plain*** in the plugin's template folder. Rename the copied folder to something you like.
+
+**Step 2**
+Edit the following files.
+* **style.css**
+* **template.php**
+* **functions.php** ( optional )
+* **settings.php** ( optional )
+
+In the *style.css* file, include the comment area ( with /* */ ) at the top of the file with the following entries.
+* **Template Name:** - the template name.
+* **Author:** - your name.
+* **Author URI:** - your web site url.
+* **Description:** - a brief description about the template.
+* **Version:** - the version number of the template.
+
+e.g.
+
+`/*
+	Template Name: Sample
+	Author: Michael Uno
+	Author URI: http://en.michaeluno.jp
+	Description: A very simple sample template added as a WordPress plugin.
+	Version: 1.0.0
+*/`
+
+**Step 3** ( optional )
+Include a thumbnail image. Prepare an image with the name screenshot.jpg, screenshot.png, or screenshot.gif, and place the image in the working(copied) folder.
+
+**Step 4**
+Create a folder named **fetch-tweets** in the theme folder. If you use, for instance, Twenty Twelve, the location would be `.../wp-content/themes/twentytwelve/fetch-tweets/`.
+
+Place the working folder( the copied and renamed one ) in there. The plugin will automatically detect it and the template will be listed in the Template page of the admin page.
+
+Optionally, a template can be added via a plugin. If you do so, add the template directory with the <code>fetch_tweets_filter_template_directories</code> filter hook.
+
+e.g.
+`add_filter( 'fetch_tweets_filter_template_directories', 'FetchTweets_AddSampleTemplateDirPath' );
+function FetchTweets_AddSampleTemplateDirPath( $arrDirPaths ) {
+	
+	// Add the template directory to the passed array.
+	$arrDirPaths[] = dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'sample';
+	return $arrDirPaths;
+	
+}`
+
 
 == Frequently Asked Questions ==
 
@@ -97,9 +145,7 @@ In order to set mutiple tags, pass them with commas as the delimiter. e.g.
 First you need to create an application to access the Twitter API [here](https://dev.twitter.com/apps). Then create *consumer key*, *consumer secret*, *access token*, and *access token secret*. Without these, you won't be able to fetch tweets.
 
 = How can I create my own template file? =
-Edit the file named *show_tweets.php* in the *template* directory of the plugin. Create a directory named *fetch-tweets* under the current theme directory and put the modified file there. If you use, for instance, Twenty Twelve, place the file as follows:
-
-`.../wp-content/themes/twentytwelve/fetch-tweets/show_tweets.php`
+See the How to Create Own Template section of the **[Other Notes]**(http://wordpress.org/plugins/responsive-column-widgets/other_notes/) page.
 
 == Screenshots ==
 
@@ -108,6 +154,12 @@ Edit the file named *show_tweets.php* in the *template* directory of the plugin.
 3. ***Widget Settings***
 
 == Changelog ==
+
+= 1.1.0 - 08/18/2013 = 
+* Added the ability to reset the plugin options.
+* Added the templates named **Single** and **Plain**.
+* Changed the template system ( ***Breaking Change*** ).
+* Changed to display the error message when the Twitter API returns an error. 
 
 = 1.0.1 - 07/29/2013 =
 * Added the ability for other plugins to override the registering classes of this plugin.

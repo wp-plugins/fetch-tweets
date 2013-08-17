@@ -1,5 +1,5 @@
 <?php
-class FetchTweets_MetaBox_ extends AdminPageFramework_MetaBox {
+class FetchTweets_MetaBox_Options_ extends AdminPageFramework_MetaBox {
 	
 	public function setUp() {
 		
@@ -38,71 +38,7 @@ class FetchTweets_MetaBox_ extends AdminPageFramework_MetaBox {
 			array()
 		);
 		
-		// Remove the default tag meta box and add a custom meta box.
-		add_action( 'admin_menu', array( $this, 'removeDefaultMetaBoxes' ) );
-		add_action( 'add_meta_boxes', array( $this, 'addCustomMetaBoxes' ) );
-		
 	}
-	
-	public function addCustomMetaBoxes() {
-		
-		// The wider tag meta box.
-		add_meta_box( 
-			'tagsdiv-' . FetchTweets_Commons::TagSlug . '-2', 		// id
-			__( 'Tags', 'fetch-tweets' ), 	// title
-			array( $this, 'drawTagBox' ), 	// callback
-			FetchTweets_Commons::PostTypeSlug,		// post type
-			'advanced', 	// context ('normal', 'advanced', or 'side'). 
-			'low',	// priority ('high', 'core', 'default' or 'low') 
-			null // argument
-		);
-		
-		// Sponsors' box.
-		add_meta_box( 
-			'miunosoft-sponsors', 		// id
-			__( 'Information', 'fetch-tweets' ), 	// title
-			array( $this, 'callSponsors' ), 	// callback
-			FetchTweets_Commons::PostTypeSlug,		// post type
-			'side', 	// context ('normal', 'advanced', or 'side'). 
-			'low',	// priority ('high', 'core', 'default' or 'low') 
-			null // argument
-		);	
-	}
-	public function callSponsors() {
-		
-		$oUserAds = isset( $GLOBALS['oFetchTweetsUserAds'] ) ? $GLOBALS['oFetchTweetsUserAds'] : new FetchTweets_UserAds;
-		echo rand ( 0 , 1 )
-			? $oUserAds->get250xNTopRight() 
-			: $oUserAds->get250xN( 2 );
-			
-	}
-	public function drawTagBox() {
-		?>
-		<div class="keywords inside">
-		<?php
-			post_tags_meta_box( 
-				get_post( $GLOBALS['post_ID'] ), 
-				array(
-					'title' => __( 'Tags', 'fetch-tweets' ),
-					'args' => array(
-						'taxonomy' => FetchTweets_Commons::TagSlug,
-					)
-				)
-			);
-		?>
-		</div>
-		<?php
-	}
-	
-	public function removeDefaultMetaBoxes() {
-		
-		// Remove 'Keywords' (like tags) metabox
-		$strTaxonomySlug = FetchTweets_Commons::TagSlug;
-		remove_meta_box( "tagsdiv-{$strTaxonomySlug}", FetchTweets_Commons::PostTypeSlug, 'side' );
-		
-		// Remove 'Groups' (like categories) metabox
-		// remove_meta_box( 'groupdiv', 'my-custom-post-type-slug', 'side' );
-	}	
 	
 	private function getTweetType() {
 
@@ -230,7 +166,7 @@ class FetchTweets_MetaBox_ extends AdminPageFramework_MetaBox {
 					'de' => __( 'German', 'fetch-tweets' ),
 					'ja' => __( 'Japanese', 'fetch-tweets' ),
 				),
-				'vDefault' 			=> 'none',	// 0 means the first item
+				'vDefault' 			=> 'none',	
 			),				
 			array(
 				'strFieldID'		=> 'result_type',
@@ -247,7 +183,6 @@ class FetchTweets_MetaBox_ extends AdminPageFramework_MetaBox {
 				'strFieldID'		=> 'exclude_replies',
 				'strType'			=> 'hidden',
 			),
-			// result_type
 			array()
 		);
 		

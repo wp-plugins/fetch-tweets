@@ -10,6 +10,8 @@ abstract class FetchTweets_Option_ {
 				'access_secret' => '',
 			),
 		),
+		'arrTemplates' => array(),	// stores template info arrays.
+		'arrDefaultTemplate' => array(),	// stores the default template info.
 	);
 	
 	public $arrStructure_DefaultParams = array(
@@ -18,10 +20,11 @@ abstract class FetchTweets_Option_ {
 		'tag'				=> null,
 		'tags'				=> null,	// deprecated as of 1.0.0.4 - but extension plugins may use it
 		'count'				=> 20,
-		'avatar_size'		=> 48,
+		// 'avatar_size'		=> 48,
 		'operator'			=> 'AND',
 		'tag_field_type'	=> 'slug',				// used internally. slug or id.
 		'sort'				=> 'descending',		//  ascending, descending, or random 
+		// 'template'			=> null,	// the template slug
 		
 		// for custom function calls
 		'q'					=> null,	
@@ -32,11 +35,30 @@ abstract class FetchTweets_Option_ {
 		'lang'				=> null,	// 
 		'result_type'		=> 'mixed',	// 
 	);
+	public $arrStructure_DefaultTemplateOptions = array(
+		// leave them null and let each template define default values.
+		'template'			=> null,	// the template slug
+		'avatar_size'		=> null,	// 48, 
+		'width'				=> null,	// 100,	
+		'width_unit'		=> null,	// '%',	
+		'height'			=> null,	// 800,
+		'height_unit'		=> null,	// 'px',
+	);		 
+	public $arrOptions = array();	// stores the option values.
+		 
+	protected $strOptionKey = '';	// stores the option key for this plugin. 
 		 
 	public function __construct( $strOptionKey ) {
 		
+		$this->strOptionKey = $strOptionKey;
 		$this->arrOptions = $this->setOption( $strOptionKey );
+// FetchTweets_Debug::getArray( $this->arrOptions, dirname( __FILE__ ) . '/options.txt' );
 	}	
+	
+	/*
+	 * 
+	 * Back end methods
+	 * */
 	private function setOption( $strOptionKey ) {
 		
 		$vOption = get_option( $strOptionKey );
@@ -45,10 +67,48 @@ abstract class FetchTweets_Option_ {
 		$vOption = ( $vOption === false ) ? array() : $vOption;		
 		
 		// Now $vOption is an array so merge with the default option to avoid undefined index warnings.
-		return $this->uniteArraysRecursive( $vOption, self::$arrStructure_Options ); 
+		$arrOptions = $this->uniteArraysRecursive( $vOption, self::$arrStructure_Options ); 
+
+		// If the template option array is empty, retrieve the active template arrays.
+		if ( empty( $arrOptions['arrTemplates'] ) ) {
+			
+			$oTemplate = new FetchTweets_Templates;
+			$arrDefaultTemplate = $oTemplate->findDefaultTemplateDetails();
+			$arrOptions['arrTemplates'][ $arrDefaultTemplate['strSlug'] ] = $arrDefaultTemplate;
+			$arrOptions['arrDefaultTemplate'] = $arrDefaultTemplate;
+			
+			// Schedule updating the option at the end of the script.
+			add_action( 'shutdown', array( $this, 'saveOptions' ) );
+			
+		}
 		
-		
+		return $arrOptions;
+				
 	}
+	private function uniteArraysRecursive( $arrPrecedence, $arrDefault ) {
+		
+		// Merges two multi-dimensional arrays recursively. The first parameter array takes its precedence.
+		// This is useful to merge default option values.
+		
+		if ( is_null( $arrPrecedence ) ) $arrPrecedence = array();
+		
+		if ( ! is_array( $arrDefault ) || ! is_array( $arrPrecedence ) ) return $arrPrecedence;
+			
+		foreach( $arrDefault as $strKey => $v ) {
+			
+			// If the precedence does not have the key, assign the default's value.
+			if ( ! array_key_exists( $strKey, $arrPrecedence ) || is_null( $arrPrecedence[ $strKey ] ) )
+				$arrPrecedence[ $strKey ] = $v;
+			else {
+				
+				// if the both are arrays, do it the recursively.
+				if ( is_array( $arrPrecedence[ $strKey ] ) && is_array( $v ) ) 
+					$arrPrecedence[ $strKey ] = $this->uniteArraysRecursive( $arrPrecedence[ $strKey ], $v );			
+			
+			}
+		}
+		return $arrPrecedence;		
+	}		
 	
 	/*
 	 * Front end methods
@@ -66,28 +126,10 @@ abstract class FetchTweets_Option_ {
 		return $this->arrOptions['fetch_tweets_settings']['authentication_keys']['access_secret'];
 	}	
 	
-	private function uniteArraysRecursive( $arrPrecedence, $arrDefault ) {
+	public function saveOptions() {
 		
-		// Merges two multi-dimensional arrays recursively. The first parameter array takes its precedence.
-		// This is useful to merge default option values.
+		update_option( $this->strOptionKey, $this->arrOptions );
 		
-		if ( is_null( $arrPrecedence ) ) $arrPrecedence = array();
-		
-		if ( ! is_array( $arrDefault ) || ! is_array( $arrPrecedence ) ) return $arrPrecedence;
-			
-		foreach( $arrDefault as $strKey => $v ) {
-			
-			// If the precedence does not have the key, assign the default's value.
-			if ( ! array_key_exists( $strKey, $arrPrecedence ) || is_null( $arrPrecedence[ $strKey ] ) )
-				$arrPrecedence[ $strKey ] = $v;
-			else {
-				
-				// if the both are arrays, do the recursive process.
-				if ( is_array( $arrPrecedence[ $strKey ] ) && is_array( $v ) ) 
-					$arrPrecedence[ $strKey ] = $this->uniteArraysRecursive( $arrPrecedence[ $strKey ], $v );			
-			
-			}
-		}
-		return $arrPrecedence;		
-	}		
+	}
+	
 }

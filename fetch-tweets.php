@@ -5,7 +5,7 @@
 	Description: Fetches and displays tweets from Twitter with the the Twitter REST API v1.1.
 	Author: miunosoft (Michael Uno)
 	Author URI: http://michaeluno.jp
-	Version: 1.0.1
+	Version: 1.1.0
 	Requirements: PHP 5.2.4 or above, WordPress 3.2 or above.
 */ 
 
@@ -40,6 +40,9 @@ final class FetchTweets_Commons {
 	public static function getPluginFilePath() {
 		return __FILE__;
 	} 
+	public static function getPluginDirPath() {
+		return dirname( __FILE__ );
+	}
 	public static function getPluginURL( $strRelativePath='' ) {
 		return plugins_url( $strRelativePath, __FILE__ );
 	}
@@ -59,27 +62,3 @@ function fetchTweets( $arrArgs ) {
 
 }
 
-/*
- * For templates
- * */
-function FetchTweets_humanTiming( $time ) {
-
-	// by arnorhs http://stackoverflow.com/a/2916189
-    $time = time() - $time; // to get the time since that moment
-
-    $tokens = array (
-        31536000 => 'year',
-        2592000 => 'month',
-        604800 => 'week',
-        86400 => 'day',
-        3600 => 'hour',
-        60 => 'minute',
-        1 => 'second'
-    );
-
-    foreach ($tokens as $unit => $text) {
-        if ($time < $unit) continue;
-        $numberOfUnits = floor($time / $unit);
-        return $numberOfUnits.' '.$text.(($numberOfUnits>1)?'s':'');
-    }
-}

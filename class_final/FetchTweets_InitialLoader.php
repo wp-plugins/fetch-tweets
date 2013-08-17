@@ -20,7 +20,7 @@ final class FetchTweets_InitialLoader {
 		// 1. Define constants.
 		// $this->defineConstants();
 		
-		// 2. Set global variables if there are.
+		// 2. Set global variables.
 		$this->setGlobals();
 		
 		// 3. Set up auto-load classes.
@@ -45,6 +45,7 @@ final class FetchTweets_InitialLoader {
 	private function setGlobals() {
 		
 		$GLOBALS['oFetchTweets_Option'] = null;	// stores the option object
+		$GLOBALS['oFetchTweets_Templates'] = null;	// stores the template object
 		
 		// Stores custom registering class paths
 		$GLOBALS['arrFetchTweets_FinalClasses'] = isset( $GLOBALS['arrFetchTweets_FinalClasses'] ) && is_array( $GLOBALS['arrFetchTweets_FinalClasses'] ) ? $GLOBALS['arrFetchTweets_FinalClasses'] : array();
@@ -97,7 +98,7 @@ final class FetchTweets_InitialLoader {
 		$oRequirement->checkRequirements();
 	
 		// Schedule transient set-ups
-		wp_schedule_single_event( time(), 'FTWS_action_setup_transients' );		
+		wp_schedule_single_event( time(), 'fetch_tweets_action_setup_transients' );		
 		
 	}
 	
@@ -148,34 +149,45 @@ final class FetchTweets_InitialLoader {
 
 		// 2. Option Object
 		$GLOBALS['oFetchTweets_Option'] = new FetchTweets_Option( FetchTweets_Commons::$strAdminKey );
-			
-		// 3. Admin pages
+
+		// 3. Templates
+		$GLOBALS['oFetchTweets_Templates'] = new FetchTweets_Templates;		
+		if ( is_admin() )
+			$GLOBALS['oFetchTweets_Templates']->loadSettings();
+		
+		// 4. Admin pages
 		if ( is_admin() ) 
 			new FetchTweets_AdminPage( FetchTweets_Commons::$strAdminKey, $this->strFilePath );		
 		
-		// 4. Post Type
+		// 5. Post Type
 		// Should not use "if ( is_admin() )" for the this class because posts of custom post type can be accessed from the regular pages.
 		new FetchTweets_PostType( FetchTweets_Commons::PostTypeSlug, null, $this->strFilePath ); 	// post type slug
-		if ( is_admin() )
-			new FetchTweets_MetaBox(
+		if ( is_admin() ) {
+			new FetchTweets_MetaBox_Options(
 				'fetch_tweets_options_meta_box',	// meta box ID
 				__( 'Options', 'fetch-tweets' ),		// meta box title
 				array( FetchTweets_Commons::PostTypeSlug ),	// post, page, etc.
 				'normal',
 				'default'
 			);			
-			
-		// 5. Plugin CSS
-		if ( ! is_admin() )
-			add_action( 'wp_enqueue_scripts', array( $this, 'enqueueStyle' ) );
-			
+			new FetchTweets_MetaBox_Template(
+				'fetch_tweets_template_meta_box',	// meta box ID
+				__( 'Template', 'fetch-tweets' ),		// meta box title
+				array( FetchTweets_Commons::PostTypeSlug ),	// post, page, etc.
+				'normal',
+				'default'
+			);
+			new FetchTweets_MetaBox_Tag;
+			new FetchTweets_MetaBox_Misc;
+		}
+						
 		// 6. Shortcode
 		new FetchTweets_Shortcode( 'fetch_tweets' );	// e.g. [fetch_tweets id="143"]
-	
-		// 7. Widget
+			
+		// 7. Widgets
 		add_action( 'widgets_init', 'FetchTweets_WidgetByID::registerWidget' );
 		add_action( 'widgets_init', 'FetchTweets_WidgetByTag::registerWidget' );
-		
+				
 		// 8. Events
 		new FetchTweets_Event;	
 		

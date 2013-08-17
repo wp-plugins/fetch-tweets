@@ -614,12 +614,13 @@ abstract class AdminPageFramework_Pages {
 			uasort( $this->oProps->arrInPageTabs[ $strPageSlug ], array( $this->oProps, 'sortByOrder' ) );
 			
 			// Set the default tab for the page.
-			foreach( $this->oProps->arrInPageTabs[ $strPageSlug ] as $strTabSlug => $arrInPageTab ) { 		// The first iteration item is the default one.
+			// Read the value as reference; otherwise, a strange bug occurs. It may be due to the variable name, $arrInPageTab, is also used as reference in the above foreach.
+			foreach( $this->oProps->arrInPageTabs[ $strPageSlug ] as $strTabSlug => &$arrInPageTab ) { 	
 			
 				if ( ! isset( $arrInPageTab['strTabSlug'] ) || isset( $arrInPageTab['fHide'] ) ) continue;	// if it's a hidden tab, it should not be the default tab.
 				
 				$this->oProps->arrDefaultInPageTabs[ $strPageSlug ] = $arrInPageTab['strTabSlug'];
-				break;
+				break;	// The first iteration item is the default one.
 			}
 		}
 	}			
@@ -1196,18 +1197,18 @@ abstract class AdminPageFramework_SettingsAPI extends AdminPageFramework_Menu {
 
 		$arrStoredPageOptions = $this->getPageOptions( $strPageSlug ); 			
 
-		// for tab
+		// for tabs
 		if ( $strTabSlug && $strPageSlug )	{
-			$arrRegisteredSectionKeysForThisTab = array_keys( $arrInput[ $strPageSlug ] );
+			$arrRegisteredSectionKeysForThisTab = isset( $arrInput[ $strPageSlug ] ) ? array_keys( $arrInput[ $strPageSlug ] ) : array();			
 			$arrInput = $this->oUtil->addAndApplyFilter( $this, "validation_{$strPageSlug}_{$strTabSlug}", $arrInput, $arrStoredPageOptions );	
 			$arrInput = $this->oUtil->uniteArraysRecursive( $arrInput, $this->getOtherTabOptions( $strPageSlug, $arrRegisteredSectionKeysForThisTab ) );
 		}
-		// for page	
+		// for pages	
 		if ( $strPageSlug )	{
 			$arrInput = $this->oUtil->addAndApplyFilter( $this, "validation_{$strPageSlug}", $arrInput, $arrStoredPageOptions );		
 			$arrInput = $this->oUtil->uniteArraysRecursive( $arrInput, $this->getOtherPageOptions( $strPageSlug ) );
 		}
-		// for class
+		// for the class
 		$arrInput = $this->oUtil->addAndApplyFilter( $this, "validation_{$this->oProps->strClassName}", $arrInput, $this->oProps->arrOptions );
 
 		return $arrInput;
@@ -1736,9 +1737,9 @@ abstract class AdminPageFramework extends AdminPageFramework_SettingsAPI {
 		// If the loading page has not been registered or not the plugin page which uses this library, do nothing.
 		if ( ! $this->oProps->isPageAdded( $strPageSlug ) ) return;
 
-		// Print out the filtered styles.
+		// Print out the filtered scripts.
 		echo "<script type='text/javascript' id='admin-page-framework-script'>"
-			. $this->oUtil->addAndApplyFilters( $this, $this->oUtil->getFilterArrayByPrefix( self::$arrPrefixes['style_'], $this->oProps->strClassName, $strPageSlug, $strTabSlug, false ), $this->oProps->strScript )
+			. $this->oUtil->addAndApplyFilters( $this, $this->oUtil->getFilterArrayByPrefix( self::$arrPrefixes['script_'], $this->oProps->strClassName, $strPageSlug, $strTabSlug, false ), $this->oProps->strScript )
 			. "</script>";		
 		
 	}
@@ -2520,13 +2521,13 @@ class AdminPageFramework_InputField extends AdminPageFramework_Utilities {
 		
 	);
 	
-	public function __construct( &$arrField, &$arrOptions, &$arrErrors, &$oMsg ) {
+	public function __construct( &$arrField, &$arrOptions, $arrErrors=array(), &$oMsg ) {
 			
 		$this->oMsg = $oMsg;
 		
 		$this->arrField = $arrField + self::$arrDefaultFieldValues;
 		$this->arrOptions = $arrOptions;
-		$this->arrErrors = $arrErrors;
+		$this->arrErrors = $arrErrors ? $arrErrors : array();
 			
 		$this->strFieldName = $this->getInputFieldName();
 		$this->strTagID = $this->getInputTagID( $arrField );
@@ -3227,7 +3228,7 @@ class AdminPageFramework_WalkerTaxonomyChecklist extends Walker_Category {	// si
 		Walker_Category : wp-includes/category-template.php
 	 * */
 	
-	function start_el( &$strOutput, $oCategory, $intDepth, $arrArgs ) {
+	function start_el( &$strOutput, $oCategory, $intDepth=0, $arrArgs=array(), $intCurrentObjectID=0 ) {
 		
 		/*	
 		 	$arrArgs keys:
@@ -3833,7 +3834,7 @@ class AdminPageFramework_MetaBox {
 		// Set the input field name which becomes the option key of the custom meta field of the post.
 		$arrField['strName'] = isset( $arrField['strName'] ) ? $arrField['strName'] : $arrField['strFieldID'];
 		
-		$oField = new AdminPageFramework_InputField( $arrField, $this->arrOptions, $arr=array(), $this->oMsg );	// currently error arrays are not supported for meta-boxes 
+		$oField = new AdminPageFramework_InputField( $arrField, $this->arrOptions, array(), $this->oMsg );	// currently error arrays are not supported for meta-boxes 
 		$strOut = $this->oUtil->addAndApplyFilter(
 			$this,
 			$this->strClassName . '_' . 'field_' . $arrField['strFieldID'],	// filter: class name + _ + field_ + field id

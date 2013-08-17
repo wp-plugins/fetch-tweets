@@ -1,0 +1,66 @@
+/*
+Template Name: Plain
+Template URI: http://en.michaeluno.jp
+Author: Michael Uno
+Author URI: http://en.michaeluno.jp
+Description: Displays tweets for multiple accounts. 
+Version: 1.0.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Tags: default
+Text Domain: fetch-tweets
+*/
+
+.fetch-tweets {
+	overflow-y: auto;	
+	overflow-x: hidden;
+	padding-right: 0.5em;	
+}
+.fetch-tweets-item {
+	display: inline-block; 
+	margin-bottom: 0.5em;	
+	width: 100%;
+}
+.fetch-tweets-retweet {
+}
+.fetch-tweets-heading {
+	vertical-align: text-top;
+	line-height: 1em;
+}
+.fetch-tweets-profile-image {
+	display: table-column;
+	float: left;
+	clear: left;
+	margin: 0 8px 0 0;
+}
+.fetch-tweets-user-name {
+	margin-bottom: 0.3em;
+	display: inline-block; 
+
+}
+.fetch-tweets-user-name a {
+	text-decoration: none;
+}
+.fetch-tweets-tweet-created-at {
+	display: inline;
+
+	float: right; 
+	font-size: smaller; 
+	margin-left: 1em;
+}
+.fetch-tweets-tweet-created-at a {
+	text-decoration: none;
+}
+.fetch-tweets-body {
+	clear: right;
+}
+.fetch-tweets-text {
+	margin-bottom: 0;
+}
+.fetch-tweets-retweet-credit {
+	float: right;
+	font-size: smaller;
+}
+.fetch-tweets-retweet-credit a {
+	text-decoration: none;
+}

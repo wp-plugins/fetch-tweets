@@ -106,7 +106,7 @@ class FetchTweets_ImageHandler extends IXR_Message {
 		
 		// $this->SetMaxSizeToCache( 2600 * 1000 );	// bytes
 		// Get the actual url
-		$strURL = $this->GetSourceImageURL( $strEncodedURL );
+		$strURL = $this->getSourceImageLocation( $strEncodedURL );
 
 		$this->SetExpirationInterval( 60*60*24 );	// 60 seconds ( one minite ) x 60 times x 24 times; one day
 		
@@ -132,7 +132,7 @@ class FetchTweets_ImageHandler extends IXR_Message {
 	}
 	function SetImageURL( $strURL, $bIsBase64Encoded=false ) {
 				
-		$this->strImageURL = $bIsBase64Encoded ? $this->GetSourceImageURL( $strURL ) : $strURL;
+		$this->strImageURL = $bIsBase64Encoded ? $this->getSourceImageLocation( $strURL ) : $strURL;
 		
 	}
 	function SetMimeType( $strExtension ) {
@@ -156,7 +156,7 @@ class FetchTweets_ImageHandler extends IXR_Message {
 			case 'image/gif':
 			case 'image/png':
 				// Decode the image data
-				$arrImageData['data'] = $this->AlterBase64( $arrImageData['data'] );
+				$arrImageData['data'] = $this->alterBase64( $arrImageData['data'] );
 				$arrImageData['data'] = $arrImageData['gzcompress'] ? gzuncompress( $arrImageData['data'] ) : $arrImageData['data'];	// the function existence check has been performed in GetTransient() at this point
 				$hImage = @imagecreatefromstring( $arrImageData['data'] );
 			   if ( error_reporting() === 0 ) {
@@ -248,7 +248,7 @@ class FetchTweets_ImageHandler extends IXR_Message {
 		 * in classes which are called by the autoloader or something. It's recommended to place the line in the plugin's main file to be safe.
 		 * 
 		 * */
-		$strURL = $this->IsBase64( $strURL ) ? $this->GetSourceImageURL( $strURL ) : $strURL;
+		$strURL = $this->IsBase64( $strURL ) ? $this->getSourceImageLocation( $strURL ) : $strURL;
 		$this->SetTransient( $strURL );
 		
 		
@@ -284,7 +284,7 @@ class FetchTweets_ImageHandler extends IXR_Message {
 		 */
 		
 		$strURL = empty( $strURL ) ? $this->strImageURL : $strURL;
-		$strURL = $this->SanitizeScheme( $strURL );
+		$strURL = $this->sanitizeScheme( $strURL );
 		
 		// Get the image data array.
 		$arrImageData = get_transient( $this->strTransientPrefix_Image . md5( $strURL ) );
@@ -324,7 +324,7 @@ class FetchTweets_ImageHandler extends IXR_Message {
 				
 		// Set up the url
 		$strURL = empty( $strURL ) ? $this->strImageURL : $strURL;
-		$strURL = $this->GetSourceImageURL( $strURL, $this->IsBase64( $strURL ), True );
+		$strURL = $this->getSourceImageLocation( $strURL, $this->IsBase64( $strURL ), True );
 		
 		// Fetch the imaga data.
 		$arrRequest = wp_remote_request( 
@@ -396,7 +396,7 @@ class FetchTweets_ImageHandler extends IXR_Message {
 		return (bool) preg_match( '/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $str );
 
 	}	 
-	function AlterBase64( $bin ) {
+	function alterBase64( $bin ) {
 
 		// Some over-sensitive users have hysterical allergy against the base64 decode function so avoid using that. 
 		// Instead, use the code of the core. I don't get why we should not use it in plugins while the core is using it. 
@@ -407,14 +407,20 @@ class FetchTweets_ImageHandler extends IXR_Message {
 		return $this->params[0];
 		
 	}
-	public function GetSourceImageURL( $strEncodedURL, $bIsEncoded=True, $bForceHttp=True ) {
+	public function getSourceImageLocation( $strLocation, $bIsEncoded=True, $bForceHttp=True ) {
 
-		$strDecodedURL = $bIsEncoded ? $this->AlterBase64( $strEncodedURL ) : $strEncodedURL;
-		$strURL = $bForceHttp ? $this->SanitizeScheme( $strDecodedURL ) : $strDecodedURL;	// https: -> http:	
-		return $strURL;
+		// The location may be a url or a path.
+		$strDecodedLocation = $bIsEncoded ? $this->alterBase64( $strLocation ) : $strLocation;
+		
+		if ( filter_var( $strDecodedLocation , FILTER_VALIDATE_URL ) )	// if it is a url
+			return $bForceHttp ? $this->sanitizeScheme( $strDecodedLocation ) : $strDecodedLocation;
+			
+		if ( file_exists( $strDecodedLocation ) )
+			return $strDecodedLocation;
 
 	}	
-	function SanitizeScheme( $strURL ) {
+	
+	function sanitizeScheme( $strURL ) {
 		
 		// if ( $this->IsHttpsSupporeted() ) return $strURL
 		return preg_replace( "/^https:/", "http:", $strURL );

@@ -2,7 +2,7 @@
 /*
  * 
  * @filters fetch_tweets_template_path - specifies the template path.
- * @actions: FTWS_action_transient_renewal - for WP Cron single event.
+ * @actions: fetch_tweets_action_transient_renewal - for WP Cron single event.
  * */
 abstract class FetchTweets_Fetch_ {
 
@@ -11,25 +11,14 @@ abstract class FetchTweets_Fetch_ {
 	public function __construct() {
 	
 		// Set up the connection.
-		$this->oOption = & $GLOBALS['oFetchTweets_Option'];
-		$this->strConsumerKey = $this->oOption->getConsumerKey();
-		$this->strConsumerSecret = $this->oOption->getConsumerSecret();
-		$this->strAccessToken = $this->oOption->getAccessToken();
-		$this->strAccessTokenSecret = $this->oOption->getAccessTokenSecret();
-		
+		$this->oOption = & $GLOBALS['oFetchTweets_Option'];		
 		$this->oTwitterOAuth =  new WP_TwitterOAuth( 
-			$this->strConsumerKey, 
-			$this->strConsumerSecret, 
-			$this->strAccessToken, 
-			$this->strAccessTokenSecret 
+			$this->oOption->getConsumerKey(), 
+			$this->oOption->getConsumerSecret(), 
+			$this->oOption->getAccessToken(), 
+			$this->oOption->getAccessTokenSecret()
 		);		
-		
-		// Set the template path.
-		$strTemplatePathInThemeDir = get_template_directory() . '/fetch-tweets/show_tweets.php';
-		$this->strTemplatePath = file_exists( $strTemplatePathInThemeDir ) 
-			? $strTemplatePathInThemeDir 
-			: dirname( FetchTweets_Commons::getPluginFilePath() ) . '/template/show_tweets.php';
-		
+			
 		// Schedule the transient update task.
 		add_action( 'shutdown', array( $this, 'updateCacheItems' ) );
 		
@@ -49,7 +38,11 @@ abstract class FetchTweets_Fetch_ {
 	public function drawTweetsByTag( $arrArgs ) {
 		
 		// Called from either the above getTweetsOutputByTag() method for the shortcode callbeck or fetchTweets() function.
-		$arrArgs['tag'] = isset( $arrArgs['tags'] ) && ! empty( $arrArgs['tags'] ) ? $arrArgs['tags'] : $arrArgs['tag'];	// backward compatibility
+		$arrArgs['tag'] = isset( $arrArgs['tags'] ) && ! empty( $arrArgs['tags'] ) 
+			? $arrArgs['tags'] 
+			: ( isset( $arrArgs['tag'] ) 
+				? $arrArgs['tag']
+				: null );	// backward compatibility
 		$arrArgs['tag'] = is_array( $arrArgs['tag'] ) ? $arrArgs['tag'] : preg_split( "/[,]\s*/", trim( ( string ) $arrArgs['tag'] ), 0, PREG_SPLIT_NO_EMPTY );
 		$arrArgs['id'] = isset( $arrArgs['tag_field_type'] ) && in_array( strtolower( $arrArgs['tag_field_type'] ), array( 'id', 'slug' ) )
 			? $this->getPostIDsByTag( $arrArgs['tag'], $arrArgs['tag_field_type'], trim( $arrArgs['operator'] ) )
@@ -71,7 +64,10 @@ abstract class FetchTweets_Fetch_ {
 				
 	}
 	public function getPostIDsByTag( $arrTermSlugs, $strFieldType='slug', $strOperator='AND' ) {	// public as the feeder extension uses it.
-		
+
+		if ( empty( $arrTermSlugs ) )
+			return array();
+			
 		$strFieldType = $this->sanitizeFieldKey( $strFieldType );
 
 		$arrPostObjects = get_posts( 
@@ -94,7 +90,7 @@ abstract class FetchTweets_Fetch_ {
 		return array_unique( $arrIDs );
 		
 	}
-	private function sanitizeFieldKey( $strField ) {
+	protected function sanitizeFieldKey( $strField ) {
 		switch( strtolower( trim( $strField ) ) ) {
 			case 'id':
 				return 'id';
@@ -103,7 +99,7 @@ abstract class FetchTweets_Fetch_ {
 				return 'slug';
 		}		
 	}
-	private function sanitizeOperator( $strOperator ) {
+	protected function sanitizeOperator( $strOperator ) {
 		switch( strtoupper( trim( $strOperator ) ) ) {
 			case 'NOT IN':
 				return 'NOT IN';
@@ -134,7 +130,6 @@ abstract class FetchTweets_Fetch_ {
 		 * 	tag - default: null. e.g. php or php, WordPress. In this method this tag is only used to pass the argument to the template filter.
 		 *  sort - default: descending. Either ascending, descending, or random can be used.
 		 * 	count - default: 20
-		 *  avatar_size - default: 48
 		 * 	operator - default: AND. Either AND or IN or NOT IN is used.
 		 *  q - default: null e.g. WordPress
 		 *  screen_name - default: null e.g. miunosoft
@@ -143,18 +138,30 @@ abstract class FetchTweets_Fetch_ {
 		 *  cache - default: 1200
 		 *	lang - default: null.  
 		 *	result_type - default: mixed
+		 *	
+		 * Template options
+		 *	template - the template slug.
+		 *	width - 
+		 *	width_unit - 
+		 *	height	- 
+		 *	height_unit - 
+		 *	avatar_size - default: 48 
 		 * 
 		 * */
-		$arrArgs = ( array ) $arrArgs + $this->oOption->arrStructure_DefaultParams;
+		$arrArgs = ( array ) $arrArgs + $this->oOption->arrStructure_DefaultParams + $this->oOption->arrStructure_DefaultTemplateOptions;
 		$arrArgs['id'] = isset( $arrArgs['ids'] ) && ! empty( $arrArgs['ids'] ) ? $arrArgs['ids'] : $arrArgs['id'];	// backward compatibility
 		$arrArgs['id'] = is_array( $arrArgs['id'] ) ? $arrArgs['id'] : preg_split( "/[,]\s*/", trim( ( string ) $arrArgs['id'] ), 0, PREG_SPLIT_NO_EMPTY );
-		
+// echo "<pre>" . htmlspecialchars( print_r( $arrArgs, true ) ) . "</pre>";			
 		$arrTweets = $this->getTweetsAsArray( $arrArgs );
 		if ( empty( $arrTweets ) || ! is_array( $arrTweets ) ) {
-			_e( 'No result has been fetched.', 'fetch-tweets' );
+			_e( 'No result could be fetched.', 'fetch-tweets' );
 			return;
 		}
-
+		if ( isset( $arrTweets['errors'][ 0 ]['message'], $arrTweets['errors'][ 0 ]['code'] ) ) {
+			echo '<strong>Fetch Tweets</strong>: ' . $arrTweets['errors'][ 0 ]['message'] . ' Code:' . $arrTweets['errors'][ 0 ]['code'];			
+			return;
+		}
+	
 		// Format the array.
 		$this->formatTweetArrays( $arrTweets, $arrArgs['avatar_size'] ); // the array is passed as reference.
 	
@@ -169,8 +176,86 @@ abstract class FetchTweets_Fetch_ {
 // echo "<pre>" . htmlspecialchars( print_r( $arrTweets, true ) ) . "</pre>";		
 // return;
 		
-		// Include the template to render the output - this function is for filters( which requires a return value ) but go ahead and render the output.
-		include( apply_filters( "fetch_tweets_template_path", $this->strTemplatePath, $arrArgs ) );
+		/*
+		 * Include the template to render the output - this method is also called from filter callbacks( which requires a return value ) but go ahead and render the output.		
+		 * */		
+		 
+		// Make it easier for the template script to access the plugin options.
+		$arrOptions = $this->oOption->arrOptions; 
+		
+		// Retrieve the template slug we are going to use.
+		$arrArgs['template'] = $this->getTemplateSlug( $arrArgs['id'], $arrArgs['template'] );
+
+// unset( $this->oOption->arrOptions['arrTemplates']['679e5a3ebc6bf1a3a408d90ed257ba80'] );	
+// $this->oOption->saveOptions();
+// return;
+		
+		// Include functions.php for the template.
+		$strFunctionsPath = isset( $this->oOption->arrOptions['arrTemplates'][ $arrArgs['template'] ]['strFunctionsPath'] ) && file_exists( $this->oOption->arrOptions['arrTemplates'][ $arrArgs['template'] ]['strFunctionsPath'] )
+			? $this->oOption->arrOptions['arrTemplates'][ $arrArgs['template'] ]['strFunctionsPath']
+			: (	file_exists( $this->oOption->arrOptions['arrTemplates'][ $arrArgs['template'] ]['strDirPath'] . '/functions.php' )
+				? $this->oOption->arrOptions['arrTemplates'][ $arrArgs['template'] ]['strDirPath'] . '/functions.php'
+				: null
+			);
+		if ( $strFunctionsPath )
+			include_once( $strFunctionsPath );
+	
+		// Call the template. ( template.php )
+		$strTemplatePath = apply_filters( "fetch_tweets_template_path", $this->getTemplatePath( $arrArgs['id'], $arrArgs['template'] ), $arrArgs );
+		include( $strTemplatePath );
+		
+	}
+	protected function getTemplateSlug( $arrPostIDs, $strTemplateSlug='' ) {
+					
+		// Return the one defined in the caller argument.
+		if ( $strTemplateSlug && isset( $this->oOption->arrOptions['arrTemplates'][ $strTemplateSlug ] ) )
+			return $this->checkNecessaryFileExists( $strTemplateSlug );
+		
+		// Return the one defined in the custom post rule.
+		if ( isset( $arrPostIDs[ 0 ] ) )
+			$strTemplateSlug = get_post_meta( $arrPostIDs[ 0 ], 'fetch_tweets_template', true );
+
+		$strTemplateSlug = $this->checkNecessaryFileExists( $strTemplateSlug );
+		
+		// Find the default template slug.
+		if ( 
+			empty( $strTemplateSlug ) 
+			|| ! isset( $this->oOption->arrOptions['arrTemplates'][ $strTemplateSlug ] ) 
+		)
+			return $GLOBALS['oFetchTweets_Templates']->getDefaultTemplateSlug();
+		
+		// Something wrong happened.
+		return $strTemplateSlug;
+		
+	}
+	protected function checkNecessaryFileExists( $strTemplateSlug ) {
+		
+		// Check if the necessary file is present. Oterwise, return the default template slug.
+		if ( 
+			( ! empty( $strTemplateSlug ) || $strTemplateSlug != '' ) 
+			&& ( 
+				! file_exists( $this->oOption->arrOptions['arrTemplates'][ $strTemplateSlug ]['strDirPath'] . '/template.php' )
+				|| ! file_exists( $this->oOption->arrOptions['arrTemplates'][ $strTemplateSlug ]['strDirPath'] . '/style.css' )
+			)
+		)
+			return $GLOBALS['oFetchTweets_Templates']->getDefaultTemplateSlug();		
+		
+		return $strTemplateSlug;
+		
+	}
+	protected function getTemplatePath( $arrPostIDs, $strTemplateSlug ) {
+		
+		if ( empty( $strTemplateSlug ) && isset( $arrPostIDs[ 0 ] ) )
+			$strTemplateSlug = get_post_meta( $arrPostIDs[ 0 ], 'fetch_tweets_template', true );
+		
+		if ( empty( $strTemplateSlug ) || ! isset( $this->oOption->arrOptions['arrTemplates'][ $strTemplateSlug ] ) )
+			return $GLOBALS['oFetchTweets_Templates']->getDefaultTemplatePath();
+			
+		$strTemplatePath = $this->oOption->arrOptions['arrTemplates'][ $strTemplateSlug ]['strTemplatePath'];
+		$strTemplatePath = ( ! $strTemplatePath || ! file_exists( $strTemplatePath ) )
+			? dirname( $this->oOption->arrOptions['arrTemplates'][ $strTemplateSlug ]['strCSSPath'] ) . '/template.php'
+			: $strTemplatePath;
+		return $strTemplatePath;			
 		
 	}
 	public function getTweetsAsArray( $arrArgs ) {	// this is public as the feed extension uses it.
@@ -183,7 +268,7 @@ abstract class FetchTweets_Fetch_ {
 			return $this->getTweetsAsArrayByPostID( $arrArgs['id'] );
 		
 	}
-	private function getTweetsAsArrayByPostID( $vPostIDs, $intMaxCount=null ) {	
+	protected function getTweetsAsArrayByPostID( $vPostIDs, $intMaxCount=null ) {	
 		
 		$arrTweets = array();
 		foreach( ( array ) $vPostIDs as $intPostID ) {
@@ -214,7 +299,7 @@ abstract class FetchTweets_Fetch_ {
 		return $arrTweets;
 		
 	}
-	private function formatTweetArrays( & $arrTweets, $intProfileImageSize ) {
+	protected function formatTweetArrays( & $arrTweets, $intProfileImageSize ) {
 		
 		foreach( $arrTweets as $intIndex => &$arrTweet ) {
 							
@@ -227,7 +312,7 @@ abstract class FetchTweets_Fetch_ {
 		}
 		
 	}
-	private function formatTweetArray( $arrTweet, $intProfileImageSize=48 ) {
+	protected function formatTweetArray( $arrTweet, $intProfileImageSize=48 ) {
 		
 		// Avoid undefined index warnings.
 		$arrTweet = $arrTweet + array( 
@@ -265,7 +350,7 @@ abstract class FetchTweets_Fetch_ {
 		
 	}
 	
-	private function sortTweetArrays( & $arrTweets, $strOrderedBy='descending' ) {
+	protected function sortTweetArrays( & $arrTweets, $strOrderedBy='descending' ) {
 		switch( strtolower( $strOrderedBy ) ) {
 			case 'ascending':
 				uasort( $arrTweets, array( $this, 'sortByTimeAscending' ) );
@@ -285,7 +370,7 @@ abstract class FetchTweets_Fetch_ {
 		return ( int ) $a['created_at'] - ( int ) $b['created_at'];
 	}		
 	
-	private function getTweetsBySearch( $strKeyword, $intCount, $strLang='en', $fIncludeRetweets=false, $strResultType='mixed', $intCacheDuration=600 ) {
+	protected function getTweetsBySearch( $strKeyword, $intCount, $strLang='en', $fIncludeRetweets=false, $strResultType='mixed', $intCacheDuration=600 ) {
 		
 		// Compose the request URI.
 		$fIncludeEntities = true;
@@ -342,7 +427,7 @@ abstract class FetchTweets_Fetch_ {
 		return $arrTweets['statuses'];
 			
 	}
-	private function getTweetsByScreenName( $strUser, $intCount, $fIncludeRetweets=false, $fExcludeReplies=false, $intCacheDuration=1200 ) {
+	protected function getTweetsByScreenName( $strUser, $intCount, $fIncludeRetweets=false, $fExcludeReplies=false, $intCacheDuration=1200 ) {
 		
 		// Compose the request URI.
 		$intCount = $intCount > 200 ? 200 : $intCount;
@@ -392,7 +477,7 @@ abstract class FetchTweets_Fetch_ {
 		
 	}
 	
-	private function makeClickableLinks( $strText, $arrURLs ) {
+	protected function makeClickableLinks( $strText, $arrURLs ) {
 		
 		// There are urls in the tweet text. So they need to be converted into hyper links.
 		foreach( ( array ) $arrURLs as $arrURLDetails ) {
@@ -412,7 +497,7 @@ abstract class FetchTweets_Fetch_ {
 		return $strText;
 		
 	}
-	private function makeClickableMedia( $strText, $arrMedia ) {
+	protected function makeClickableMedia( $strText, $arrMedia ) {
 		
 		// This method converts media links in the tweet text.
 		foreach( ( array ) $arrMedia as $arrDetails ) {
@@ -439,7 +524,7 @@ abstract class FetchTweets_Fetch_ {
 		return $strText;
 		
 	}
-	private function makeClickableHashTags( $strText, $arrHashTags ) {
+	protected function makeClickableHashTags( $strText, $arrHashTags ) {
 		
 		// There are urls in the tweet text. So we need to convert them into hyper links.
 		foreach( ( array ) $arrHashTags as $arrDetails ) {
@@ -459,7 +544,7 @@ abstract class FetchTweets_Fetch_ {
 		return $strText;
 		
 	}
-	private function makeClickableUsers( $strText, $arrMentions ) {
+	protected function makeClickableUsers( $strText, $arrMentions ) {
 		
 		// There are urls in the tweet text. So they need to be converted into hyper links.
 		foreach( ( array ) $arrMentions as $arrDetails ) {
@@ -482,18 +567,18 @@ abstract class FetchTweets_Fetch_ {
 		return $strText;
 		
 	}
-	private function makeClickableLinksByRegex( $strText ) {	
+	protected function makeClickableLinksByRegex( $strText ) {	
 		// since current format contains the entities element, this method is not used. However, at later some point, this may be used for other occasions.
 		return preg_replace( '@(https?://([-\w\.]+[-\w])+(:\d+)?(/([\w/_\.#-]*(\?\S+)?[^\.\s])?)?)@' , '<a href="$1" target="_blank">$1</a>', $strText );
 	}	
-	private function makeClickableUsersByRegex( $strText ) {
+	protected function makeClickableUsersByRegex( $strText ) {
 		return preg_replace( '/@(\w+?)(\W|$)/', '<a href="https://twitter.com/$1" target="_blank">@$1</a>$2', $strText );
 	}
-	private function makeClickableHashTagByRegex( $strText ) {
+	protected function makeClickableHashTagByRegex( $strText ) {
 		// e.g. https://twitter.com/search?q=%23PHP&src=hash
 		return preg_replace( '/#(\w+?)(\W|$)/', '<a href="https://twitter.com/search?q=%23$1&src=hash" target="_blank">#$1</a>$2', $strText );
 	}		
-	private function adjustProfileImageSize( $strURL, $intImageSize ) {
+	protected function adjustProfileImageSize( $strURL, $intImageSize ) {
 		
 		// reference: https://dev.twitter.com/docs/user-profile-images-and-banners
 		// url example: 
@@ -526,11 +611,11 @@ abstract class FetchTweets_Fetch_ {
 		$this->arrExpiredTransientsRequestURIs = array_map( "unserialize", array_unique( array_map( "serialize", $this->arrExpiredTransientsRequestURIs ) ) );
 				
 		// Schedules the action to run in the background with WP Cron.
-		if ( wp_next_scheduled( 'FTWS_action_transient_renewal', array( $this->arrExpiredTransientsRequestURIs ) ) ) 
+		if ( wp_next_scheduled( 'fetch_tweets_action_transient_renewal', array( $this->arrExpiredTransientsRequestURIs ) ) ) 
 			return;		
 		wp_schedule_single_event( 
 			time(), 
-			'FTWS_action_transient_renewal', 	// the other event class will check this action hook and executes it with WP Cron.
+			'fetch_tweets_action_transient_renewal', 	// the other event class will check this action hook and executes it with WP Cron.
 			array( $this->arrExpiredTransientsRequestURIs )
 		);
 		

@@ -10,7 +10,7 @@
 
 /*
  * Custom Hooks
- * - FTWS_action_simplepie_renew_cache : the event action that renew caches in the background.
+ * - fetch_tweets_action_simplepie_renew_cache : the event action that renew caches in the background.
  * - SimplePie_filter_cache_transient_lifetime_{FileID} : applies to cache transients. FileID is md5( $url ).
  * 
  * Global Variables
@@ -25,7 +25,7 @@
 // Do not include class-simplepie.php, which causes the unknown class warning.
 if ( ! class_exists( 'SimplePie' ) ) include_once( ABSPATH . WPINC . '/class-feed.php' );		
 
-// If the WordPress version is below 3.5, which uses SimplePie below 1.3.
+// If the WordPress version is below 3.5, which uses SimplePie below 1.3,
 if ( version_compare( get_bloginfo( 'version' ) , '3.5', "<" ) ) {	
 
 	class FetchTweets_SimplePie__ extends SimplePie {
@@ -123,8 +123,8 @@ class FetchTweets_SimplePie extends FetchTweets_SimplePie__ {
 	protected function scheduleCacheRenewal( $arrURLs ) {
 		
 		// Schedules the action to run in the background with WP Cron.
-		if ( wp_next_scheduled( 'FTWS_action_simplepie_renew_cache', array( $arrURLs ) ) ) return;		
-		wp_schedule_single_event( time() , 'FTWS_action_simplepie_renew_cache', array( $arrURLs ) );
+		if ( wp_next_scheduled( 'fetch_tweets_action_simplepie_renew_cache', array( $arrURLs ) ) ) return;		
+		wp_schedule_single_event( time() , 'fetch_tweets_action_simplepie_renew_cache', array( $arrURLs ) );
 				
 	}
 	
