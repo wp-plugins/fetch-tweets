@@ -91,23 +91,27 @@ In order to set mutiple tags, pass them with commas as the delimiter. e.g.
 `<?php fetchTweets( array( 'id' => 678, 'count' => 8, 'avatar_size' => 96 ) ); ?>`
 
 = How to Create Own Template =
+
 **Step 1**
+
 Copy the folder named ***plain*** in the plugin's template folder. Rename the copied folder to something you like.
 
 **Step 2**
+
 Edit the following files.
+
 * **style.css**
 * **template.php**
 * **functions.php** ( optional )
 * **settings.php** ( optional )
 
 In the *style.css* file, include the comment area ( with /* */ ) at the top of the file with the following entries.
+
 * **Template Name:** - the template name.
 * **Author:** - your name.
 * **Author URI:** - your web site url.
 * **Description:** - a brief description about the template.
 * **Version:** - the version number of the template.
-
 e.g.
 
 `/*
@@ -119,9 +123,11 @@ e.g.
 */`
 
 **Step 3** ( optional )
+
 Include a thumbnail image. Prepare an image with the name screenshot.jpg, screenshot.png, or screenshot.gif, and place the image in the working(copied) folder.
 
 **Step 4**
+
 Create a folder named **fetch-tweets** in the theme folder. If you use, for instance, Twenty Twelve, the location would be `.../wp-content/themes/twentytwelve/fetch-tweets/`.
 
 Place the working folder( the copied and renamed one ) in there. The plugin will automatically detect it and the template will be listed in the Template page of the admin page.
@@ -152,6 +158,7 @@ See the How to Create Own Template section of the **[Other Notes]**(http://wordp
 1. ***Tweets Displayed in Page and Sidebar***
 2. ***Fetching Rule List***
 3. ***Widget Settings***
+4. ***Manage Templates***
 
 == Changelog ==
 
