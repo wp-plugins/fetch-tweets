@@ -169,7 +169,7 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 == Changelog ==
 
-= 1.1.1 =
+= 1.1.1 - 09/08/2013 =
 * Tweaked the default template styles.
 * Changed the timing of loading active template's functions files to before the header gets sent.
 * Added the visibility, margins, paddings, and the background color options for the default templates. The users may need to re-configure the height and width of the template option. 
