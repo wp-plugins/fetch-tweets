@@ -145,15 +145,16 @@ final class FetchTweets_InitialLoader {
 		
 		// 1. Load Necessary libraries
 		include_once( dirname( FetchTweets_Commons::getPluginFilePath() ) . '/library/WP_TwitterOAuth.php' );
-		include_once( dirname( FetchTweets_Commons::getPluginFilePath() ) . '/library/admin-page-framework.php' );
+		include_once( dirname( FetchTweets_Commons::getPluginFilePath() ) . '/library/admin-page-framework-for-fetch-tweets.php' );
 
 		// 2. Option Object
 		$GLOBALS['oFetchTweets_Option'] = new FetchTweets_Option( FetchTweets_Commons::$strAdminKey );
 
 		// 3. Templates
 		$GLOBALS['oFetchTweets_Templates'] = new FetchTweets_Templates;		
+		$GLOBALS['oFetchTweets_Templates']->loadFunctionsOfActiveTemplates();
 		if ( is_admin() )
-			$GLOBALS['oFetchTweets_Templates']->loadSettings();
+			$GLOBALS['oFetchTweets_Templates']->loadSettingsOfActiveTemplates();
 		
 		// 4. Admin pages
 		if ( is_admin() ) 

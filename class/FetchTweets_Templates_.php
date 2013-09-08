@@ -159,10 +159,13 @@ abstract class FetchTweets_Templates_ {
 	/*
 	 * Event methods 
 	 * */
+	/**
+	 * Outputs the stylesheet of the given template slug and then exits.
+	 * 
+	 * @remark			This is called from the event class. 
+	 */
 	public function loadStyle( $strTemplateSlug ) {
-		
-		// This is called from the event class. This outputs the stylesheet of the given template slug and then exits.
-				
+						
 		$arrTemplate = isset( $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'][ trim( $strTemplateSlug ) ] )
 			? $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'][ trim( $strTemplateSlug ) ]
 			: $this->findDefaultTemplateDetails();
@@ -176,7 +179,40 @@ abstract class FetchTweets_Templates_ {
 		
 	}
 	
-	public function loadSettings() {
+	/**
+	 * Includes activated templates' functions.php files.
+	 * 
+	 * @remark			This is called from the initial loader class.
+	 * 
+	 */ 	
+	public function loadFunctionsOfActiveTemplates() {
+		
+		foreach( $this->getActiveTemplates() as $arrTemplate ) {
+			
+			if ( ! isset( $arrTemplate['strFunctionPath'], $arrTemplate['strTemplatePath'], $arrTemplate['strCSSPath'] ) ) continue;
+			if ( ! $arrTemplate['strCSSPath'] ) continue;
+			if ( ! $arrTemplate['fIsActive'] ) continue;
+			
+			$strFunctionsPath = file_exists( $arrTemplate['strFunctionPath'] )
+				? $arrTemplate['strFunctionPath']
+				: ( file_exists( dirname( $arrTemplate['strCSSPath'] ) . '/functions.php' )
+					? dirname( $arrTemplate['strCSSPath'] ) . '/functions.php'
+					: null
+				);
+			if ( $strFunctionsPath )
+				include_once( $strFunctionsPath );
+						
+		}
+		
+	}
+	
+	/**
+	 * Includes activated templates' settings.php files.
+	 * 
+	 * @remark			This is called from the initial loader class.
+	 * 
+	 */ 
+	public function loadSettingsOfActiveTemplates() {
 		
 		if ( ! is_admin() ) return;
 		

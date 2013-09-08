@@ -1,7 +1,7 @@
 ﻿=== Fetch Tweets ===
 Contributors: Michael Uno, miunosoft
 Donate link: http://en.michaeluno.jp/donate
-Tags: twitter, tweets, tweet, widget, widgets, post, posts, page, pages, custom post type, API, Twitter API, REST, oAuth, shortcode, sidebar, plugin, template
+Tags: twitter, twitter widget, tweets, tweet, widget, widgets, post, posts, page, pages, custom post type, API, Twitter API, REST, oAuth, shortcode, sidebar, plugin, template
 Requires at least: 3.2
 Tested up to: 3.6
 Stable tag: 1.1.0
@@ -10,14 +10,20 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Fetches and displays tweets from twitter.com with the Twitter API.
 
 == Description ==
+It enables to display tweets anywhere you want such as in the sidebar, posts, and pages. Not only you can show your own tweets but also the mashed up results of multple user's timelines.
 
+Not only it is easy to set up for WordPress beginners but also it allows developers to write additional add-ons and templates. 
+
+One of the extensions, [Feeder](http://en.michaeluno.jp/fetch-tweets/extensions/feeder/), supports feeds so you can subscribe your favorite person’s tweets as RSS, which has become harder as the Twitter API was upgraded and the previous version no longer support tweet feed without authentication keys. With this addon, if you are a programmer, you can import the tweet data as JSON to your application by making the WordPress as own Twitter API server.
+
+If you are a theme developer, you can easily customize the template for the tweet outputs. Just copy the existing template and modify the copied files and rename the template name. And there you go! Your own template will be listed in the plugin’s setting page. This way, when the plugin updates, you won’t loose your modifications.
 <h4>Features</h4>
 * **User Timeline** - by specifying the user name, the timeline can be fetched and displayed.
 * **Search Results** - by specifying the search keyword, the results can be fetched and displayed.
 * **Mashups** - you can display the combined results from multiple rule sets of your choosing.
 * **Widget** - tweets can be displayed in the widgets that the plugin provides.
 * **Shortcode** - with the shortcode, the fetched tweets can be displayed in posts and pages.
-* **PHP Code** - with the PHP function, the fetched tweets can be embeded in the templates.
+* **PHP Code** - with the PHP function, the fetched tweets can be embedded in the templates.
 * **Custom Templates** - you can change the design by modifying/creating the template file.
 * **Background Cache Renewal** - it renews the caches in the background so it will prevent the page load from suddenly getting stuck for fetching external sources. 
  
@@ -112,6 +118,7 @@ In the *style.css* file, include the comment area ( with /* */ ) at the top of t
 * **Author URI:** - your web site url.
 * **Description:** - a brief description about the template.
 * **Version:** - the version number of the template.
+
 e.g.
 
 `/*
@@ -124,13 +131,13 @@ e.g.
 
 **Step 3** ( optional )
 
-Include a thumbnail image. Prepare an image with the name screenshot.jpg, screenshot.png, or screenshot.gif, and place the image in the working(copied) folder.
+Include a thumbnail image. Prepare an image with the name screenshot.jpg, screenshot.png, or screenshot.gif, and place the image in the working(copied in step 1) folder.
 
 **Step 4**
 
 Create a folder named **fetch-tweets** in the theme folder. If you use, for instance, Twenty Twelve, the location would be `.../wp-content/themes/twentytwelve/fetch-tweets/`.
 
-Place the working folder( the copied and renamed one ) in there. The plugin will automatically detect it and the template will be listed in the Template page of the admin page.
+Place the working folder( the copied and renamed one in step 1) in there. The plugin will automatically detect it and the template will be listed in the Template page of the admin page.
 
 Optionally, a template can be added via a plugin. If you do so, add the template directory with the <code>fetch_tweets_filter_template_directories</code> filter hook.
 
@@ -151,7 +158,7 @@ function FetchTweets_AddSampleTemplateDirPath( $arrDirPaths ) {
 First you need to create an application to access the Twitter API [here](https://dev.twitter.com/apps). Then create *consumer key*, *consumer secret*, *access token*, and *access token secret*. Without these, you won't be able to fetch tweets.
 
 = How can I create my own template file? =
-See the How to Create Own Template section of the **[Other Notes]**(http://wordpress.org/plugins/responsive-column-widgets/other_notes/) page.
+See the How to Create Own Template section of the **[Other Notes](http://wordpress.org/plugins/fetch-tweets/other_notes/)** page.
 
 == Screenshots ==
 
@@ -161,6 +168,12 @@ See the How to Create Own Template section of the **[Other Notes]**(http://wordp
 4. ***Manage Templates***
 
 == Changelog ==
+
+= 1.1.1 =
+* Tweaked the default template styles.
+* Changed the timing of loading active template's functions files to before the header gets sent.
+* Added the visibility, margins, paddings, and the background color options for the default templates. The users may need to re-configure the height and width of the template option. 
+* Updated the Admin Page Framework library to v2.0.2.
 
 = 1.1.0 - 08/18/2013 = 
 * Added the ability to reset the plugin options.

@@ -6,28 +6,90 @@
  * - $arrOptions : the plugin options saved in the database.
  * */
  
+ /*
+ * For debug - uncomment the following line to see the contents of the arrays.
+ */ 
+// echo "<pre>" . htmlspecialchars( print_r( $arrTweets, true ) ) . "</pre>";	 
+// echo "<pre>" . htmlspecialchars( print_r( $arrArgs, true ) ) . "</pre>";	 
+ 
+// Set the default template option values.
+$arrDefaultTemplateValues = array(
+	'fetch_tweets_template_plain_avatar_size' => 48,
+	'fetch_tweets_template_plain_width' => array( 'size' => 100, 'unit' => '%' ),
+	'fetch_tweets_template_plain_height' => array( 'size' => 400, 'unit' => 'px' ),
+	'fetch_tweets_template_plain_background_color' => 'transparent',
+	'fetch_tweets_template_plain_visibilities' => array(
+		'avatar' => true,
+		'user_name' => true,
+		// 'follow_button' => true,
+		// 'user_description' => true,
+		'time' => true,			
+	),
+	'fetch_tweets_template_plain_margins' => array(
+		'top' => array( 'size' => '', 'unit' => 'px' ),
+		'left' => array( 'size' => '', 'unit' => 'px' ),
+		'bottom' => array( 'size' => '', 'unit' => 'px' ),
+		'right' => array( 'size' => '', 'unit' => 'px' ),
+	),
+	'fetch_tweets_template_plain_paddings' => array(
+		'top' => array( 'size' => '', 'unit' => 'px' ),
+		'left' => array( 'size' => '', 'unit' => 'px' ),
+		'bottom' => array( 'size' => '', 'unit' => 'px' ),
+		'right' => array( 'size' => '', 'unit' => 'px' ),
+	),	
+);
 
 // Retrieve the default template option values.
 if ( ! isset( $arrOptions['fetch_tweets_templates']['fetch_tweets_template_plain'] ) ) {	// for the fist time of calling the template.
-	$arrOptions['fetch_tweets_templates']['fetch_tweets_template_plain']['fetch_tweets_template_plain_avatar_size'] = 48;
-	$arrOptions['fetch_tweets_templates']['fetch_tweets_template_plain']['fetch_tweets_template_plain_width'] = 100;
-	$arrOptions['fetch_tweets_templates']['fetch_tweets_template_plain']['fetch_tweets_template_plain_width_unit'] = '%';	
-	$arrOptions['fetch_tweets_templates']['fetch_tweets_template_plain']['fetch_tweets_template_plain_height'] = 400;
-	$arrOptions['fetch_tweets_templates']['fetch_tweets_template_plain']['fetch_tweets_template_plain_height_unit'] = 'px';	
+	$arrOptions['fetch_tweets_templates']['fetch_tweets_template_plain'] = $arrDefaultTemplateValues;
 	update_option( FetchTweets_Commons::AdminOptionKey, $arrOptions );
 }
-$arrArgs['avatar_size'] = isset( $arrArgs['avatar_size'] ) ? $arrArgs['avatar_size'] : $arrOptions['fetch_tweets_templates']['fetch_tweets_template_plain']['fetch_tweets_template_plain_avatar_size'];
-$arrArgs['width']		= isset( $arrArgs['width'] ) ? $arrArgs['width'] : $arrOptions['fetch_tweets_templates']['fetch_tweets_template_plain']['fetch_tweets_template_plain_width'];
-$arrArgs['width_unit']	= isset( $arrArgs['width_unit'] ) ? $arrArgs['width_unit'] : $arrOptions['fetch_tweets_templates']['fetch_tweets_template_plain']['fetch_tweets_template_plain_width_unit'];
-$arrArgs['height']		= isset( $arrArgs['height'] ) ? $arrArgs['height']: $arrOptions['fetch_tweets_templates']['fetch_tweets_template_plain']['fetch_tweets_template_plain_height'];
-$arrArgs['height_unit']	= isset( $arrArgs['height_unit'] ) ? $arrArgs['height_unit'] : $arrOptions['fetch_tweets_templates']['fetch_tweets_template_plain']['fetch_tweets_template_plain_height_unit'];
+
+// Some new setting items are not be stored in the database, so merge the saved options with the defined default values.
+$arrTemplateOptions = $arrOptions['fetch_tweets_templates']['fetch_tweets_template_plain'] + $arrDefaultTemplateValues;
+
+// Set the template option values.
+$arrArgs['avatar_size']				= isset( $arrArgs['avatar_size'] ) ? $arrArgs['avatar_size'] : $arrTemplateOptions['fetch_tweets_template_plain_avatar_size'];
+$arrArgs['width']					= isset( $arrArgs['width'] ) ? $arrArgs['width'] : $arrTemplateOptions['fetch_tweets_template_plain_width']['size'];
+$arrArgs['width_unit']				= isset( $arrArgs['width_unit'] ) ? $arrArgs['width_unit'] : $arrTemplateOptions['fetch_tweets_template_plain_width']['unit'];
+$arrArgs['height']					= isset( $arrArgs['height'] ) ? $arrArgs['height']: $arrTemplateOptions['fetch_tweets_template_plain_height']['size'];
+$arrArgs['height_unit']				= isset( $arrArgs['height_unit'] ) ? $arrArgs['height_unit'] : $arrTemplateOptions['fetch_tweets_template_plain_height']['unit'];
+$arrArgs['background_color']		= isset( $arrArgs['background_color'] ) ? $arrArgs['background_color'] : $arrTemplateOptions['fetch_tweets_template_plain_background_color'];
+$arrArgs['visibilities']			= isset( $arrArgs['visibilities'] ) ? $arrArgs['visibilities'] : $arrTemplateOptions['fetch_tweets_template_plain_visibilities'];
+$arrArgs['margin_top']				= isset( $arrArgs['margin_top'] ) ? $arrArgs['margin_top'] : $arrTemplateOptions['fetch_tweets_template_plain_margins']['top']['size'];
+$arrArgs['margin_top_unit']			= isset( $arrArgs['margin_top_unit'] ) ? $arrArgs['margin_top_unit'] : $arrTemplateOptions['fetch_tweets_template_plain_margins']['top']['unit'];
+$arrArgs['margin_right']			= isset( $arrArgs['margin_right'] ) ? $arrArgs['margin_right'] : $arrTemplateOptions['fetch_tweets_template_plain_margins']['right']['size'];
+$arrArgs['margin_right_unit']		= isset( $arrArgs['margin_right_unit'] ) ? $arrArgs['margin_right_unit'] : $arrTemplateOptions['fetch_tweets_template_plain_margins']['right']['unit'];
+$arrArgs['margin_bottom']			= isset( $arrArgs['margin_bottom'] ) ? $arrArgs['margin_bottom'] : $arrTemplateOptions['fetch_tweets_template_plain_margins']['bottom']['size'];
+$arrArgs['margin_bottom_unit']		= isset( $arrArgs['margin_bottom_unit'] ) ? $arrArgs['margin_bottom_unit'] : $arrTemplateOptions['fetch_tweets_template_plain_margins']['bottom']['unit'];
+$arrArgs['margin_left']				= isset( $arrArgs['margin_left'] ) ? $arrArgs['margin_left'] : $arrTemplateOptions['fetch_tweets_template_plain_margins']['left']['size'];
+$arrArgs['margin_left_unit']		= isset( $arrArgs['margin_left_unit'] ) ? $arrArgs['margin_left_unit'] : $arrTemplateOptions['fetch_tweets_template_plain_margins']['left']['unit'];
+$arrArgs['padding_top']				= isset( $arrArgs['padding_top'] ) ? $arrArgs['padding_top'] : $arrTemplateOptions['fetch_tweets_template_plain_paddings']['top']['size'];
+$arrArgs['padding_top_unit']		= isset( $arrArgs['padding_top_unit'] ) ? $arrArgs['padding_top_unit'] : $arrTemplateOptions['fetch_tweets_template_plain_paddings']['top']['unit'];
+$arrArgs['padding_right']			= isset( $arrArgs['padding_right'] ) ? $arrArgs['padding_right'] : $arrTemplateOptions['fetch_tweets_template_plain_paddings']['right']['size'];
+$arrArgs['padding_right_unit']		= isset( $arrArgs['padding_right_unit'] ) ? $arrArgs['padding_right_unit'] : $arrTemplateOptions['fetch_tweets_template_plain_paddings']['right']['unit'];
+$arrArgs['padding_bottom']			= isset( $arrArgs['padding_bottom'] ) ? $arrArgs['padding_bottom'] : $arrTemplateOptions['fetch_tweets_template_plain_paddings']['bottom']['size'];
+$arrArgs['padding_bottom_unit']		= isset( $arrArgs['padding_bottom_unit'] ) ? $arrArgs['padding_bottom_unit'] : $arrTemplateOptions['fetch_tweets_template_plain_paddings']['bottom']['unit'];
+$arrArgs['padding_left']			= isset( $arrArgs['padding_left'] ) ? $arrArgs['padding_left'] : $arrTemplateOptions['fetch_tweets_template_plain_paddings']['left']['size'];
+$arrArgs['padding_left_unit']		= isset( $arrArgs['padding_left_unit'] ) ? $arrArgs['padding_left_unit'] : $arrTemplateOptions['fetch_tweets_template_plain_paddings']['left']['unit'];
 $strWidth = $arrArgs['width'] . $arrArgs['width_unit'];
 $strHeight = $arrArgs['height'] . $arrArgs['height_unit'];
+$strMarginTop = empty( $arrArgs['margin_top'] ) ? 0 : $arrArgs['margin_top'] . $arrArgs['margin_top_unit'];
+$strMarginRight = empty( $arrArgs['margin_right'] ) ? 0 : $arrArgs['margin_right'] . $arrArgs['margin_right_unit'];
+$strMarginBottom = empty( $arrArgs['margin_bottom'] ) ? 0 : $arrArgs['margin_bottom'] . $arrArgs['margin_bottom_unit'];
+$strMarginLeft = empty( $arrArgs['margin_left'] ) ? 0 : $arrArgs['margin_left'] . $arrArgs['margin_left_unit'];
+$strPaddingTop = empty( $arrArgs['padding_top'] ) ? 0 : $arrArgs['padding_top'] . $arrArgs['padding_top_unit'];
+$strPaddingRight = empty( $arrArgs['padding_right'] ) ? 0 : $arrArgs['padding_right'] . $arrArgs['padding_right_unit'];
+$strPaddingBottom = empty( $arrArgs['padding_bottom'] ) ? 0 : $arrArgs['padding_bottom'] . $arrArgs['padding_bottom_unit'];
+$strPaddingLeft = empty( $arrArgs['padding_left'] ) ? 0 : $arrArgs['padding_left'] . $arrArgs['padding_left_unit'];
+// $strMargins = "{$strMarginTop} {$strMarginRight} {$strMarginBottom} {$strMarginLeft}";
+// $strPaddings = "{$strPaddingTop} {$strPaddingRight} {$strPaddingBottom} {$strPaddingLeft}";
+$strMargins = ( $strMarginTop ? "margin-top: {$strMarginTop}; " : "" ) . ( $strMarginRight ? "margin-right: {$strMarginRight}; " : "" ) . ( $strMarginBottom ? "margin-bottom: {$strMarginBottom}; " : "" ) . ( $strMarginLeft ? "margin-left: {$strMarginLeft}; " : "" );
+$strPaddings = ( $strPaddingTop ? "padding-top: {$strPaddingTop}; " : "" ) . ( $strPaddingRight ? "padding-right: {$strPaddingRight}; " : "" ) . ( $strPaddingBottom ? "padding-bottom: {$strPaddingBottom}; " : "" ) . ( $strPaddingLeft ? "padding-left: {$strPaddingLeft}; " : "" );
 
-// echo "<pre>" . htmlspecialchars( print_r( $arrArgs, true ) ) . "</pre>";	 
 ?>
 
-<div class='fetch-tweets' style="max-width: <?php echo $strWidth; ?>; max-height: <?php echo $strHeight; ?>;">
+<div class='fetch-tweets' style="max-width: <?php echo $strWidth; ?>; max-height: <?php echo $strHeight; ?>; background-color: <?php echo $arrArgs['background_color']; ?>; <?php echo $strMargins; ?> <?php echo $strPaddings; ?>">
 
 	<?php foreach ( $arrTweets as $arrDetail ) : ?>
 	<?php 
@@ -40,14 +102,18 @@ $strHeight = $arrArgs['height'] . $arrArgs['height_unit'];
 		
 	?>
     <div class='fetch-tweets-item <?php echo $strRetweetClassProperty; ?>' >
-		<?php if ( $arrArgs['avatar_size'] > 0 ) : ?>
+
+		<?php if ( $arrArgs['avatar_size'] > 0  && $arrArgs['visibilities']['avatar'] ) : ?>
 		<div class='fetch-tweets-profile-image' style="width:<?php echo $arrArgs['avatar_size'];?>px;">
 			<a href='https://twitter.com/<?php echo $arrTweet['user']['screen_name']; ?>' target='_blank'>
 				<img src='<?php echo $arrTweet['user']['profile_image_url']; ?>' />
 			</a>
 		</div>
 		<?php endif; ?>
+		
 		<div class='fetch-tweets-heading'>
+		
+			<?php if ( $arrArgs['visibilities']['user_name'] ) : ?>
 			<span class='fetch-tweets-user-name'>
 				<strong>
 					<a href='https://twitter.com/<?php echo $arrTweet['user']['screen_name']; ?>' target='_blank'>
@@ -55,11 +121,16 @@ $strHeight = $arrArgs['height'] . $arrArgs['height_unit'];
 					</a>
 				</strong>
 			</span>
+			<?php endif; ?>
+			
+			<?php if ( $arrArgs['visibilities']['time'] ) : ?>
 			<span class='fetch-tweets-tweet-created-at'>
 				<a href='https://twitter.com/<?php echo $arrTweet['user']['screen_name']; ?>/status/<?php echo $arrTweet['id_str'] ;?>' target='_blank'>
 					<?php echo FetchTweets_humanTiming( $arrTweet['created_at'] ) . ' ' . __( 'ago', 'fetch-tweets' ); ?>
 				</a>			
 			</span>
+			<?php endif; ?>
+			
 		</div>
 		<div class='fetch-tweets-body'>
 			<p class='fetch-tweets-text'><?php echo trim( $arrTweet['text'] ); ?>				

@@ -1,9 +1,13 @@
 <?php
-/*
+/**
+ * Fetches and displays tweets.
  * 
- * @filters fetch_tweets_template_path - specifies the template path.
- * @actions: fetch_tweets_action_transient_renewal - for WP Cron single event.
- * */
+ * @package			Fetch Tweets
+ * @subpackage		
+ * @copyright		Michael Uno
+ * @filters			fetch_tweets_template_path - specifies the template path.
+ * @actions			fetch_tweets_action_transient_renewal - for WP Cron single event.
+ */
 abstract class FetchTweets_Fetch_ {
 
 	protected $arrExpiredTransientsRequestURIs = array(); // stores the expired transients' request URIs
@@ -151,7 +155,10 @@ abstract class FetchTweets_Fetch_ {
 		$arrArgs = ( array ) $arrArgs + $this->oOption->arrStructure_DefaultParams + $this->oOption->arrStructure_DefaultTemplateOptions;
 		$arrArgs['id'] = isset( $arrArgs['ids'] ) && ! empty( $arrArgs['ids'] ) ? $arrArgs['ids'] : $arrArgs['id'];	// backward compatibility
 		$arrArgs['id'] = is_array( $arrArgs['id'] ) ? $arrArgs['id'] : preg_split( "/[,]\s*/", trim( ( string ) $arrArgs['id'] ), 0, PREG_SPLIT_NO_EMPTY );
+
+// Debug
 // echo "<pre>" . htmlspecialchars( print_r( $arrArgs, true ) ) . "</pre>";			
+
 		$arrTweets = $this->getTweetsAsArray( $arrArgs );
 		if ( empty( $arrTweets ) || ! is_array( $arrTweets ) ) {
 			_e( 'No result could be fetched.', 'fetch-tweets' );
@@ -185,21 +192,7 @@ abstract class FetchTweets_Fetch_ {
 		
 		// Retrieve the template slug we are going to use.
 		$arrArgs['template'] = $this->getTemplateSlug( $arrArgs['id'], $arrArgs['template'] );
-
-// unset( $this->oOption->arrOptions['arrTemplates']['679e5a3ebc6bf1a3a408d90ed257ba80'] );	
-// $this->oOption->saveOptions();
-// return;
 		
-		// Include functions.php for the template.
-		$strFunctionsPath = isset( $this->oOption->arrOptions['arrTemplates'][ $arrArgs['template'] ]['strFunctionsPath'] ) && file_exists( $this->oOption->arrOptions['arrTemplates'][ $arrArgs['template'] ]['strFunctionsPath'] )
-			? $this->oOption->arrOptions['arrTemplates'][ $arrArgs['template'] ]['strFunctionsPath']
-			: (	file_exists( $this->oOption->arrOptions['arrTemplates'][ $arrArgs['template'] ]['strDirPath'] . '/functions.php' )
-				? $this->oOption->arrOptions['arrTemplates'][ $arrArgs['template'] ]['strDirPath'] . '/functions.php'
-				: null
-			);
-		if ( $strFunctionsPath )
-			include_once( $strFunctionsPath );
-	
 		// Call the template. ( template.php )
 		$strTemplatePath = apply_filters( "fetch_tweets_template_path", $this->getTemplatePath( $arrArgs['id'], $arrArgs['template'] ), $arrArgs );
 		include( $strTemplatePath );
@@ -230,11 +223,12 @@ abstract class FetchTweets_Fetch_ {
 	}
 	protected function checkNecessaryFileExists( $strTemplateSlug ) {
 		
-		// Check if the necessary file is present. Oterwise, return the default template slug.
+		// Check if the necessary file is present. Otherwise, return the default template slug.
 		if ( 
 			( ! empty( $strTemplateSlug ) || $strTemplateSlug != '' ) 
 			&& ( 
-				! file_exists( $this->oOption->arrOptions['arrTemplates'][ $strTemplateSlug ]['strDirPath'] . '/template.php' )
+				! isset( $this->oOption->arrOptions['arrTemplates'][ $strTemplateSlug ] )	// this happens when the options have been reset.
+				|| ! file_exists( $this->oOption->arrOptions['arrTemplates'][ $strTemplateSlug ]['strDirPath'] . '/template.php' )
 				|| ! file_exists( $this->oOption->arrOptions['arrTemplates'][ $strTemplateSlug ]['strDirPath'] . '/style.css' )
 			)
 		)

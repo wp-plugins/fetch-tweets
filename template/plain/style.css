@@ -18,7 +18,8 @@ Text Domain: fetch-tweets
 }
 .fetch-tweets-item {
 	display: inline-block; 
-	margin-bottom: 0.5em;	
+	padding-right: 0.5em;
+	padding-bottom: 0.5em;	
 	width: 100%;
 }
 .fetch-tweets-retweet {

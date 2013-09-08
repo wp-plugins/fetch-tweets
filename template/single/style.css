@@ -15,7 +15,6 @@ Text Domain: fetch-tweets
 	overflow-y: auto;	
 	overflow-x: hidden;
 	padding-right: 0.5em;
-
 }
 .fetch-tweets-single-follow-button {
 	float: right;
@@ -49,6 +48,7 @@ div.fetch-tweets-single-heading iframe {
 .fetch-tweets-single-heading {
 	vertical-align: text-top;
 	line-height: 1em;
+	margin-right: 1em;
 }
 .fetch-tweets-single-profile-image {
 	display: table-column;
@@ -81,6 +81,7 @@ div.fetch-tweets-single-heading iframe {
 .fetch-tweets-single-tweet-created-at a {
 }
 .fetch-tweets-single-body {
+	margin-right: 1em;
 	clear: right;
 }
 div.fetch-tweets-single-body p.fetch-tweets-single-text {
