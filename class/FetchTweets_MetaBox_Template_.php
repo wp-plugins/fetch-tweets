@@ -1,5 +1,5 @@
 <?php
-abstract class FetchTweets_MetaBox_Template_ extends AdminPageFramework_MetaBox {
+abstract class FetchTweets_MetaBox_Template_ extends FetchTweets_AdminPageFramework_MetaBox {
 
 	public function setUp() {
 		
