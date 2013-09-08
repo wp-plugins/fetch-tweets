@@ -10,13 +10,15 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Fetches and displays tweets from twitter.com with the Twitter API.
 
 == Description ==
-It enables to display tweets anywhere you want such as in the sidebar, posts, and pages. Not only you can show your own tweets but also the mashed up results of multple user's timelines.
+It enables to display tweets anywhere you want such as in the sidebar, posts, and pages. It does not rely on JavaScript so the tweets will be displayed for visitors disabling JavaScript in their browsers. Not only can you show your own tweets but also the mashed up results of multple user's timelines.
 
-Not only it is easy to set up for WordPress beginners but also it allows developers to write additional add-ons and templates. 
+It is easy to set up for WordPress beginners. Plus, it allows developers to write additional add-ons and templates.
 
 One of the extensions, [Feeder](http://en.michaeluno.jp/fetch-tweets/extensions/feeder/), supports feeds so you can subscribe your favorite person’s tweets as RSS, which has become harder as the Twitter API was upgraded and the previous version no longer support tweet feed without authentication keys. With this addon, if you are a programmer, you can import the tweet data as JSON to your application by making the WordPress as own Twitter API server.
 
 If you are a theme developer, you can easily customize the template for the tweet outputs. Just copy the existing template and modify the copied files and rename the template name. And there you go! Your own template will be listed in the plugin’s setting page. This way, when the plugin updates, you won’t loose your modifications.
+
+
 <h4>Features</h4>
 * **User Timeline** - by specifying the user name, the timeline can be fetched and displayed.
 * **Search Results** - by specifying the search keyword, the results can be fetched and displayed.
