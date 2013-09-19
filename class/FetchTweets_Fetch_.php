@@ -27,6 +27,9 @@ abstract class FetchTweets_Fetch_ {
 		$this->oEmbed = new FetchTweets_oEmbed;
 		$this->oBase64 = new FetchTweets_Base64;	
 			
+		// Properties
+		$this->fIsSSL = is_ssl();
+			
 		// Schedule the transient update task.
 		add_action( 'shutdown', array( $this, 'updateCacheItems' ) );
 		
@@ -52,10 +55,11 @@ abstract class FetchTweets_Fetch_ {
 				? $arrArgs['tag']
 				: null );	// backward compatibility
 		$arrArgs['tag'] = is_array( $arrArgs['tag'] ) ? $arrArgs['tag'] : preg_split( "/[,]\s*/", trim( ( string ) $arrArgs['tag'] ), 0, PREG_SPLIT_NO_EMPTY );
+		$arrArgs = ( array ) $arrArgs + $this->oOption->arrOptions['fetch_tweets_settings']['default_values'] + $this->oOption->arrStructure_DefaultParams + $this->oOption->arrStructure_DefaultTemplateOptions;
 		$arrArgs['id'] = isset( $arrArgs['tag_field_type'] ) && in_array( strtolower( $arrArgs['tag_field_type'] ), array( 'id', 'slug' ) )
 			? $this->getPostIDsByTag( $arrArgs['tag'], $arrArgs['tag_field_type'], trim( $arrArgs['operator'] ) )
 			: $this->getPostIDsByTagName( $arrArgs['tag'], trim( $arrArgs['operator'] ) );
-	
+
 		$this->drawTweets( $arrArgs );
 			
 	}
@@ -267,7 +271,7 @@ abstract class FetchTweets_Fetch_ {
 	public function getTweetsAsArray( $arrArgs ) {	// this is public as the feed extension uses it.
 	
 		if ( isset( $arrArgs['q'] ) )	// custom call by search keyword
-			return $this->getTweetsBySearch( $arrArgs['q'], $arrArgs['count'], $arrArgs['lang'], $arrArgs['include_rts'], $arrArgs['result_type'], $arrArgs['cache'] );
+			return $this->getTweetsBySearch( $arrArgs['q'], $arrArgs['count'], $arrArgs['lang'], $arrArgs['result_type'], $arrArgs['cache'] );
 		else if ( isset( $arrArgs['screen_name'] ) )	// custom call by screen name
 			return $this->getTweetsByScreenName( $arrArgs['screen_name'], $arrArgs['count'], $arrArgs['include_rts'], $arrArgs['exclude_replies'], $arrArgs['cache'] );
 		else if ( isset( $arrArgs['list_id'] ) ) 	
@@ -285,13 +289,13 @@ abstract class FetchTweets_Fetch_ {
 			$intCount = get_post_meta( $intPostID, 'item_count', true );
 			$fIncludeRetweets = get_post_meta( $intPostID, 'include_retweets', true );
 			$intCacheDuration = get_post_meta( $intPostID, 'cache_duration', true );
-			
+
 			switch ( $strTweetType ) {
 				case 'search':
 					$strKeyword = get_post_meta( $intPostID, 'search_keyword', true );			
 					$strResultType = get_post_meta( $intPostID, 'result_type', true );	
 					$strLang = get_post_meta( $intPostID, 'language', true );				
-					$arrRetrievedTweets = $this->getTweetsBySearch( $strKeyword, $intCount, $strLang, $fIncludeRetweets, $strResultType, $intCacheDuration );
+					$arrRetrievedTweets = $this->getTweetsBySearch( $strKeyword, $intCount, $strLang, $strResultType, $intCacheDuration );
 					break;
 				case 'list':
 					$intListID = get_post_meta( $intPostID, 'list_id', true );						
@@ -351,14 +355,18 @@ abstract class FetchTweets_Fetch_ {
 		);
 				
 		// Make the urls in the text hyper-links.
-		$arrTweet['text'] = $this->makeClickableLinks( $arrTweet['text'], $arrTweet['entities']['urls'], $fExternalMedia );
+		$arrTweet['text'] = $this->makeClickableLinks( $arrTweet['text'], $arrTweet['entities']['urls'] );
 		$arrTweet['text'] = $this->makeClickableMedia( $arrTweet['text'], $arrTweet['entities']['media'] );	
 		$arrTweet['text'] = $this->makeClickableHashTags( $arrTweet['text'], $arrTweet['entities']['hashtags'] );	
 		$arrTweet['text'] = $this->makeClickableUsers( $arrTweet['text'], $arrTweet['entities']['user_mentions'] );
 		
-		// Insert twitter media files at the bottom of the tweet. For external media files, the above makeClickableLinks() method will take care of it.
+		// Insert external media files at the bottom of the tweet.
+		if ( $fExternalMedia )
+			$arrTweet['text'] .= $this->getExternalMedia( $arrTweet['entities']['urls'] );
+			
+		// Insert twitter media files at the bottom of the tweet. 
 		if ( $fTwitterMedia ) 
-			$arrTweet['text'] = $this->appendTwitterMedia( $arrTweet['text'], $arrTweet['entities']['media'] );
+			$arrTweet['text'] .= $this->getTwitterMedia( $arrTweet['entities']['media'] );
 					
 		// Adjust the profile image size.
 		$arrTweet['user']['profile_image_url'] = $this->adjustProfileImageSize( $arrTweet['user']['profile_image_url'], $intProfileImageSize );
@@ -391,17 +399,22 @@ abstract class FetchTweets_Fetch_ {
 		return ( int ) $a['created_at'] - ( int ) $b['created_at'];
 	}		
 	
-	protected function getTweetsBySearch( $strKeyword, $intCount, $strLang='en', $fIncludeRetweets=false, $strResultType='mixed', $intCacheDuration=600 ) {
+	/**
+	 * Fetches tweets by search keyword.
+	 * 
+	 * @see			https://dev.twitter.com/docs/api/1.1/get/search/tweets
+	 */ 
+	protected function getTweetsBySearch( $strKeyword, $intCount, $strLang='en', $strResultType='mixed', $intCacheDuration=600 ) {
 
 		// Compose the request URI.
 		$fIncludeEntities = true;
+
 		$intCount = ( ( int ) $intCount ) > 100 ? 100 : $intCount;
 		$strRequestURI = "https://api.twitter.com/1.1/search/tweets.json"
 			. "?q=" . urlencode_deep( $strKeyword )
 			. "&result_type={$strResultType}"	//  mixed, recent, popular
 			. "&count={$intCount}"
 			. ( $strLang == 'none' ? "" : "&lang={$strLang}" )
-			. "&include_rts=" . ( $fIncludeRetweets ? 1 : 0 )
 			. "&include_entities=" . ( $fIncludeEntities ? 1 : 0 );
 						
 		return $this->doAPIRequest_Get( $strRequestURI, 'statuses', $intCacheDuration );
@@ -618,7 +631,7 @@ abstract class FetchTweets_Fetch_ {
 			
 	}
 	
-	protected function makeClickableLinks( $strText, $arrURLs, $fExternalMedia=true ) {
+	protected function makeClickableLinks( $strText, $arrURLs ) {
 				
 		// There are urls in the tweet text. So they need to be converted into hyper links.
 		foreach( ( array ) $arrURLs as $arrURLDetails ) {
@@ -628,17 +641,13 @@ abstract class FetchTweets_Fetch_ {
 				'expanded_url' => null,
 				'display_url' => null,
 			);
-			
-			
-			$strEmbeddedElement = $fExternalMedia ? $this->oEmbed->get_html( $arrURLDetails['expanded_url'], array( 'discover' => false, ) ) : '';
-				
+
 			$strText = str_replace( 
 				$arrURLDetails['url'],	// needle 
-				$strEmbeddedElement
-					? "<div class='fetch-tweets-external-media'>{$strEmbeddedElement}</div>"
-					: "<a href='{$arrURLDetails['expanded_url']}' target='_blank' rel='nofollow'>{$arrURLDetails['display_url']}</a>", 	// replace
+				"<a href='{$arrURLDetails['expanded_url']}' target='_blank' rel='nofollow'>{$arrURLDetails['display_url']}</a>", 	// replace
 				$strText 	// haystack
 			);	
+			
 		}
 		return $strText;
 		
@@ -747,12 +756,44 @@ abstract class FetchTweets_Fetch_ {
 	}
 	
 	/**
-	 * Appends the Twitter media files to the tweet text.
+	 * Returns the external media files to the tweet text.
+	 * 
+	 * @remark			The supported providers depend on the WordPress oEmbed class. It has a filter for the providers so it can be customized.
+	 * @since			1.2.0
+	 */ 
+	protected function getExternalMedia( $arrURLs ) {
+
+		// There are urls in the tweet text. So they need to be converted into hyper links.
+		$arrOutput = array();
+		foreach( ( array ) $arrURLs as $arrURLDetails ) {
+			
+			$arrURLDetails = $arrURLDetails + array(	// avoid undefined index warnings.
+				'url' => null,
+				'expanded_url' => null,
+				'display_url' => null,
+			);
+
+			if ( empty( $arrURLDetails['expanded_url'] ) ) continue;
+			
+			$strEmbed = $this->oEmbed->get_html( $arrURLDetails['expanded_url'], array( 'discover' => false, ) );
+			if ( empty( $strEmbed ) ) continue;
+			
+			$arrOutput[] = "<div class='fetch-tweets-external-media'>"
+				. $strEmbed
+				. "</div>";
+
+		}
+		return implode( PHP_EOL, $arrOutput );
+	
+	}
+	
+	/**
+	 * Returns the Twitter media files to the tweet text.
 	 * 
 	 * @remark			Currently only photos are supported.
 	 * @since			1.2.0
 	 */ 
-	protected function appendTwitterMedia( $strTweet, $arrMedia ) {
+	protected function getTwitterMedia( $arrMedia ) {
 		
 		$arrOutput = array();
 		foreach( ( array ) $arrMedia as $arrMedium ) {
@@ -761,16 +802,20 @@ abstract class FetchTweets_Fetch_ {
 			$arrMedium = $arrMedium + array(
 				'type' => null,
 				'expanded_url' => null,
-				'media_url' => null,			
+				'media_url' => null,		
+				'media_url_https' => null,				
 			);
 			
 			if ( $arrMedium['type'] != 'photo' || ! $arrMedium['media_url'] ) continue;
 			
-			$arrOutput[] = "<div class='fetch-tweets-media-photo'><a href='{$arrMedium['expanded_url']}'><img src='{$arrMedium['media_url']}'></a></div>";
+			$arrOutput[] = "<div class='fetch-tweets-media-photo'>"
+					. "<a href='{$arrMedium['expanded_url']}'>"
+						. "<img src='" . ( $this->fIsSSL ? $arrMedium['media_url_https'] : $arrMedium['media_url'] ) . "'>"
+					. "</a>"
+				. "</div>";
 		
 		}
-		return $strTweet 
-			. ( empty( $arrOutput ) 
+		return ( empty( $arrOutput ) 
 				? ''
 				: "<div class='fetch-tweets-media'>" 
 					. implode( PHP_EOL, $arrOutput ) 

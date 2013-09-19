@@ -18,13 +18,7 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 		}			
 
 		// Common fields among the other field types including search, screen_name, and list.
-		$this->addSettingFields(			
-			array(
-				'strFieldID'		=> 'include_retweets',
-				'strTitle'			=> __( 'Include Retweets', 'fetch-tweets' ),
-				'vLabel'			=> __( 'Retweets will be included.', 'fetch-tweets' ),
-				'strType'			=> 'checkbox',
-			),							
+		$this->addSettingFields(									
 			array(
 				'strFieldID'		=> 'cache_duration',
 				'strTitle'			=> __( 'Cache Duration', 'fetch-tweets' ),
@@ -100,6 +94,12 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 			array(	// since 1.2.0
 				'strFieldID'		=> 'list_id',			
 				'strType'			=> 'hidden',
+			),			
+			array(
+				'strFieldID'		=> 'include_retweets',
+				'strTitle'			=> __( 'Include Retweets', 'fetch-tweets' ),
+				'vLabel'			=> __( 'Retweets will be included.', 'fetch-tweets' ),
+				'strType'			=> 'checkbox',
 			),				
 			array()
 		);	
@@ -177,7 +177,11 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 			array(	// since 1.2.0
 				'strFieldID'		=> 'list_id',			
 				'strType'			=> 'hidden',
-			),				
+			),		
+			array(
+				'strFieldID'		=> 'include_retweets',
+				'strType'			=> 'hidden',
+			),			
 			array()
 		);
 		
@@ -236,6 +240,12 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 				'strFieldID'		=> 'exclude_replies',
 				'strType'			=> 'hidden',
 			),
+			array(
+				'strFieldID'		=> 'include_retweets',
+				'strTitle'			=> __( 'Include Retweets', 'fetch-tweets' ),
+				'vLabel'			=> __( 'Retweets will be included.', 'fetch-tweets' ),
+				'strType'			=> 'checkbox',
+			),				
 			array()
 		);
 				
