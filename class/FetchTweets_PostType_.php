@@ -58,7 +58,7 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 			: isset( $_GET['post_type'] ) ? $_GET['post_type'] : '';
 		
 		// For admin
-		if ( $strCurrentPostTypeInAdmin == $this->strPostType && is_admin() ) {
+		if ( $strCurrentPostTypeInAdmin == $this->oProps->strPostType && is_admin() ) {
 			
 			add_filter( 'enter_title_here', array( $this, 'changeTitleMetaBoxFieldLabel' ) );	// add_filter( 'gettext', array( $this, 'changeTitleMetaBoxFieldLabel' ) );
 			add_action( 'edit_form_after_title', array( $this, 'addTextAfterTitle' ) );	
@@ -97,9 +97,11 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 		// Used for the post type single page that functions as preview the result.
 	
 		global $post;
-		if ( ! isset( $post->post_type ) || $post->post_type != $this->strPostType ) return $strContent;
+		if ( ! isset( $post->post_type ) || $post->post_type != $this->oProps->strPostType ) return $strContent;
 
-		fetchTweets( array( 'id' => $post->ID ) );
+		$intPostID = $post->ID;
+		$intCount = get_post_meta( $intPostID, 'item_count', true );
+		fetchTweets( array( 'id' => $intPostID, 'count' => $intCount ) );	// this draws the result.
 		return $strContent;	// should be an empty string.
 	
 	}
@@ -121,7 +123,7 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 		// return array_merge( $arrColumnHeader, $this->arrColumnHeaders );
 	}
 	public function setSortableColumns( $arrColumns ) {
-		return array_merge( $arrColumns, $this->arrColumnSortable );		
+		return array_merge( $arrColumns, $this->oProps->arrColumnSortable );		
 	}	
 	
 	/*
@@ -158,6 +160,8 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 				return __( 'Search', 'fetch-tweets' );
 			case 'screen_name':
 				return __( 'User Name', 'fetch-tweets' );
+			case 'list':
+				return __( 'List', 'fetch-tweets' );
 		}
 		
 	}

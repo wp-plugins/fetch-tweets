@@ -4,7 +4,7 @@ Template URI: http://en.michaeluno.jp
 Author: Michael Uno
 Author URI: http://en.michaeluno.jp
 Description: Displays tweets for a single account.
-Version: 1.0.0
+Version: 1.2.0
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: single
@@ -14,11 +14,13 @@ Text Domain: fetch-tweets
 .fetch-tweets-single-container {
 	overflow-y: auto;	
 	overflow-x: hidden;
-	padding-right: 0.5em;
+}
+.fetch-tweets-single-user-profile {
+
 }
 .fetch-tweets-single-follow-button {
 	float: right;
-	margin-bottom: 0.5em;	
+	margin: 0 0 0 0.5em;
 	font-size: 92%;
 }
 p.fetch-tweets-single-user-description {
@@ -27,37 +29,37 @@ p.fetch-tweets-single-user-description {
 div.fetch-tweets-single-heading p.fetch-tweets-single-user-description {
 	font-size: 92%;
 	line-height: 110%;
-	margin-top: 0.25em;
-	margin-bottom: 0.25em;
+	margin: 0.25em 0;
+	display: table-cell;
 }
 div.fetch-tweets-single-heading iframe {
 	margin-bottom: 0;
 }
 .fetch-tweets-single-item {
-	display: inline-block; 
+	display: inline-block;
 	border-width: 1px 0 0 0;
 	border-style: solid;
 	border-color: #E7E7E7;
 	margin-top: 0.5em;
 	margin-bottom: 0.5em;	
 	padding-top: 0.5em;
-	width: 100%;
+	width: 98%;
 }
 .fetch-tweets-single-retweet {
 }
 .fetch-tweets-single-heading {
 	vertical-align: text-top;
 	line-height: 1em;
-	margin-right: 1em;
+	width: 98%;
+
 }
 .fetch-tweets-single-profile-image {
 	display: table-column;
 	float: left;
 	clear: left;
-	margin: 0 1em 0.25em 0;
 }
 .fetch-tweets-single-user-name {
-	margin-bottom: 0.3em;
+	margin: 0 0 0.5em;
 	display: inline-block; 
 
 }
@@ -81,7 +83,6 @@ div.fetch-tweets-single-heading iframe {
 .fetch-tweets-single-tweet-created-at a {
 }
 .fetch-tweets-single-body {
-	margin-right: 1em;
 	clear: right;
 }
 div.fetch-tweets-single-body p.fetch-tweets-single-text {
@@ -91,4 +92,11 @@ div.fetch-tweets-single-body p.fetch-tweets-single-text {
 .fetch-tweets-single-retweet-credit {
 }
 .fetch-tweets-single-retweet-credit a {
+}
+.fetch-tweets-external-media {
+	clear: both;
+}
+.fetch-tweets-single-container .fetch-tweets-media-photo {
+}
+.fetch-tweets-single-container .fetch-tweets-media {
 }

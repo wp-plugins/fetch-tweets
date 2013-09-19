@@ -53,6 +53,17 @@ class FetchTweets_Template_Settings_Single extends FetchTweets_Template_Settings
 			'vSize' => 10,
 			'vDefault' => 48, 
 		);				
+		$arrFields[] = array(
+			'strFieldID' => 'fetch_tweets_template_single_avatar_position',
+			'strSectionID' => 'fetch_tweets_template_single',
+			'strTitle' => __( 'Profile Image Position', 'fetch-tweets' ),
+			'strType' => 'radio',
+			'vLabel' => array(
+				'left' => __( 'Left', 'fetch-tweets' ),
+				'right' => __( 'Right', 'fetch-tweets' ),
+			),
+			'vDefault' => 'left', 
+		);			
 		$arrFields[] = array(	// width
 			'strFieldID' => 'fetch_tweets_template_single_width',
 			'strSectionID' => 'fetch_tweets_template_single',

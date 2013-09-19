@@ -4,7 +4,7 @@ Template URI: http://en.michaeluno.jp
 Author: Michael Uno
 Author URI: http://en.michaeluno.jp
 Description: Displays tweets for multiple accounts. 
-Version: 1.0.0
+Version: 1.2.0
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: default
@@ -14,25 +14,27 @@ Text Domain: fetch-tweets
 .fetch-tweets {
 	overflow-y: auto;	
 	overflow-x: hidden;
-	padding-right: 0.5em;	
 }
 .fetch-tweets-item {
 	display: inline-block; 
-	padding-right: 0.5em;
 	padding-bottom: 0.5em;	
 	width: 100%;
 }
 .fetch-tweets-retweet {
+}
+.fetch-tweets-main {
+	padding: 0 0.8em;
+	/* display: table-cell; */
 }
 .fetch-tweets-heading {
 	vertical-align: text-top;
 	line-height: 1em;
 }
 .fetch-tweets-profile-image {
-	display: table-column;
-	float: left;
-	clear: left;
-	margin: 0 8px 0 0;
+	/* display: table-column; */
+	/* float: left; */
+	/* clear: left; */
+	margin: 0 0 0 0;
 }
 .fetch-tweets-user-name {
 	margin-bottom: 0.3em;
@@ -53,7 +55,7 @@ Text Domain: fetch-tweets
 	text-decoration: none;
 }
 .fetch-tweets-body {
-	clear: right;
+	/* clear: right; */
 }
 .fetch-tweets-text {
 	margin-bottom: 0;
@@ -64,4 +66,13 @@ Text Domain: fetch-tweets
 }
 .fetch-tweets-retweet-credit a {
 	text-decoration: none;
+}
+.fetch-tweets-external-media {
+	clear: both;
+}
+.fetch-tweets-media-photo {
+}
+.fetch-tweets .fetch-tweets-media-photo {
+}
+.fetch-tweets .fetch-tweets-media {
 }

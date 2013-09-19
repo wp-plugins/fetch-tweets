@@ -52,6 +52,17 @@ class FetchTweets_Template_Settings_Plain extends FetchTweets_Template_Settings_
 			'strType' => 'number',
 			'vSize' => 10,
 			'vDefault' => 48, 
+		);	
+		$arrFields[] = array(
+			'strFieldID' => 'fetch_tweets_template_plain_avatar_position',
+			'strSectionID' => 'fetch_tweets_template_plain',
+			'strTitle' => __( 'Profile Image Position', 'fetch-tweets' ),
+			'strType' => 'radio',
+			'vLabel' => array(
+				'left' => __( 'Left', 'fetch-tweets' ),
+				'right' => __( 'Right', 'fetch-tweets' ),
+			),
+			'vDefault' => 'left', 
 		);				
 		$arrFields[] = array(	// width
 			'strFieldID' => 'fetch_tweets_template_plain_width',

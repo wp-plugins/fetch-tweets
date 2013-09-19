@@ -9,6 +9,8 @@ abstract class FetchTweets_Option_ {
 				'access_token' => '',
 				'access_secret' => '',
 			),
+			'default_values' => array(),
+			'capabilities' => array(),
 		),
 		'arrTemplates' => array(),	// stores template info arrays.
 		'arrDefaultTemplate' => array(),	// stores the default template info.
@@ -34,6 +36,11 @@ abstract class FetchTweets_Option_ {
 		'cache'				=> 1200,	// Cache lifespan in seconds.
 		'lang'				=> null,	// 
 		'result_type'		=> 'mixed',	// 
+		
+		// since 1.2.0
+		'list_id'			=> null,	
+		'twitter_media'		=> true,
+		'external_media'	=> true,
 	);
 	public $arrStructure_DefaultTemplateOptions = array(
 		// leave them null and let each template define default values.

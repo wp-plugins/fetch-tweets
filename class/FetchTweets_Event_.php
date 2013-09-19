@@ -76,32 +76,13 @@ abstract class FetchTweets_Event_ {
 		
 	}
 	
-	public function renewTransients( $arrRequestURIs ) {
+	public function renewTransients( $arrRequestURI ) {
 
-// $oDebug	= new FetchTweets_Debug;
-// $oDebug->getArray( $arrRequestURIs, dirname( __FILE__ ) . '/request_uris.txt' );
+// Debug
+// FetchTweets_Debug::getArray( $arrRequestURI, dirname( __FILE__ ) . '/request_uris.txt' );
 
 		$oFetch = new FetchTweets_Fetch;
-		foreach( ( array ) $arrRequestURIs as $arrRewuestURI ) {
-			
-			// $arrRewuestURI['URL'] 
-			// $arrRewuestURI['type'] - screen_name or search
-			
-			$arrTweets = ( array ) $oFetch->oTwitterOAuth->get( $arrRewuestURI['URI'] );
-			
-			// If there is a problem, skip.
-			if ( $arrRewuestURI['type'] == 'search' && ! isset( $arrTweets['statuses'] ) ) continue;
-			
-			$arrTweets = $arrRewuestURI['type'] == 'search' ? $arrTweets['statuses'] : $arrTweets;
-			if ( empty( $arrTweets ) ) continue;
-			
-			// Save the cache
-			set_transient(
-				'FTWS_' . md5( $arrRewuestURI['URI'] ), 
-				array( 'mod' => time(), 'data' => $arrTweets ), 
-				9999999999 // this barely expires by itself. $intCacheDuration 
-			);			
-			
-		}
+		$oFetch->setAPIGETRequestCache( $arrRequestURI['URI'], $arrRequestURI['key'] );
+
 	}
 }

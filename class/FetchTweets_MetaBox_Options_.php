@@ -8,11 +8,16 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 				$this->addFieldsForTweetsBySearch();
 				break;
 			case 'screen_name':
-			default:	
 				$this->addFieldsForTweetsByScreenName();
+				break;
+			case 'list':
+				$this->addFieldsForTweetsByList();
+				break;
+			default:	
 				break;				
 		}			
 
+		// Common fields among the other field types including search, screen_name, and list.
 		$this->addSettingFields(			
 			array(
 				'strFieldID'		=> 'include_retweets',
@@ -27,14 +32,6 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 				'strType'			=> 'number',
 				'vDefault'			=> 60 * 20,	// 20 minutes
 			),			
-			// array(
-				// 'strFieldID'		=> 'template_path',
-				// 'strTitle'			=> __( 'Template', 'fetch-tweets' ),
-				// 'strDescription'	=> __( 'Set the template path to layout the output of the fetched tweet ocntents. In other words, you can modify how they are displayed with a template file.', 'fetch-tweets' ),
-				// 'vDefault'			=> dirname( FetchTweets_Commons::getPluginFilePath() ) . '/template/fetch-tweets-by-user-name.php',
-				// 'vSize'				=> 120,
-				// 'strType'			=> 'text',
-			// ),
 			array()
 		);
 		
@@ -53,6 +50,12 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 		return 'screen_name';
 		
 	}	
+	
+	/**
+	 * Adds form fields for the options to fetch tweets by screen name to the meta box.
+	 * 
+	 * @since			1.0.0
+	 */ 
 	protected function addFieldsForTweetsByScreenName() {
 		$this->addSettingFields(
 			array(
@@ -94,32 +97,20 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 				'strType'			=> 'checkbox',
 				'vLabel'			=> __( 'This prevents replies from appearing in the returned timeline.', 'fetch-tweets' ),
 			),		
-			// array (
-				// 'strFieldID'		=> 'checkbox_group_field',
-				// 'strTitle'		=> 'Checkbox Group',
-				// 'strDescription'	=> 'The description for the field.',
-				// 'strType'		=> 'checkbox',
-				// 'vLabel' => array( 
-					// 'one' => __( 'Option One', 'demo' ),
-					// 'two' => __( 'Option Two', 'demo' ),
-					// 'three' => __( 'Option Three', 'demo' ),
-				// ),
-				// 'vDefault' => array(
-					// 'one' => true,
-					// 'two' => false,
-					// 'three' => false,
-				// ),
-			// ),			
-			// array (
-				// 'strFieldID'		=> 'image_field',
-				// 'strTitle'			=> 'Image',
-				// 'strDescription'	=> 'The description for the field.',
-				// 'strType'			=> 'image',
-			// ),			
+			array(	// since 1.2.0
+				'strFieldID'		=> 'list_id',			
+				'strType'			=> 'hidden',
+			),				
 			array()
 		);	
 	
 	}
+	
+	/**
+	 * Adds form fields for the options to fetch tweets by keyword search to the meta box.
+	 * 
+	 * @since			1.0.0
+	 */ 
 	protected function addFieldsForTweetsBySearch() {
 		
 		$this->addSettingFields(		
@@ -151,7 +142,7 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 			),				
 			array(
 				'strFieldID'		=> 'language',
-				'strTitle'			=> 'Language ',
+				'strTitle'			=> __( 'Language ', 'fetch-tweets' ),
 				'strType'			=> 'select',
 				'vLabel' => array( 
 					'none' => __( 'None', 'fetch-tweets' ),
@@ -183,12 +174,117 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 				'strFieldID'		=> 'exclude_replies',
 				'strType'			=> 'hidden',
 			),
+			array(	// since 1.2.0
+				'strFieldID'		=> 'list_id',			
+				'strType'			=> 'hidden',
+			),				
 			array()
 		);
 		
 	}	
 
-	public function validation_FetchTweets_MetaBox( $arrInput ) {	// validation_ + extended class name
+	/**
+	 * Adds form fields for the options to fetch tweets by list to the meta box.
+	 * 
+	 * @since			1.2.0
+	 */ 
+	protected function addFieldsForTweetsByList() {
+		
+		$strScreenName = $this->getScreenName();
+		$arrLists = $this->getLists( $strScreenName );
+		
+		$this->addSettingFields(		
+			array(
+				'strFieldID'		=> 'tweet_type',
+				'strType'			=> 'hidden',
+				'vValue'			=> 'list',
+			),			
+			array(
+				'strFieldID'		=> 'list_id',
+				'strTitle'			=> __( 'Lists', 'fetch-tweets' ),
+				'strType'			=> 'select',
+				'vLabel'			=> $arrLists,
+			),
+			array(	// non-used fields must be set as hidden since the callback function will assign a value.
+				'strFieldID'		=> 'screen_name',
+				'strType'			=> 'hidden',
+				'vValue'			=> $strScreenName,
+			),				
+			array(
+				'strFieldID'		=> 'search_keyword',
+				'strType'			=> 'hidden',
+			),
+			array(
+				'strFieldID'		=> 'item_count',
+				'strTitle'			=> __( 'Item Count', 'fetch-tweets' ),
+				'strDescription'	=> __( 'Set how many items should be fetched.', 'fetch-tweets' ) . ' ' 
+					. __( 'Max', 'fetch-tweets' ) . ': 100 '
+					. __( 'Default', 'fetch-tweets' ) . ': 20',
+				'strType'			=> 'number',
+				'vDefault'			=> 20,
+				'vMax'				=> 100,				
+			),				
+			array(
+				'strFieldID'		=> 'language',
+				'strType'			=> 'hidden',
+			),				
+			array(
+				'strFieldID'		=> 'result_type',
+				'strType'			=> 'hidden',
+			),		
+			array(
+				'strFieldID'		=> 'exclude_replies',
+				'strType'			=> 'hidden',
+			),
+			array()
+		);
+				
+		
+		
+		
+	}
+	/**
+	 * Returns an array of lists received from the previous page; otherwise, fetches lists from the set screen name.
+	 * 
+	 */	 
+	protected function getLists( $strScreenName='' ) {
+		
+		// If the cache is set from the previous page, use that.
+		$strListTransient = isset( $_GET['list_cache'] ) ? $_GET['list_cache'] : '';
+		if ( ! empty( $strListTransient ) ) {
+			$arrLists = ( array ) get_transient( $strListTransient );
+			delete_transient( $strListTransient );
+			return $arrLists;
+		}
+		
+		if ( empty( $strScreenName ) ) return array();	
+		
+		// Fetch lists from the given screen name.
+		$oFetch = new FetchTweets_Fetch;
+		$arrLists = $oFetch->getListNamesFromScreenName( $strScreenName );
+		return $arrLists;
+		
+	}
+	/**
+	 * Returns the associated screen name (twitter user name) of the post.
+	 * 
+	 * @return			string				The screen name associated with the post.
+	 * @since			1.2.0
+	 */
+	protected function getScreenName() {
+		
+		// If the 'action' query value is edit, search for the meta field value which previously set when it is saved.
+		if ( isset( $_GET['action'], $_GET['post'] ) && $_GET['action'] == 'edit' ) 
+			return get_post_meta( $_GET['post'], 'screen_name', true );
+	
+		// If the GET 'tweet_type' query value is set, use it.
+		if ( isset( $_GET['screen_name'] ) && $_GET['screen_name'] ) return $_GET['screen_name'];
+		
+		return '';
+		
+	}
+	
+	public function validation_FetchTweets_MetaBox_Options( $arrInput ) {	// validation_ + extended class name
 			
 		$arrInput['item_count'] = $this->oUtil->fixNumber( 
 			$arrInput['item_count'], 	// number to sanitize

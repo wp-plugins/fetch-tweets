@@ -35,6 +35,7 @@ foreach( $arrTweets as $arrDetail ) {
 // Set the default template option values.
 $arrDefaultTemplateValues = array(
 	'fetch_tweets_template_single_avatar_size' => 48,
+	'fetch_tweets_template_single_avatar_position' => 'left',
 	'fetch_tweets_template_single_width' => array( 'size' => 100, 'unit' => '%' ),
 	'fetch_tweets_template_single_height' => array( 'size' => 400, 'unit' => 'px' ),
 	'fetch_tweets_template_single_background_color' => 'transparent',
@@ -68,6 +69,7 @@ $arrTemplateOptions = $arrOptions['fetch_tweets_templates']['fetch_tweets_templa
 
 // Set the template option values.
 $arrArgs['avatar_size']				= isset( $arrArgs['avatar_size'] ) ? $arrArgs['avatar_size'] : $arrTemplateOptions['fetch_tweets_template_single_avatar_size'];
+$arrArgs['avatar_position']			= isset( $arrArgs['avatar_position'] ) ? $arrArgs['avatar_position'] : $arrTemplateOptions['fetch_tweets_template_single_avatar_position'];
 $arrArgs['width']					= isset( $arrArgs['width'] ) ? $arrArgs['width'] : $arrTemplateOptions['fetch_tweets_template_single_width']['size'];
 $arrArgs['width_unit']				= isset( $arrArgs['width_unit'] ) ? $arrArgs['width_unit'] : $arrTemplateOptions['fetch_tweets_template_single_width']['unit'];
 $arrArgs['height']					= isset( $arrArgs['height'] ) ? $arrArgs['height']: $arrTemplateOptions['fetch_tweets_template_single_height']['size'];
@@ -102,7 +104,7 @@ $strPaddingBottom = empty( $arrArgs['padding_bottom'] ) ? "" : $arrArgs['padding
 $strPaddingLeft = empty( $arrArgs['padding_left'] ) ? "" : $arrArgs['padding_left'] . $arrArgs['padding_left_unit'];
 $strMargins = ( $strMarginTop ? "margin-top: {$strMarginTop}; " : "" ) . ( $strMarginRight ? "margin-right: {$strMarginRight}; " : "" ) . ( $strMarginBottom ? "margin-bottom: {$strMarginBottom}; " : "" ) . ( $strMarginLeft ? "margin-left: {$strMarginLeft}; " : "" );
 $strPaddings = ( $strPaddingTop ? "padding-top: {$strPaddingTop}; " : "" ) . ( $strPaddingRight ? "padding-right: {$strPaddingRight}; " : "" ) . ( $strPaddingBottom ? "padding-bottom: {$strPaddingBottom}; " : "" ) . ( $strPaddingLeft ? "padding-left: {$strPaddingLeft}; " : "" );
-
+$strMarginForImage = $arrArgs['visibilities']['avatar'] ? ( ( $arrArgs['avatar_position'] == 'left' ? "margin-left: " : "margin-right: " ) . ( ( int ) $arrArgs['avatar_size'] + 10 ) . "px" ) : "";
 /*
  * Start rendering
  */ 
@@ -113,34 +115,42 @@ $strPaddings = ( $strPaddingTop ? "padding-top: {$strPaddingTop}; " : "" ) . ( $
 	
 	<div class='fetch-tweets-single-heading'>
 		<?php if ( $arrArgs['avatar_size'] > 0  && $arrArgs['visibilities']['avatar'] ) : ?>
-		<div class='fetch-tweets-single-profile-image' style="width:<?php echo $arrArgs['avatar_size'];?>px;">
+		<div class='fetch-tweets-single-profile-image' style="max-width:<?php echo $arrArgs['avatar_size'];?>px; float:<?php echo $arrArgs['avatar_position']; ?>;">
 			<a href='https://twitter.com/<?php echo $strUserScreenName; ?>' target='_blank'>
 				<img src='<?php echo $strUserAvatarURL; ?>' />
 			</a>		
 		</div>
 		<?php endif; ?>
 		
-		<?php if ( $arrArgs['visibilities']['user_name'] ) : ?>
-		<span class='fetch-tweets-single-user-name'>
-			<strong>
-				<a href='https://twitter.com/<?php echo $strUserScreenName; ?>' target='_blank'>
-					<?php echo $strUserName; ?>
-				</a>
-			</strong>
-		</span>	
+		<?php if ( $arrArgs['visibilities']['user_name'] || $arrArgs['visibilities']['follow_button'] || $arrArgs['visibilities']['user_description'] ) : ?>
+		<div class='fetch-tweets-single-user-profile' style='<?php echo $strMarginForImage; ?>;'>
 		<?php endif; ?>
 		
-		<?php if ( $arrArgs['visibilities']['follow_button'] ) : ?>
-		<div class='fetch-tweets-single-follow-button'>
-			<a href="https://twitter.com/<?php echo $strUserScreenName;?>" class="twitter-follow-button" data-show-count="false" data-lang="<?php echo $strUserLang; ?>" target="_blank">Follow @<?php echo $strUserScreenName; ?></a>
-			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-		</div>		
-		<?php endif; ?>
+			<?php if ( $arrArgs['visibilities']['user_name'] ) : ?>
+			<span class='fetch-tweets-single-user-name'>
+				<strong>
+					<a href='https://twitter.com/<?php echo $strUserScreenName; ?>' target='_blank'>
+						<?php echo $strUserName; ?>
+					</a>
+				</strong>
+			</span>	
+			<?php endif; ?>
+			
+			<?php if ( $arrArgs['visibilities']['follow_button'] ) : ?>
+			<div class='fetch-tweets-single-follow-button'>
+				<a href="https://twitter.com/<?php echo $strUserScreenName;?>" class="twitter-follow-button" data-show-count="false" data-lang="<?php echo $strUserLang; ?>" target="_blank">Follow @<?php echo $strUserScreenName; ?></a>
+				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+			</div>		
+			<?php endif; ?>
+			
+			<?php if ( $arrArgs['visibilities']['user_description'] ) : ?>
+			<p class='fetch-tweets-single-user-description'>
+				<?php echo $strDescription; ?>
+			</p>
+			<?php endif; ?>
 		
-		<?php if ( $arrArgs['visibilities']['user_description'] ) : ?>
-		<p class='fetch-tweets-single-user-description'>
-			<?php echo $strDescription; ?>
-		</p>
+		<?php if ( $arrArgs['visibilities']['user_name'] || $arrArgs['visibilities']['follow_button'] || $arrArgs['visibilities']['user_description'] ) : ?>
+		</div>
 		<?php endif; ?>
 		
 	</div>

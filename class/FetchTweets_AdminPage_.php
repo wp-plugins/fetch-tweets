@@ -32,15 +32,13 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
     	
 		$this->checkAPIKeys();
 	
+		if ( isset( $this->oProps->arrOptions['fetch_tweets_settings']['capabilities']['setting_page_capability'] ) 
+			&& ! empty( $this->oProps->arrOptions['fetch_tweets_settings']['capabilities']['setting_page_capability'] )
+		)	
+			$this->setCapability( $this->oProps->arrOptions['fetch_tweets_settings']['capabilities']['setting_page_capability'] );
+	
 		$this->setRootMenuPageBySlug( 'edit.php?post_type=fetch_tweets' );
 		$this->addSubMenuItems(
-			/* 	e.g.
-			 * 	'strPageTitle' => 'Your Page Title',
-				'strPageSlug'] => 'your_page_slug',		// avoid hyphen(dash), dots, and white spaces
-				'strScreenIcon' => 'edit',
-				'strCapability' => 'manage-options',
-				'numOrder' => 10,
-			*/
 			array(
 				'strMenuTitle' => __( 'Add Rule by User Name', 'fetch-tweets' ),
 				'strType' => 'link',
@@ -53,6 +51,11 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 				'strType' => 'link',				
 				'strURL' => 'post-new.php?post_type=fetch_tweets&tweet_type=search',
 				'fPageHeadingTab' => false,
+			),			
+			array(
+				'strPageTitle'	=> __( 'Add Rule by List', 'fetch-tweets' ),
+				'strPageSlug'	=> 'fetch_tweets_add_rule_by_list',
+				'strScreenIcon'	=> FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
 			),			
 			array(
 				'strPageTitle'	=> __( 'Settings', 'fetch-tweets' ),
@@ -69,16 +72,6 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 				'strPageSlug' => 'fetch_tweets_templates',
 				'strScreenIcon'	=> FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
 			)
-			// array(
-				// 'strPageTitle' => __( 'Test Results', 'fetch-tweets' ),
-				// 'strPageSlug' => 'fetch_tweets_test',
-			// )
-			/*	Screen Types:
-				'edit', 'post', 'index', 'media', 'upload', 'link-manager', 'link', 'link-category', 
-				'edit-pages', 'page', 'edit-comments', 'themes', 'plugins', 'users', 'profile', 
-				'user-edit', 'tools', 'admin', 'options-general', 'ms-admin', 'generic',		 
-			*/				
-
 		);
 		$this->addInPageTabs(
 			array(
@@ -89,9 +82,21 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 			),
 			array(
 				'strPageSlug'	=> 'fetch_tweets_settings',
+				'strTabSlug'	=> 'general',
+				'strTitle'		=> __( 'General', 'fetch-tweets' ),
+				'numOrder'		=> 2,				
+			),				
+			array(
+				'strPageSlug'	=> 'fetch_tweets_settings',
+				'strTabSlug'	=> 'misc',
+				'strTitle'		=> __( 'Misc', 'fetch-tweets' ),
+				'numOrder'		=> 3,				
+			),			
+			array(
+				'strPageSlug'	=> 'fetch_tweets_settings',
 				'strTabSlug'	=> 'reset',
 				'strTitle'		=> __( 'Reset', 'fetch-tweets' ),
-				'numOrder'		=> 2,				
+				'numOrder'		=> 4,				
 			)					
 		);
 		$this->addInPageTabs(
@@ -134,13 +139,45 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 				'strDescription'	=> __( 'These keys are required to process oAuth requests of the twitter API.', 'fetch-tweets' ),
 			),
 			array(
+				'strSectionID'		=> 'default_values',
+				'strPageSlug'		=> 'fetch_tweets_settings',
+				'strTabSlug'		=> 'general',
+				'strTitle'			=> __( 'Default Values', 'fetch-tweets' ),
+				'strHelp'			=> __( 'Set the default option values which will be applied when the argument values are not set.', 'fetch-tweets' )
+										. __( 'These values will be overridden by the argument set directly to the widget options or shortcode.', 'fetch-tweets' ),
+			),			
+			array(
+				'strSectionID'		=> 'capabilities',
+				'strCapability'		=> 'manage_options',
+				'strPageSlug'		=> 'fetch_tweets_settings',
+				'strTabSlug'		=> 'misc',
+				'strTitle'			=> __( 'Access Rights', 'fetch-tweets' ),
+				'strDescription'	=> __( 'Set the access levels to the plugin setting pages.', 'fetch-tweets' ),
+			),			
+			array(
 				'strSectionID'		=> 'reset_settings',
 				'strPageSlug'		=> 'fetch_tweets_settings',
+				'strCapability'		=> 'manage_options',
 				'strTabSlug'		=> 'reset',
 				'strTitle'			=> __( 'Reset Settings', 'fetch-tweets' ),
 				'strDescription'	=> __( 'If you get broken options, initialize them by performing reset.', 'fetch-tweets' ),
+			),
+			array(
+				'strSectionID'		=> 'caches',
+				'strPageSlug'		=> 'fetch_tweets_settings',
+				'strTabSlug'		=> 'reset',
+				'strTitle'			=> __( 'Caches', 'fetch-tweets' ),
+				'strDescription'	=> __( 'If you need to refresh the fetched tweets, clear the cashes.', 'fetch-tweets' ),
 			)			
-		);					
+		);	
+		$this->addSettingSections(
+			array(
+				'strSectionID'		=> 'add_rule_by_list',
+				'strPageSlug'		=> 'fetch_tweets_add_rule_by_list',
+				'strTitle'			=> __( 'Specify the Screen Name', 'fetch-tweets' ),
+				'strDescription'	=> __( 'In order to select list, the user name(screen name) of the account that owns the list must be specified.', 'fetch-tweets' ),
+			)		
+		);
 		
 		// Add setting fields
 		$this->addSettingFields(
@@ -186,6 +223,77 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 				'vClassAttribute' => 'button button-primary',
 			)		
 		);
+		// default_values
+		$this->addSettingFields(
+			array(
+				'strFieldID' => 'count',
+				'strSectionID' => 'default_values',
+				'strTitle' => __( 'Number of Items', 'fetch-tweets' ),
+				'strHelp' => __( 'The number of tweets to display.', 'fetch-tweets' )
+					. __( 'Default', 'fetch-tweets' ) . ': ' . $GLOBALS['oFetchTweets_Option']->arrStructure_DefaultParams['count']
+					. __( 'This option corresponds to the <code>count</code> argument value. For instance, with this shortcode, <code>[fetch_tweets id="10" count="30"]</code>, the count value, 30, will override this option. If the <code>count</code> parameter is not set, this option value will be used.', 'fetch-tweets' ),
+				'vDefault'	=> $GLOBALS['oFetchTweets_Option']->arrStructure_DefaultParams['count'],
+				'strType' => 'number',
+			),
+			array(
+				'strFieldID'		=> 'twitter_media',
+				'strSectionID' => 'default_values',
+				'strTitle'			=> __( 'Twitter Media', 'fetch-tweets' ),
+				'strType'			=> 'checkbox',
+				'vLabel'			=> __( 'Display media images posted in the tweet that are recognized as media file by Twitter.' ),
+				'strHelp'	=> __( 'This option corresponds to the <code>twitter_media</code> argument value. For instance, with this shortcode, <code>[fetch_tweets id="10" count="30"]</code>, the count value, 30, will override this option. If the <code>count</code> parameter is not set, this option value will be used.', 'fetch-tweets' ) . ' '
+					. __( 'Currently only photos are supported by the Twitter API.' ),
+				'vDefault'			=> $GLOBALS['oFetchTweets_Option']->arrStructure_DefaultParams['twitter_media'],
+			),
+			array(
+				'strFieldID'		=> 'external_media',
+				'strSectionID' => 'default_values',
+				'strTitle'			=> __( 'External Media', 'fetch-tweets' ),
+				'strType'			=> 'checkbox',
+				'vLabel'			=> __( 'Replace media links of external sources to an embedded element.', 'fetch-tweets' ),
+				'strHelp'			=> __( 'This option corresponds to the <code>external_media</code> argument value. For instance, with this shortcode, <code>[fetch_tweets id="10" count="30"]</code>, the count value, 30, will override this option. If the <code>count</code> parameter is not set, this option value will be used.', 'fetch-tweets' ) . ' '
+					. __( 'Unlike the above media images, there are media links that are not categorized as media by the Twitter API. Thus, enabling this option will attempt to replace them to the embedded elements.', 'fetch-tweets' ) . ' e.g. youtube, vimeo, dailymotion etc.',
+				'vDefault'			=> $GLOBALS['oFetchTweets_Option']->arrStructure_DefaultParams['external_media'],
+			),					
+			array(  // single button
+				'strFieldID' => 'submit_default_values',
+				'strSectionID' => 'default_values',
+				'strType' => 'submit',
+				'strBeforeField' => "<div class='right-button'>",
+				'strAfterField' => "</div>",
+				'vLabelMinWidth' => 0,
+				'vLabel' => __( 'Save Changes', 'fetch-tweets' ),
+				'vClassAttribute' => 'button button-primary',
+			)			
+		);
+		$this->addSettingFields(
+			array(
+				'strFieldID' => 'setting_page_capability',
+				'strSectionID' => 'capabilities',
+				'strTitle' => __( 'Capability', 'fetch-tweets' ),
+				'strDescription' => __( 'Select the user role that is allowed to access the plugin setting pages.', 'fetch-tweets' )
+					. __( 'Default', 'fetch-tweets' ) . ': ' . __( 'Administrator', 'fetch-tweets' ),
+				'strType' => 'select',
+				'strCapability' => 'manage_options',
+				'vLabel' => array(						
+					'manage_options' => __( 'Administrator', 'responsive-column-widgets' ),
+					'edit_pages' => __( 'Editor', 'responsive-column-widgets' ),
+					'publish_posts' => __( 'Author', 'responsive-column-widgets' ),
+					'edit_posts' => __( 'Contributor', 'responsive-column-widgets' ),
+					'read' => __( 'Subscriber', 'responsive-column-widgets' ),
+				),
+			),
+			array(  // single button
+				'strFieldID' => 'submit_misc',
+				'strSectionID' => 'capabilities',
+				'strType' => 'submit',
+				'strBeforeField' => "<div class='right-button'>",
+				'strAfterField' => "</div>",
+				'vLabelMinWidth' => 0,
+				'vLabel' => __( 'Save Changes', 'fetch-tweets' ),
+				'vClassAttribute' => 'button button-primary',
+			)			
+		);
 		$this->addSettingFields(
 			array(	
 				'strFieldID' => 'option_sections',
@@ -200,9 +308,26 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 					// 'template' => __( 'Template related options', 'fetch-tweets' ),
 				),
 			),
+			// array(  // single button
+				// 'strFieldID' => 'submit_reset_settings',
+				// 'strSectionID' => 'reset_settings',
+				// 'strType' => 'submit',
+				// 'strBeforeField' => "<div class='right-button'>",
+				// 'strAfterField' => "</div>",
+				// 'vLabelMinWidth' => 0,
+				// 'vLabel' => __( 'Perform', 'fetch-tweets' ),
+				// 'vClassAttribute' => 'button button-primary',
+			// ),
+			array(	
+				'strFieldID' => 'clear_caches',
+				'strSectionID' => 'caches',
+				'strTitle' => __( 'Clear Caches', 'fetch-tweets' ),
+				'strType' => 'checkbox',
+				'vLabel' => __( 'Clear tweet caches', 'fetch-tweets' ),
+			),
 			array(  // single button
 				'strFieldID' => 'submit_reset_settings',
-				'strSectionID' => 'reset_settings',
+				'strSectionID' => 'caches',
 				'strType' => 'submit',
 				'strBeforeField' => "<div class='right-button'>",
 				'strAfterField' => "</div>",
@@ -210,12 +335,37 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 				'vLabel' => __( 'Perform', 'fetch-tweets' ),
 				'vClassAttribute' => 'button button-primary',
 			)			
+
+		);
+		$this->addSettingFields(
+			array(	
+				'strFieldID' => 'list_owner_screen_name',
+				'strSectionID' => 'add_rule_by_list',
+				'strTitle' => __( 'Owner Screen Name', 'fetch-tweets' ),
+				'strDescription' => __( 'The screen name(user name) that owns the list.', 'fetch-tweets' ) . '<br />'
+					. 'e.g. miunosoft',
+				'strType' => 'text',
+				'vValue' => '',
+				'vSize' => 40,
+			),		
+			array(  // single button
+				'strFieldID' => 'list_proceed',
+				'strSectionID' => 'add_rule_by_list',
+				'strType' => 'submit',
+				'strBeforeField' => "<div class='right-button'>",
+				'strAfterField' => "</div>",
+				'vLabelMinWidth' => 0,
+				'vLabel' => __( 'Proceed', 'fetch-tweets' ),
+				// 'vLink'	=> admin_url(),
+				// 'vLink'	=> admin_url( 'post-new.php?post_type=fetch_tweets&tweet_type=list' ),
+				// 'vRedirect'	=> admin_url(),
+				// 'vRedirect'	=> admin_url( 'post-new.php?post_type=fetch_tweets&tweet_type=list' ),
+				'vClassAttribute' => 'button button-primary',
+			)		
 		);
 		$this->addLinkToPluginDescription(  
-			array(
-				'<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J4UJHETVAZX34">' . __( 'Donate', 'fetch-tweets' ) . '</a>',
-				'<a href="http://en.michaeluno.jp/contact/custom-order/?lang=' . ( WPLANG ? WPLANG : 'en' ) . '">' . __( 'Order custom plugin', 'fetch-tweets' ) . '</a>',
-			) 
+			'<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J4UJHETVAZX34">' . __( 'Donate', 'fetch-tweets' ) . '</a>',
+			'<a href="http://en.michaeluno.jp/contact/custom-order/?lang=' . ( WPLANG ? WPLANG : 'en' ) . '">' . __( 'Order custom plugin', 'fetch-tweets' ) . '</a>'
 		);						
 		
 	}
@@ -246,6 +396,62 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 			. "</p>"
 			. "</div>";		
 			
+	}
+	
+	/*
+	 * Customize the Menu
+	 */
+	public function buildMenus() {
+	
+		parent::buildMenus();
+		
+		// Remove the default post type menu item.
+		$strPageSlug = $this->oProps->arrRootMenu['strPageSlug'];
+		foreach ( $GLOBALS['submenu'][ $strPageSlug ] as $intIndex => $arrSubMenu ) {
+						
+			if ( ! isset( $arrSubMenu[ 2 ] ) ) continue;
+			
+			// Remove the default Add New entry.
+			if ( $arrSubMenu[ 2 ] == 'post-new.php?post_type=' . FetchTweets_Commons::PostTypeSlug ) {
+				unset( $GLOBALS['submenu'][ $strPageSlug ][ $intIndex ] );
+				continue;
+			}
+			
+			// Edit the first item
+			if ( $arrSubMenu[ 2 ] == 'edit.php?post_type=' . FetchTweets_Commons::PostTypeSlug ) {
+				$GLOBALS['submenu'][ $strPageSlug ][ $intIndex ][ 0 ] = __( 'Manage Rules', 'fetch-tweets' );
+				continue;
+			}
+
+			// Copy and remove the Tag menu element to change the position. 
+			if ( $arrSubMenu[ 2 ] == 'edit-tags.php?taxonomy=' . FetchTweets_Commons::TagSlug . '&amp;post_type=' . FetchTweets_Commons::PostTypeSlug ) {
+				$arrMenuEntry_Tag = array( $GLOBALS['submenu'][ $strPageSlug ][ $intIndex ] );
+				unset( $GLOBALS['submenu'][ $strPageSlug ][ $intIndex ] );
+				continue;				
+			}
+
+		}
+		
+		// Second iteration.
+		$intMenuPos_Setting = -1;
+		foreach ( $GLOBALS['submenu'][ $strPageSlug ] as $intIndex => $arrSubMenu ) {
+			
+			$intMenuPos_Setting++;	
+			if (  isset( $arrSubMenu[ 2 ] ) && $arrSubMenu[ 2 ] == 'fetch_tweets_settings' ) 
+				break;	// the position variable will now contain the position of the Setting menu item.
+	
+		}
+	
+		// Insert the Tag menu item before the Setting menu item.
+		array_splice( 
+			$GLOBALS['submenu'][ $strPageSlug ], // original array
+			$intMenuPos_Setting, 	// position
+			0, 	// offset - should be 0
+			$arrMenuEntry_Tag 	// replacement array
+		);		
+
+		// Unfortunately array_splice() will loose all the associated keys(index).
+		
 	}
 	
 	/*
@@ -298,7 +504,59 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 			
 	}	 
 	
+	/*
+	 * Add Rule by List Page
+	 */
+	public function do_fetch_tweets_add_rule_by_list() {	// do_ + page slug
+		
+		// $oFetch = new FetchTweets_Fetch;
+		// $arrTweets = $oFetch->getListsByScreenName( 'Otto42' );
+// Debug
+// echo "<pre>" . htmlspecialchars( print_r( $arrTweets, true ) ) . "</pre>";			
+		// $arrTweets = $oFetch->getTweetsAsArray( array( 'list_id' => '33331244' ) );
+// echo "<pre>" . htmlspecialchars( print_r( $arrTweets, true ) ) . "</pre>";					
+		
+	}
+	public function validation_fetch_tweets_add_rule_by_list( $arrInput, $arrOriginal ) {
+				
+		// Check if the input has been properly sent.
+		if ( ! isset( $arrInput['fetch_tweets_add_rule_by_list']['add_rule_by_list']['list_owner_screen_name'] ) ) {			
+			$this->setSettingNotice( __( 'Something went wrong. Your input could not be received. Try again and if this happens again, contact the developer.', 'fetch-tweets' ) );
+			return $arrOriginal;
+		}
+		
+		// Variables
+		$fVerified = true;	// flag
+		$arrErrors = array();	// error array
+		$strOwnerScreenName = $arrInput['fetch_tweets_add_rule_by_list']['add_rule_by_list']['list_owner_screen_name'];
+		
+		// The list owner screen name must be provided.
+		if ( empty( $strOwnerScreenName ) ) {
+			$arrErrors['add_rule_by_list']['list_owner_screen_name'] = __( 'The screen name of the list owner must be specified: ' ) . $strOwnerScreenName;
+			$this->setFieldErrors( $arrErrors );		
+			$this->setSettingNotice( __( 'There was an error in your input.', 'fetch-tweets' ) );
+			return $arrOriginal;						
+		}
+		
+		// Fetch the lists by the screen name.
+		$oFetch = new FetchTweets_Fetch;
+		$arrLists = $oFetch->getListNamesFromScreenName( $strOwnerScreenName );
+		if ( empty( $arrLists ) ) {
+			$this->setSettingNotice( __( 'No list found.', 'fetch-tweets' ) );
+			return $arrOriginal;			
+		}
+
+		// Set the transient of the fetched IDs. This will be used right next page load.
+		$strListCacheID = uniqid();
+		set_transient( $strListCacheID, $arrLists, 60 );		
+		$this->oUtil->goRedirect( admin_url( "post-new.php?post_type=fetch_tweets&tweet_type=list&list_cache={$strListCacheID}&screen_name={$strOwnerScreenName}" ) );
+		
+	}
 	
+	
+	/*
+	 * Settings Page
+	 */
 	public function do_before_fetch_tweets_settings() {	// do_before_ + page slug
 		$this->showPageTitle( false );
 	}
@@ -306,18 +564,128 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 	public function do_fetch_tweets_settings () {	// do_ + page slug
 		
 		// submit_button();
-// $arrOptions = get_option( FetchTweets_Commons::AdminOptionKey );
+// echo "<h3>Variables</h3>";
+// echo $this->oDebug->getArray( $GLOBALS['option_page'] );
+
+// echo "<h3>Properties</h3>";
+// echo $this->oDebug->getArray( $this->oProps ); 
+// echo $this->oDebug->getArray( $this->oProps->arrOptions ); 
+
 // echo "<h3>Options</h3>";
+// $arrOptions = get_option( FetchTweets_Commons::AdminOptionKey );
 // echo $this->oDebug->getArray( $arrOptions );
+
 
 // echo "<h3>Registered Pages</h3>";
 // echo $this->oDebug->getArray( $this->oProps->arrPages );
 // echo "<h3>Registered Tabs</h3>";
 // echo $this->oDebug->getArray( $this->oProps->arrInPageTabs[ 'fetch_tweets_settings' ] );
 
+	}
+	public function validation_fetch_tweets_settings_general( $arrInput, $arrOriginal ) {
+		
+		$arrInput['fetch_tweets_settings']['default_values']['count'] = $this->oUtil->fixNumber(
+			$arrInput['fetch_tweets_settings']['default_values']['count'],
+			$GLOBALS['oFetchTweets_Option']->arrStructure_DefaultParams['count'],
+			1
+		);
+		
+		return $arrInput;
+		
+	}
+	public function validation_fetch_tweets_settings_reset( $arrInput, $arrOriginal ) {
+				
+		// Variables
+		$fChanged = false;
+				
+		// Make it one dimensional.
+		$arrSubmit = array();
+		foreach ( $arrInput['fetch_tweets_settings'] as $strSection => $arrFields ) 
+			$arrSubmit = $arrSubmit + $arrFields;				
+			
+		// If the Perform button is not set, return.
+		if ( ! isset( $arrSubmit['submit_reset_settings'] ) ) {
+			$this->setSettingNotice( __( 'Nothing changed.', 'fetch-tweets' ) );	
+			return $arrOriginal;
+		}
 
+		if ( isset( $arrSubmit['clear_caches'] ) && $arrSubmit['clear_caches'] ) {
+			$this->clearCaches();
+			$fChanged = true;
+			$this->setSettingNotice( __( 'The caches have been cleared.', 'fetch-tweets' ) );
+		}
+		
+		// $this->oDebug->getArray( $arrSubmit, dirname( __FILE__ ) . '/submit.txt' );
+		// $this->oDebug->getArray( $GLOBALS['oFetchTweets_Option']->arrOptions, dirname( __FILE__ ) . '/options.txt' );
+		
+		if ( isset( $arrSubmit['option_sections'] ) ) {
+			if ( isset( $arrSubmit['option_sections']['all'] ) && $arrSubmit['option_sections']['all'] ) {
+				$fChanged = true;
+				add_action( 'shutdown', array( $this, 'deleteOptions_All' ), 999 );
+			}
+			if ( isset( $arrSubmit['option_sections']['genaral'] ) && $arrSubmit['option_sections']['general'] ) {
+				$fChanged = true;
+				add_action( 'shutdown', array( $this, 'deleteOptions_General' ), 999 );
+			}
+			if ( isset( $arrSubmit['option_sections']['template'] ) && $arrSubmit['option_sections']['template'] ) {
+				$fChanged = true;
+				add_action( 'shutdown', array( $this, 'deleteOptions_Template' ), 999 );
+			}		
+		}
+		
+		if ( ! $fChanged )
+			$this->setSettingNotice( __( 'Nothing changed.', 'fetch-tweets' ) );	
+		return $arrOriginal;	// no need to update the options.
+		
+	}
+	public function deleteOptions_All() {
+		delete_option( FetchTweets_Commons::AdminOptionKey );
+	}
+	public function deleteOptions_General() {
+		// Currently not working: Somehow the options get recovered.
+		unset( $GLOBALS['oFetchTweets_Option']->arrOptions['fetch_tweets_settings'] );
+		$GLOBALS['oFetchTweets_Option']->saveOptions();		
+	}
+	public function deleteOptions_Template() {		
+		// Currently not working: Somehow the options get recovered.
+// $this->oDebug->getArray( $GLOBALS['oFetchTweets_Option']->arrOptions, dirname( __FILE__ ) . '/options.txt' );	
+		unset( $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'] );
+		unset( $GLOBALS['oFetchTweets_Option']->arrOptions['arrDefaultTemplate'] );
+		unset( $GLOBALS['oFetchTweets_Option']->arrOptions['fetch_tweets_templates'] );
+		$GLOBALS['oFetchTweets_Option']->saveOptions();
+// $this->oDebug->getArray( $GLOBALS['oFetchTweets_Option']->arrOptions, dirname( __FILE__ ) . '/options.txt' );	
 	}
 	
+	/**
+	 * Clears tweet caches
+	 * 
+	 * @since			1.2.0
+	 */ 
+	protected function clearCaches( $arrPrefixes=array( 'FTWS', 'FTWSFeedMs' ) ) {
+		
+		foreach( $arrPrefixes as $strPrefix ) {
+			$GLOBALS['wpdb']->query( "DELETE FROM `" . $GLOBALS['table_prefix'] . "options` WHERE `option_name` LIKE ( '_transient_%{$strPrefix}%' )" );
+			$GLOBALS['wpdb']->query( "DELETE FROM `" . $GLOBALS['table_prefix'] . "options` WHERE `option_name` LIKE ( '_transient_timeout_%{$strPrefix}%' )" );
+		}
+	
+	}
+	
+	protected $arrColumnOption = array (
+		'strClassAttr' 				=>	'fetch_tweets_multiple_columns',
+		'strClassAttrGroup' 		=>	'fetch_tweets_multiple_columns_box',
+		'strClassAttrRow' 			=>	'fetch_tweets_multiple_columns_row',
+		'strClassAttrCol' 			=>	'fetch_tweets_multiple_columns_col',
+		'strClassAttrFirstCol' 		=>	'fetch_tweets_multiple_columns_first_col',
+	);	
+	protected $arrColumnInfoDefault = array (	// this will be modified as the items get rendered
+		'fIsRowTagClosed'	=>	False,
+		'numCurrRowPos'		=>	0,
+		'numCurrColPos'		=> 	0,
+	);	
+	
+	/*
+	 * Template Page
+	 */ 
 	public function do_before_fetch_tweets_templates() {
 		$this->showPageTitle( false );
 	}
@@ -423,119 +791,55 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		
 		return $arrData;
 			
-	}
-	
-	public function buildMenus() {
-	
-		parent::buildMenus();
+	}	
+	public function style_fetch_tweets_templates( $strStyle ) {
 		
-		// Remove the default post type menu item.
-		$strPageSlug = $this->oProps->arrRootMenu['strPageSlug'];
-		foreach ( $GLOBALS['submenu'][ $strPageSlug ] as $intIndex => $arrSubMenu ) {
-						
-			if ( ! isset( $arrSubMenu[ 2 ] ) ) continue;
-			
-			// Remove the default Add New entry.
-			if ( $arrSubMenu[ 2 ] == 'post-new.php?post_type=' . FetchTweets_Commons::PostTypeSlug ) {
-				unset( $GLOBALS['submenu'][ $strPageSlug ][ $intIndex ] );
-				continue;
-			}
-			
-			// Edit the first item
-			if ( $arrSubMenu[ 2 ] == 'edit.php?post_type=' . FetchTweets_Commons::PostTypeSlug ) {
-				$GLOBALS['submenu'][ $strPageSlug ][ $intIndex ][ 0 ] = __( 'Manage Rules', 'fetch-tweets' );
-				continue;
-			}
+		return $strStyle . PHP_EOL
+			. " .widefat td	{
+					vertical-align: middle;
+				}
+				.column-thumbnail {
+					width: 20%;
+				}
+				.disabled {
+					color: #C5C5C5;
+				}
+				.right-button {
+					float: right;
+				}
 
-			// Copy and remove the Tag menu element to change the position. 
-			if ( $arrSubMenu[ 2 ] == 'edit-tags.php?taxonomy=' . FetchTweets_Commons::TagSlug . '&amp;post_type=' . FetchTweets_Commons::PostTypeSlug ) {
-				$arrMenuEntry_Tag = array( $GLOBALS['submenu'][ $strPageSlug ][ $intIndex ] );
-				unset( $GLOBALS['submenu'][ $strPageSlug ][ $intIndex ] );
-				continue;				
-			}
-
-		}
-		
-		// Second iteration.
-		$intMenuPos_Setting = -1;
-		foreach ( $GLOBALS['submenu'][ $strPageSlug ] as $intIndex => $arrSubMenu ) {
-			
-			$intMenuPos_Setting++;	
-			if (  isset( $arrSubMenu[ 2 ] ) && $arrSubMenu[ 2 ] == 'fetch_tweets_settings' ) 
-				break;	// the position variable will now contain the position of the Setting menu item.
-	
-		}
-	
-		// Insert the Tag menu item before the Setting menu item.
-		array_splice( 
-			$GLOBALS['submenu'][ $strPageSlug ], // original array
-			$intMenuPos_Setting, 	// position
-			0, 	// offset - should be 0
-			$arrMenuEntry_Tag 	// replacement array
-		);		
-
-		// Unfortunately array_splica() will loose all the associated keys(index).
-		
+				.template-thumbnail{
+					position: relative;
+					z-index: 0;
+				}
+				.template-thumbnail:hover{
+					background-color: transparent;
+					z-index: 50;
+				}
+				.template-thumbnail span{ /*CSS for enlarged image*/
+					position: fixed;
+					background-color: #FCFCFC;
+					padding: 5px;		
+					border: 1px dashed gray;
+					visibility: hidden;
+					color: black;
+					text-decoration: none;
+				}
+				.template-thumbnail span img{ /*CSS for enlarged image*/
+					border-width: 0;
+					padding: 2px;
+					margin: 0 auto;
+				}
+				.template-thumbnail:hover span{ /*CSS for enlarged image on hover*/
+					visibility: visible;
+					top: 50px;				
+				}				
+			";	
 	}
 	
-	public function validation_fetch_tweets_settings_reset( $arrInput, $arrOriginal ) {
-				
-		// Make it one dimensional.
-		$arrSubmit = array();
-		foreach ( $arrInput['fetch_tweets_settings'] as $strSection => $arrFields ) 
-			$arrSubmit = $arrSubmit + $arrFields;				
-			
-		// If the Perform button is not set, return.
-		if ( ! isset( $arrSubmit['submit_reset_settings'] ) ) return $arrOriginal;
-
-		// $this->oDebug->getArray( $arrSubmit, dirname( __FILE__ ) . '/submit.txt' );
-		// $this->oDebug->getArray( $GLOBALS['oFetchTweets_Option']->arrOptions, dirname( __FILE__ ) . '/options.txt' );
-		
-		if ( isset( $arrSubmit['option_sections'] ) ) {
-			if ( isset( $arrSubmit['option_sections']['all'] ) && $arrSubmit['option_sections']['all'] ) {
-				add_action( 'shutdown', array( $this, 'deleteOptions_All' ), 999 );
-			}
-			if ( isset( $arrSubmit['option_sections']['genaral'] ) && $arrSubmit['option_sections']['general'] ) {
-				add_action( 'shutdown', array( $this, 'deleteOptions_General' ), 999 );
-			}
-			if ( isset( $arrSubmit['option_sections']['template'] ) && $arrSubmit['option_sections']['template'] ) {
-				add_action( 'shutdown', array( $this, 'deleteOptions_Template' ), 999 );
-			}		
-		}
-		
-		return $arrOriginal;
-		
-	}
-	public function deleteOptions_All() {
-		delete_option( FetchTweets_Commons::AdminOptionKey );
-	}
-	public function deleteOptions_General() {
-		// Currently not working: Somehow the options get recovered.
-		unset( $GLOBALS['oFetchTweets_Option']->arrOptions['fetch_tweets_settings'] );
-		$GLOBALS['oFetchTweets_Option']->saveOptions();		
-	}
-	public function deleteOptions_Template() {		
-		// Currently not working: Somehow the options get recovered.
-// $this->oDebug->getArray( $GLOBALS['oFetchTweets_Option']->arrOptions, dirname( __FILE__ ) . '/options.txt' );	
-		unset( $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'] );
-		unset( $GLOBALS['oFetchTweets_Option']->arrOptions['arrDefaultTemplate'] );
-		unset( $GLOBALS['oFetchTweets_Option']->arrOptions['fetch_tweets_templates'] );
-		$GLOBALS['oFetchTweets_Option']->saveOptions();
-// $this->oDebug->getArray( $GLOBALS['oFetchTweets_Option']->arrOptions, dirname( __FILE__ ) . '/options.txt' );	
-	}
-	protected $arrColumnOption = array (
-		'strClassAttr' 				=>	'fetch_tweets_multiple_columns',
-		'strClassAttrGroup' 		=>	'fetch_tweets_multiple_columns_box',
-		'strClassAttrRow' 			=>	'fetch_tweets_multiple_columns_row',
-		'strClassAttrCol' 			=>	'fetch_tweets_multiple_columns_col',
-		'strClassAttrFirstCol' 		=>	'fetch_tweets_multiple_columns_first_col',
-	);	
-	protected $arrColumnInfoDefault = array (	// this will be modified as the items get rendered
-		'fIsRowTagClosed'	=>	False,
-		'numCurrRowPos'		=>	0,
-		'numCurrColPos'		=> 	0,
-	);	
-	
+	/*
+	 * Extension page
+	 */ 
 	public function do_before_fetch_tweets_extensions() {	// do_before_ + page slug
 		$this->showPageTitle( false );
 	}
@@ -605,67 +909,33 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		echo '<div class="ftws_extension_container">' . $strOut . '</div>';
 		
 	}
-	public function style_fetch_tweets_settings( $strStyle ) {
-		
-		return $strStyle . PHP_EOL
-			. " .right-button {
-					float: right;
-				}
-				input.read-only {
-					background-color: #F6F6F6;
-				}	
-			";
-		
-	}
-	public function style_fetch_tweets_templates( $strStyle ) {
-		
-		return $strStyle . PHP_EOL
-			. " .widefat td	{
-					vertical-align: middle;
-				}
-				.column-thumbnail {
-					width: 20%;
-				}
-				.disabled {
-					color: #C5C5C5;
-				}
-				.right-button {
-					float: right;
-				}
 
-				.template-thumbnail{
-					position: relative;
-					z-index: 0;
-				}
-				.template-thumbnail:hover{
-					background-color: transparent;
-					z-index: 50;
-				}
-				.template-thumbnail span{ /*CSS for enlarged image*/
-					position: fixed;
-					background-color: #FCFCFC;
-					padding: 5px;		
-					border: 1px dashed gray;
-					visibility: hidden;
-					color: black;
-					text-decoration: none;
-				}
-				.template-thumbnail span img{ /*CSS for enlarged image*/
-					border-width: 0;
-					padding: 2px;
-					margin: 0 auto;
-				}
-				.template-thumbnail:hover span{ /*CSS for enlarged image on hover*/
-					visibility: visible;
-					top: 50px;				
-				}				
-			";
+	// public function style_fetch_tweets_settings( $strStyle ) {
 		
-	}
+		// return $strStyle . PHP_EOL
+			// . " .right-button {
+					// float: right;
+				// }
+				// input.read-only {
+					// background-color: #F6F6F6;
+				// }	
+			// ";
+		
+	// }
 
+	/*
+	 * Styling
+	 */
 	public function style_FetchTweets_AdminPage( $strStyle ) {
 		return $strStyle . PHP_EOL	
-			. ' .ftws_extension_container{
+			. ' 
+			.right-button {
+				float: right;
+			}
+			input.read-only {
+				background-color: #F6F6F6;
+			}	
+			.ftws_extension_container{
 				padding-right: 30px;
 				padding-left: 10px;
 				margin-top: 10px;

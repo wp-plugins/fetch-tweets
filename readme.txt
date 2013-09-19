@@ -16,12 +16,13 @@ It is easy to set up for WordPress beginners. Plus, it allows developers to writ
 
 One of the extensions, [Feeder](http://en.michaeluno.jp/fetch-tweets/extensions/feeder/), supports feeds so you can subscribe your favorite person’s tweets as RSS, which has become harder as the Twitter API was upgraded and the previous version no longer support tweet feed without authentication keys. With this addon, if you are a programmer, you can import the tweet data as JSON to your application by making the WordPress as own Twitter API server.
 
-If you are a theme developer, you can easily customize the template for the tweet outputs. Just copy the existing template and modify the copied files and rename the template name. And there you go! Your own template will be listed in the plugin’s setting page. This way, when the plugin updates, you won’t loose your modifications.
+If you are a theme developer, you can easily customize the template for the tweet outputs. Just copy the existing template and modify the copied files and rename the template name. Then place the copied folder into the theme folder. And there you go! Your own template will be listed in the plugin’s setting page. This way, when the plugin updates, you won’t loose your modifications.
 
 
 <h4>Features</h4>
 * **User Timeline** - by specifying the user name, the timeline can be fetched and displayed.
 * **Search Results** - by specifying the search keyword, the results can be fetched and displayed.
+* **Lists**	- tweet timeline for members of the specified list can be fetched and displayed.
 * **Mashups** - you can display the combined results from multiple rule sets of your choosing.
 * **Widget** - tweets can be displayed in the widgets that the plugin provides.
 * **Shortcode** - with the shortcode, the fetched tweets can be displayed in posts and pages.
@@ -98,6 +99,13 @@ In order to set mutiple tags, pass them with commas as the delimiter. e.g.
 
 `<?php fetchTweets( array( 'id' => 678, 'count' => 8, 'avatar_size' => 96 ) ); ?>`
 
+* **twitter_media** - true (1) / false (0). Determines whether the twitter media elements should be displayed.
+* **external_media** - true (1)/ false (0). Determines whether the external media links should be replaced with embedded elements.
+
+`[fetch_tweets id="678" twitter_media="0" external_media="1" ]`
+
+`<?php fetchTweets( array( 'id' => 678, twitter_media="0" external_media="1" ) ); ?>`
+
 = How to Create Own Template =
 
 **Step 1**
@@ -110,8 +118,8 @@ Edit the following files.
 
 * **style.css**
 * **template.php**
-* **functions.php** ( optional )
-* **settings.php** ( optional )
+* **functions.php** ( optional ) - if not edited, do not include it.
+* **settings.php** ( optional ) - if not edited, do not include it.
 
 In the *style.css* file, include the comment area ( with /* */ ) at the top of the file with the following entries.
 
@@ -139,7 +147,7 @@ Include a thumbnail image. Prepare an image with the name screenshot.jpg, screen
 
 Create a folder named **fetch-tweets** in the theme folder. If you use, for instance, Twenty Twelve, the location would be `.../wp-content/themes/twentytwelve/fetch-tweets/`.
 
-Place the working folder( the copied and renamed one in step 1) in there. The plugin will automatically detect it and the template will be listed in the Template page of the admin page.
+Place the working folder( the copied and renamed one in step 1 ) in there. The plugin will automatically detect it and the template will be listed in the Template page of the admin page.
 
 Optionally, a template can be added via a plugin. If you do so, add the template directory with the <code>fetch_tweets_filter_template_directories</code> filter hook.
 
@@ -170,6 +178,17 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 4. ***Manage Templates***
 
 == Changelog ==
+
+= 1.2.0 - 09/15/2013 =
+* Fixed an issue that sometimes caches could not be saved due to the corrupt serialized array.
+* Fixed a bug that meta box fields' input values did not get validated. 
+* Fixed a bug that the Item Count option did not take effect in the preview.
+* Added the option to set profile image position for the default templates.
+* Tweaked the default template styles for right to left text display.
+* Updated the Admin Page Framework library to v2.1.0.
+* Added the option to set access rights to the setting pages.
+* Added the ability to clear caches.
+* Added the ability to fetch tweets by list.
 
 = 1.1.1 - 09/08/2013 =
 * Tweaked the default template styles.

@@ -81,7 +81,7 @@ final class FetchTweets_InitialLoader {
 					'error' => 'The plugin requires the PHP version %1$s or higher.',
 				),
 				'wordpress' => array(
-					'version' => '3.2',
+					'version' => '3.3',
 					'error' => 'The plugin requires the WordPress version %1$s or higher.',
 				),
 				'functions' => array(
@@ -171,6 +171,13 @@ final class FetchTweets_InitialLoader {
 				'normal',
 				'default'
 			);			
+			// new FetchTweets_MetaBox_Media(
+				// 'fetch_tweets_media_meta_box',	// meta box ID
+				// __( 'Media', 'fetch-tweets' ),		// meta box title
+				// array( FetchTweets_Commons::PostTypeSlug ),	// post, page, etc.
+				// 'normal',
+				// 'default'			
+			// );
 			new FetchTweets_MetaBox_Template(
 				'fetch_tweets_template_meta_box',	// meta box ID
 				__( 'Template', 'fetch-tweets' ),		// meta box title

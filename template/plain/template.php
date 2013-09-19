@@ -10,11 +10,13 @@
  * For debug - uncomment the following line to see the contents of the arrays.
  */ 
 // echo "<pre>" . htmlspecialchars( print_r( $arrTweets, true ) ) . "</pre>";	 
+// return;
 // echo "<pre>" . htmlspecialchars( print_r( $arrArgs, true ) ) . "</pre>";	 
  
 // Set the default template option values.
 $arrDefaultTemplateValues = array(
 	'fetch_tweets_template_plain_avatar_size' => 48,
+	'fetch_tweets_template_plain_avatar_position' => 'left',
 	'fetch_tweets_template_plain_width' => array( 'size' => 100, 'unit' => '%' ),
 	'fetch_tweets_template_plain_height' => array( 'size' => 400, 'unit' => 'px' ),
 	'fetch_tweets_template_plain_background_color' => 'transparent',
@@ -50,6 +52,7 @@ $arrTemplateOptions = $arrOptions['fetch_tweets_templates']['fetch_tweets_templa
 
 // Set the template option values.
 $arrArgs['avatar_size']				= isset( $arrArgs['avatar_size'] ) ? $arrArgs['avatar_size'] : $arrTemplateOptions['fetch_tweets_template_plain_avatar_size'];
+$arrArgs['avatar_position']			= isset( $arrArgs['avatar_position'] ) ? $arrArgs['avatar_position'] : $arrTemplateOptions['fetch_tweets_template_plain_avatar_position'];
 $arrArgs['width']					= isset( $arrArgs['width'] ) ? $arrArgs['width'] : $arrTemplateOptions['fetch_tweets_template_plain_width']['size'];
 $arrArgs['width_unit']				= isset( $arrArgs['width_unit'] ) ? $arrArgs['width_unit'] : $arrTemplateOptions['fetch_tweets_template_plain_width']['unit'];
 $arrArgs['height']					= isset( $arrArgs['height'] ) ? $arrArgs['height']: $arrTemplateOptions['fetch_tweets_template_plain_height']['size'];
@@ -82,11 +85,9 @@ $strPaddingTop = empty( $arrArgs['padding_top'] ) ? 0 : $arrArgs['padding_top'] 
 $strPaddingRight = empty( $arrArgs['padding_right'] ) ? 0 : $arrArgs['padding_right'] . $arrArgs['padding_right_unit'];
 $strPaddingBottom = empty( $arrArgs['padding_bottom'] ) ? 0 : $arrArgs['padding_bottom'] . $arrArgs['padding_bottom_unit'];
 $strPaddingLeft = empty( $arrArgs['padding_left'] ) ? 0 : $arrArgs['padding_left'] . $arrArgs['padding_left_unit'];
-// $strMargins = "{$strMarginTop} {$strMarginRight} {$strMarginBottom} {$strMarginLeft}";
-// $strPaddings = "{$strPaddingTop} {$strPaddingRight} {$strPaddingBottom} {$strPaddingLeft}";
 $strMargins = ( $strMarginTop ? "margin-top: {$strMarginTop}; " : "" ) . ( $strMarginRight ? "margin-right: {$strMarginRight}; " : "" ) . ( $strMarginBottom ? "margin-bottom: {$strMarginBottom}; " : "" ) . ( $strMarginLeft ? "margin-left: {$strMarginLeft}; " : "" );
 $strPaddings = ( $strPaddingTop ? "padding-top: {$strPaddingTop}; " : "" ) . ( $strPaddingRight ? "padding-right: {$strPaddingRight}; " : "" ) . ( $strPaddingBottom ? "padding-bottom: {$strPaddingBottom}; " : "" ) . ( $strPaddingLeft ? "padding-left: {$strPaddingLeft}; " : "" );
-
+$strMarginForImage = $arrArgs['visibilities']['avatar'] ? ( ( $arrArgs['avatar_position'] == 'left' ? "margin-left: " : "margin-right: " ) . ( ( int ) $arrArgs['avatar_size'] ) . "px" ) : "";
 ?>
 
 <div class='fetch-tweets' style="max-width: <?php echo $strWidth; ?>; max-height: <?php echo $strHeight; ?>; background-color: <?php echo $arrArgs['background_color']; ?>; <?php echo $strMargins; ?> <?php echo $strPaddings; ?>">
@@ -104,45 +105,47 @@ $strPaddings = ( $strPaddingTop ? "padding-top: {$strPaddingTop}; " : "" ) . ( $
     <div class='fetch-tweets-item <?php echo $strRetweetClassProperty; ?>' >
 
 		<?php if ( $arrArgs['avatar_size'] > 0  && $arrArgs['visibilities']['avatar'] ) : ?>
-		<div class='fetch-tweets-profile-image' style="width:<?php echo $arrArgs['avatar_size'];?>px;">
+		<div class='fetch-tweets-profile-image' style="max-width:<?php echo $arrArgs['avatar_size'];?>px; float:<?php echo $arrArgs['avatar_position']; ?>;">
 			<a href='https://twitter.com/<?php echo $arrTweet['user']['screen_name']; ?>' target='_blank'>
 				<img src='<?php echo $arrTweet['user']['profile_image_url']; ?>' />
 			</a>
 		</div>
 		<?php endif; ?>
-		
-		<div class='fetch-tweets-heading'>
-		
-			<?php if ( $arrArgs['visibilities']['user_name'] ) : ?>
-			<span class='fetch-tweets-user-name'>
-				<strong>
-					<a href='https://twitter.com/<?php echo $arrTweet['user']['screen_name']; ?>' target='_blank'>
-						<?php echo $arrTweet['user']['name']; ?>
-					</a>
-				</strong>
-			</span>
-			<?php endif; ?>
+		<div class='fetch-tweets-main' style='<?php echo $strMarginForImage;?>;'>
+			<div class='fetch-tweets-heading'>
 			
-			<?php if ( $arrArgs['visibilities']['time'] ) : ?>
-			<span class='fetch-tweets-tweet-created-at'>
-				<a href='https://twitter.com/<?php echo $arrTweet['user']['screen_name']; ?>/status/<?php echo $arrTweet['id_str'] ;?>' target='_blank'>
-					<?php echo FetchTweets_humanTiming( $arrTweet['created_at'] ) . ' ' . __( 'ago', 'fetch-tweets' ); ?>
-				</a>			
-			</span>
-			<?php endif; ?>
-			
-		</div>
-		<div class='fetch-tweets-body'>
-			<p class='fetch-tweets-text'><?php echo trim( $arrTweet['text'] ); ?>				
-				<?php if ( isset( $arrDetail['retweeted_status']['text'] ) ) : ?>
-				<span class='fetch-tweets-retweet-credit'>
-					<?php echo _e( 'Retweeted by', 'fetch-tweets' ) . ' '; ?>
-					<a href='https://twitter.com/<?php echo $arrDetail['user']['screen_name']; ?>' target='_blank'>
-						<?php echo $arrDetail['user']['name']; ?>
-					</a>
+				<?php if ( $arrArgs['visibilities']['user_name'] ) : ?>
+				<span class='fetch-tweets-user-name'>
+					<strong>
+						<a href='https://twitter.com/<?php echo $arrTweet['user']['screen_name']; ?>' target='_blank'>
+							<?php echo $arrTweet['user']['name']; ?>
+						</a>
+					</strong>
 				</span>
 				<?php endif; ?>
-			</p>
+				
+				<?php if ( $arrArgs['visibilities']['time'] ) : ?>
+				<span class='fetch-tweets-tweet-created-at'>
+					<a href='https://twitter.com/<?php echo $arrTweet['user']['screen_name']; ?>/status/<?php echo $arrTweet['id_str'] ;?>' target='_blank'>
+						<?php echo FetchTweets_humanTiming( $arrTweet['created_at'] ) . ' ' . __( 'ago', 'fetch-tweets' ); ?>
+					</a>			
+				</span>
+				<?php endif; ?>
+				
+			</div>
+			<div class='fetch-tweets-body'>
+				<p class='fetch-tweets-text'><?php echo trim( $arrTweet['text'] ); ?>				
+					<?php if ( isset( $arrDetail['retweeted_status']['text'] ) ) : ?>
+					<span class='fetch-tweets-retweet-credit'>
+						<?php echo _e( 'Retweeted by', 'fetch-tweets' ) . ' '; ?>
+						<a href='https://twitter.com/<?php echo $arrDetail['user']['screen_name']; ?>' target='_blank'>
+							<?php echo $arrDetail['user']['name']; ?>
+						</a>
+					</span>
+					<?php endif; ?>
+				</p>
+			</div>
+						
 		</div>
     </div>
 	<?php endforeach; ?>	
