@@ -565,12 +565,16 @@ abstract class FetchTweets_Fetch_ {
 // var_dump( $arrTweets );
 // $result = ob_get_clean();
 // FetchTweets_Debug::getArray( $result, dirname( __FILE__ ) . '/cache_renewed.txt' );
-			
+					
 		// If empty, return an empty array.
 		if ( empty( $arrTweets ) ) return array();
-			
+		
+		// If the result is string, something went wrong.
+		if ( ! is_array( $arrTweets ) )
+			return ( array ) $arrTweets;
+		
 		// If an error occurs, do not set the cache.
-		if ( isset( $arrTweets['errors'][ 0 ]['message'], $arrTweets['errors'][ 0 ]['code'] ) && is_string( $arrTweets['errors'][ 0 ]['message'] ) ) {
+		if ( isset( $arrTweets['errors'][ 0 ]['message'], $arrTweets['errors'][ 0 ]['code'] ) ) {
 			$arrTweets['errors'][ 0 ]['message'] .= "<!-- Request URI: {$strRequestURI} -->";	
 			return ( array ) $arrTweets;
 		}
