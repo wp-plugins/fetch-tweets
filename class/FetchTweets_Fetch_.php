@@ -277,10 +277,10 @@ abstract class FetchTweets_Fetch_ {
 		else if ( isset( $arrArgs['list_id'] ) ) 	
 			return $this->getTweetsByListID( $arrArgs['list_id'], $arrArgs['count'], $arrArgs['include_rts'], $arrArgs['cache'] );
 		else	// normal
-			return $this->getTweetsAsArrayByPostID( $arrArgs['id'] );
+			return $this->getTweetsAsArrayByPostID( $arrArgs['id'], $arrArgs );
 		
 	}
-	protected function getTweetsAsArrayByPostID( $vPostIDs, $intMaxCount=null ) {	
+	protected function getTweetsAsArrayByPostID( $vPostIDs, $arrArgs ) {	
 		
 		$arrTweets = array();
 		foreach( ( array ) $vPostIDs as $intPostID ) {
@@ -288,7 +288,7 @@ abstract class FetchTweets_Fetch_ {
 			$strTweetType = get_post_meta( $intPostID, 'tweet_type', true );
 			$intCount = get_post_meta( $intPostID, 'item_count', true );
 			$fIncludeRetweets = get_post_meta( $intPostID, 'include_retweets', true );
-			$intCacheDuration = get_post_meta( $intPostID, 'cache_duration', true );
+			$intCacheDuration = isset( $arrArgs['cache'] ) ? $arrArgs['cache'] : get_post_meta( $intPostID, 'cache_duration', true );
 
 			switch ( $strTweetType ) {
 				case 'search':
@@ -561,12 +561,16 @@ abstract class FetchTweets_Fetch_ {
 
 // Debug
 // FetchTweets_Debug::getArray( $arrTweets, dirname( __FILE__ ) . '/cache_renewed.txt' );
+// ob_start();
+// var_dump( $arrTweets );
+// $result = ob_get_clean();
+// FetchTweets_Debug::getArray( $result, dirname( __FILE__ ) . '/cache_renewed.txt' );
 			
-		// If empty, return an ampty array.
+		// If empty, return an empty array.
 		if ( empty( $arrTweets ) ) return array();
 			
 		// If an error occurs, do not set the cache.
-		if ( isset( $arrTweets['errors'][ 0 ]['message'], $arrTweets['errors'][ 0 ]['code'] ) ) {
+		if ( isset( $arrTweets['errors'][ 0 ]['message'], $arrTweets['errors'][ 0 ]['code'] ) && is_string( $arrTweets['errors'][ 0 ]['message'] ) ) {
 			$arrTweets['errors'][ 0 ]['message'] .= "<!-- Request URI: {$strRequestURI} -->";	
 			return ( array ) $arrTweets;
 		}
