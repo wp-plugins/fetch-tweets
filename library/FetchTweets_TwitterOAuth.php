@@ -3,7 +3,7 @@
 if ( ! class_exists('TwitterOAuth') )
 	require_once( dirname( __FILE__ ) . '/TwitterOAuth/twitteroauth.php' );
 
-class WP_TwitterOAuth extends TwitterOAuth {
+class FetchTweets_TwitterOAuth extends TwitterOAuth {
 	
 	public $host = "https://api.twitter.com/1.1/";
 	/**

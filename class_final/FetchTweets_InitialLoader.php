@@ -144,7 +144,7 @@ final class FetchTweets_InitialLoader {
 		// All the necessary classes have been already loaded.
 		
 		// 1. Load Necessary libraries
-		include_once( dirname( FetchTweets_Commons::getPluginFilePath() ) . '/library/WP_TwitterOAuth.php' );
+		include_once( dirname( FetchTweets_Commons::getPluginFilePath() ) . '/library/FetchTweets_TwitterOAuth.php' );
 		include_once( dirname( FetchTweets_Commons::getPluginFilePath() ) . '/library/admin-page-framework-for-fetch-tweets.php' );
 
 		// 2. Option Object
