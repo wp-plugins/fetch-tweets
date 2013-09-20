@@ -16,7 +16,7 @@ abstract class FetchTweets_Fetch_ {
 	
 		// Set up the connection.
 		$this->oOption = & $GLOBALS['oFetchTweets_Option'];		
-		$this->oTwitterOAuth =  new WP_TwitterOAuth( 
+		$this->oTwitterOAuth =  new FetchTweets_TwitterOAuth( 
 			$this->oOption->getConsumerKey(), 
 			$this->oOption->getConsumerSecret(), 
 			$this->oOption->getAccessToken(), 
