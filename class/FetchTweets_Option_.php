@@ -17,6 +17,8 @@ abstract class FetchTweets_Option_ {
 	);
 	
 	public $arrStructure_DefaultParams = array(
+		'tweet_type'		=> null,	// this will be set in the add/edit rule page
+		
 		'id'				=> null,
 		'ids'				=> null,	// deprecated as of 1.0.0.4 - but extension plugins may use it
 		'tag'				=> null,

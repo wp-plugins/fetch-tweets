@@ -47,7 +47,7 @@ abstract class FetchTweets_Fetch_ {
 		
 	}	
 	public function drawTweetsByTag( $arrArgs ) {
-		
+
 		// Called from either the above getTweetsOutputByTag() method for the shortcode callbeck or fetchTweets() function.
 		$arrArgs['tag'] = isset( $arrArgs['tags'] ) && ! empty( $arrArgs['tags'] ) 
 			? $arrArgs['tags'] 
@@ -59,7 +59,7 @@ abstract class FetchTweets_Fetch_ {
 		$arrArgs['id'] = isset( $arrArgs['tag_field_type'] ) && in_array( strtolower( $arrArgs['tag_field_type'] ), array( 'id', 'slug' ) )
 			? $this->getPostIDsByTag( $arrArgs['tag'], $arrArgs['tag_field_type'], trim( $arrArgs['operator'] ) )
 			: $this->getPostIDsByTagName( $arrArgs['tag'], trim( $arrArgs['operator'] ) );
-
+	
 		$this->drawTweets( $arrArgs );
 			
 	}
@@ -163,8 +163,10 @@ abstract class FetchTweets_Fetch_ {
 		 *	avatar_size - default: 48 
 		 * 
 		 * */
-		 
-		$arrArgs = ( array ) $arrArgs + $this->oOption->arrOptions['fetch_tweets_settings']['default_values'] + $this->oOption->arrStructure_DefaultParams + $this->oOption->arrStructure_DefaultTemplateOptions;
+		
+		$arrRawArgs = ( array ) $arrArgs; 
+		$arrArgs = FetchTweets_Utilities::uniteArrays( $arrRawArgs, $this->oOption->arrOptions['fetch_tweets_settings']['default_values'], $this->oOption->arrStructure_DefaultParams, $this->oOption->arrStructure_DefaultTemplateOptions );
+		// $arrArgs = $arrRawArgs + $this->oOption->arrOptions['fetch_tweets_settings']['default_values'] + $this->oOption->arrStructure_DefaultParams + $this->oOption->arrStructure_DefaultTemplateOptions;
 		$arrArgs['id'] = isset( $arrArgs['ids'] ) && ! empty( $arrArgs['ids'] ) ? $arrArgs['ids'] : $arrArgs['id'];	// backward compatibility
 		$arrArgs['id'] = is_array( $arrArgs['id'] ) ? $arrArgs['id'] : preg_split( "/[,]\s*/", trim( ( string ) $arrArgs['id'] ), 0, PREG_SPLIT_NO_EMPTY );
 
@@ -174,7 +176,7 @@ abstract class FetchTweets_Fetch_ {
 // echo "<pre>" . htmlspecialchars( print_r( $this->oOption->arrOptions, true ) ) . "</pre>";	
 // return;		
 
-		$arrTweets = $this->getTweetsAsArray( $arrArgs );
+		$arrTweets = $this->getTweetsAsArray( $arrArgs, $arrRawArgs );
 		if ( empty( $arrTweets ) || ! is_array( $arrTweets ) ) {
 			_e( 'No result could be fetched.', 'fetch-tweets' );
 			return;
@@ -268,7 +270,14 @@ abstract class FetchTweets_Fetch_ {
 		return $strTemplatePath;			
 		
 	}
-	public function getTweetsAsArray( $arrArgs ) {	// this is public as the feed extension uses it.
+	
+	/**
+	 * Fetches tweets based on the argument.
+	 * 
+	 * @param			array			$arrArgs			The argument array that is merged with the default option values.
+	 * @param			array			$arrRawArgs			The raw argument array that is not merged with any. Used by the getTweetsAsArrayByPostID() method that fetches tweets by post ID.
+	 */
+	public function getTweetsAsArray( $arrArgs, $arrRawArgs ) {	// this is public as the feed extension uses it.
 	
 		if ( isset( $arrArgs['q'] ) )	// custom call by search keyword
 			return $this->getTweetsBySearch( $arrArgs['q'], $arrArgs['count'], $arrArgs['lang'], $arrArgs['result_type'], $arrArgs['cache'] );
@@ -277,43 +286,42 @@ abstract class FetchTweets_Fetch_ {
 		else if ( isset( $arrArgs['list_id'] ) ) 	
 			return $this->getTweetsByListID( $arrArgs['list_id'], $arrArgs['count'], $arrArgs['include_rts'], $arrArgs['cache'] );
 		else	// normal
-			return $this->getTweetsAsArrayByPostID( $arrArgs['id'], $arrArgs );
+			return $this->getTweetsAsArrayByPostID( $arrArgs['id'], $arrArgs, $arrRawArgs );
 		
 	}
-	protected function getTweetsAsArrayByPostID( $vPostIDs, $arrArgs ) {	
-		
+	protected function getTweetsAsArrayByPostID( $vPostIDs, $arrArgs, $arrRawArgs ) {	
+	
 		$arrTweets = array();
 		foreach( ( array ) $vPostIDs as $intPostID ) {
 			
-			$strTweetType = get_post_meta( $intPostID, 'tweet_type', true );
-			$intCount = get_post_meta( $intPostID, 'item_count', true );
-			$fIncludeRetweets = get_post_meta( $intPostID, 'include_retweets', true );
-			$intCacheDuration = isset( $arrArgs['cache'] ) ? $arrArgs['cache'] : get_post_meta( $intPostID, 'cache_duration', true );
+			$arrArgs['tweet_type'] = get_post_meta( $intPostID, 'tweet_type', true );
+			$arrArgs['count'] = get_post_meta( $intPostID, 'item_count', true );
+			$arrArgs['include_retweets'] = get_post_meta( $intPostID, 'include_retweets', true );
+			$arrArgs['cache'] = get_post_meta( $intPostID, 'cache', true );
 
-			switch ( $strTweetType ) {
+			switch ( $arrArgs['tweet_type'] ) {
 				case 'search':
-					$strKeyword = get_post_meta( $intPostID, 'search_keyword', true );			
-					$strResultType = get_post_meta( $intPostID, 'result_type', true );	
-					$strLang = get_post_meta( $intPostID, 'language', true );				
-					$arrRetrievedTweets = $this->getTweetsBySearch( $strKeyword, $intCount, $strLang, $strResultType, $intCacheDuration );
+					$arrArgs['q'] = get_post_meta( $intPostID, 'search_keyword', true );	
+					$arrArgs['result_type'] = get_post_meta( $intPostID, 'result_type', true );
+					$arrArgs['lang'] = get_post_meta( $intPostID, 'language', true );
+					$arrArgs = FetchTweets_Utilities::uniteArrays( $arrRawArgs, $arrArgs ); // The direct input takes its precedence.
+					$arrRetrievedTweets = $this->getTweetsBySearch( $arrArgs['q'], $arrArgs['count'], $arrArgs['lang'], $arrArgs['result_type'], $arrArgs['cache'] );
 					break;
 				case 'list':
-					$intListID = get_post_meta( $intPostID, 'list_id', true );						
-					$arrRetrievedTweets = $this->getTweetsByListID( $intListID, $intCount, $fIncludeRetweets, $intCacheDuration );
+					$arrArgs['list_id'] = get_post_meta( $intPostID, 'list_id', true );					
+					$arrArgs = FetchTweets_Utilities::uniteArrays( $arrRawArgs, $arrArgs ); // The direct input takes its precedence.
+					$arrRetrievedTweets = $this->getTweetsByListID( $arrArgs['list_id'], $arrArgs['count'], $arrArgs['include_retweets'], $arrArgs['cache'] );
 					break;
 				case 'screen_name':
 				default:	
-					$strUser = get_post_meta( $intPostID, 'screen_name', true );			
-					$fExcludeReplies = get_post_meta( $intPostID, 'exclude_replies', true );	
-					$arrRetrievedTweets = $this->getTweetsByScreenName( $strUser, $intCount, $fIncludeRetweets, $fExcludeReplies, $intCacheDuration );
+					$arrArgs['screen_name'] = get_post_meta( $intPostID, 'screen_name', true );	
+					$arrArgs['exclude_replies'] = get_post_meta( $intPostID, 'exclude_replies', true );	
+					$arrArgs = FetchTweets_Utilities::uniteArrays( $arrRawArgs, $arrArgs ); // The direct input takes its precedence.
+					$arrRetrievedTweets = $this->getTweetsByScreenName( $arrArgs['screen_name'], $arrArgs['count'], $arrArgs['include_retweets'], $arrArgs['exclude_replies'], $arrArgs['cache'] );
 					break;				
 			}	
-			
+
 			$arrTweets = array_merge( $arrRetrievedTweets, $arrTweets );
-			
-			// Truncate the array.
-			// if ( $intCount && is_numeric( $intCount ) ) 
-				// array_splice( $arrTweets, $intCount );
 				
 		}
 		
@@ -407,15 +415,13 @@ abstract class FetchTweets_Fetch_ {
 	protected function getTweetsBySearch( $strKeyword, $intCount, $strLang='en', $strResultType='mixed', $intCacheDuration=600 ) {
 
 		// Compose the request URI.
-		$fIncludeEntities = true;
-
 		$intCount = ( ( int ) $intCount ) > 100 ? 100 : $intCount;
 		$strRequestURI = "https://api.twitter.com/1.1/search/tweets.json"
 			. "?q=" . urlencode_deep( $strKeyword )
 			. "&result_type={$strResultType}"	//  mixed, recent, popular
 			. "&count={$intCount}"
 			. ( $strLang == 'none' ? "" : "&lang={$strLang}" )
-			. "&include_entities=" . ( $fIncludeEntities ? 1 : 0 );
+			. "&include_entities=1";
 						
 		return $this->doAPIRequest_Get( $strRequestURI, 'statuses', $intCacheDuration );
 					
@@ -569,7 +575,7 @@ abstract class FetchTweets_Fetch_ {
 		// If empty, return an empty array.
 		if ( empty( $arrTweets ) ) return array();
 		
-		// If the result is string, something went wrong.
+		// If the result is not an array, something went wrong.
 		if ( ! is_array( $arrTweets ) )
 			return ( array ) $arrTweets;
 		
