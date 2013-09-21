@@ -2,9 +2,9 @@
 Contributors: Michael Uno, miunosoft
 Donate link: http://en.michaeluno.jp/donate
 Tags: twitter, twitter widget, tweets, tweet, widget, widgets, post, posts, page, pages, custom post type, API, Twitter API, REST, oAuth, shortcode, sidebar, plugin, template
-Requires at least: 3.2
-Tested up to: 3.6
-Stable tag: 1.1.1
+Requires at least: 3.3
+Tested up to: 3.6.1
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Fetches and displays tweets from twitter.com with the Twitter API.
@@ -179,7 +179,8 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 == Changelog ==
 
-= 1.2.0 - 09/20/2013 =
+= 1.2.0 - 09/21/2013 =
+* Fixed the minimum required WordPress version to 3.3.
 * Removed redundant functions from the default template functions file.
 * Added authentication information in the setting page.
 * Removed the *Include Retweets* option from the search type because Twitter API does not support that parameter and in fact it was not working.
