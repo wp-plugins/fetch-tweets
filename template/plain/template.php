@@ -127,7 +127,7 @@ $strMarginForImage = $arrArgs['visibilities']['avatar'] ? ( ( $arrArgs['avatar_p
 				<?php if ( $arrArgs['visibilities']['time'] ) : ?>
 				<span class='fetch-tweets-tweet-created-at'>
 					<a href='https://twitter.com/<?php echo $arrTweet['user']['screen_name']; ?>/status/<?php echo $arrTweet['id_str'] ;?>' target='_blank'>
-						<?php echo FetchTweets_humanTiming( $arrTweet['created_at'] ) . ' ' . __( 'ago', 'fetch-tweets' ); ?>
+						<?php echo human_time_diff( $arrTweet['created_at'], current_time('timestamp') ) . ' ' . __( 'ago', 'fetch-tweets' ); ?>
 					</a>			
 				</span>
 				<?php endif; ?>

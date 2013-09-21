@@ -180,6 +180,8 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 == Changelog ==
 
 = 1.2.0 - 09/20/2013 =
+* Removed redundant functions from the default template functions file.
+* Added authentication information in the setting page.
 * Removed the *Include Retweets* option from the search type because Twitter API does not support that parameter and in fact it was not working.
 * Fixed an issue that sometimes caches could not be saved due to the corrupt serialized array.
 * Fixed a bug that meta box fields' input values did not get validated. 

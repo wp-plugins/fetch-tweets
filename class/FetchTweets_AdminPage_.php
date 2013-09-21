@@ -184,28 +184,28 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 			array(	
 				'strFieldID' => 'consumer_key',
 				'strSectionID' => 'authentication_keys',
-				'strTitle' => 'Consumer Key',
+				'strTitle' => __( 'Consumer Key', 'fetch-tweets' ),
 				'strType' => 'text',
 				'vSize' => 80,
 			),
 			array(	
 				'strFieldID' => 'consumer_secret',
 				'strSectionID' => 'authentication_keys',
-				'strTitle' => 'Consumer Secret',
+				'strTitle' => __( 'Consumer Secret', 'fetch-tweets' ),
 				'strType' => 'text',
 				'vSize' => 80,
 			),
 			array(	
 				'strFieldID' => 'access_token',
 				'strSectionID' => 'authentication_keys',
-				'strTitle' => 'Access Token',
+				'strTitle' => __( 'Access Token', 'fetch-tweets' ),
 				'strType' => 'text',
 				'vSize' => 80,
 			),
 			array(	
 				'strFieldID' => 'access_secret',
 				'strSectionID' => 'authentication_keys',
-				'strTitle' => 'Access Secret',
+				'strTitle' => __( 'Access Secret', 'fetch-tweets' ),
 				'strType' => 'text',
 				'vSize' => 80,
 				'strAfterField' => '<p class="description">' 
@@ -560,7 +560,7 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 	public function do_before_fetch_tweets_settings() {	// do_before_ + page slug
 		$this->showPageTitle( false );
 	}
-	
+		
 	public function do_fetch_tweets_settings () {	// do_ + page slug
 		
 		// submit_button();
@@ -582,6 +582,80 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 // echo $this->oDebug->getArray( $this->oProps->arrInPageTabs[ 'fetch_tweets_settings' ] );
 
 	}
+	
+	public function do_fetch_tweets_settings_authentication() {
+		
+		$oOption = & $GLOBALS['oFetchTweets_Option'];		
+		$oTwitterOAuth =  new FetchTweets_TwitterOAuth( 
+			$oOption->getConsumerKey(), 
+			$oOption->getConsumerSecret(), 
+			$oOption->getAccessToken(), 
+			$oOption->getAccessTokenSecret()
+		);		
+					
+		// Rate Limit Status			
+		$arrContent = $oOption->getConsumerKey() && $oOption->getConsumerSecret() && $oOption->getAccessToken() && $oOption->getAccessTokenSecret()
+			? $oTwitterOAuth->get( 'https://api.twitter.com/1.1/application/rate_limit_status.json?resources=help,users,search,statuses' )
+			: array();
+		$strUserTimelineLimit = isset( $arrContent['resources']['statuses']['/statuses/user_timeline'] )
+			? $arrContent['resources']['statuses']['/statuses/user_timeline']['remaining'] . ' / ' . $arrContent['resources']['statuses']['/statuses/user_timeline']['limit'] 
+				. "&nbsp;&nbsp;&nbsp;( " . __( 'Will be reset at', 'fetch-tweets' ) . ' ' . date( "F j, Y, g:i a" , $arrContent['resources']['statuses']['/statuses/user_timeline']['reset'] + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) . " )"
+			: "";		
+		$strSearchLimit = isset( $arrContent['resources']['search']['/search/tweets'] ) 
+			? $arrContent['resources']['search']['/search/tweets']['remaining'] . ' / ' . $arrContent['resources']['search']['/search/tweets']['limit'] 
+				. "&nbsp;&nbsp;&nbsp;( " . __( 'Will be reset at', 'fetch-tweets' ) . ' ' . date( "F j, Y, g:i a" , $arrContent['resources']['search']['/search/tweets']['reset'] + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) . " )"
+			: "";
+				
+		// Credientials Verification
+		$arrUser = $oOption->getConsumerKey() && $oOption->getConsumerSecret() && $oOption->getAccessToken() && $oOption->getAccessTokenSecret()
+			? $oTwitterOAuth->get( 'account/verify_credentials' )
+			: array();
+		$fIsValid = isset( $arrUser['id'] ) && $arrUser['id'] ? true : false;
+		$strScreenName = isset( $arrUser['screen_name'] ) ? $arrUser['screen_name'] : "";
+
+				
+		?>
+		
+		<table class="form-table">
+			<tbody>
+				<tr valign="top">
+					<th scope="row">
+						<?php _e( 'Status', 'fetch-tweets' ); ?>
+					</th>
+					<td>
+						<?php echo $fIsValid ? __( 'Authenticated', 'fetch-tweets' ) : __( 'Not authenticated', 'fetch-tweets' ); ?>
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<?php _e( 'Screen Name', 'fetch-tweets' ); ?>
+					</th>
+					<td>
+						<?php echo $strScreenName; ?>
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<?php _e( 'Timeline Request Limit', 'fetch-tweets' ); ?>
+					</th>
+					<td>
+						<?php echo $strUserTimelineLimit; ?>
+					</td>
+				</tr>	
+				<tr valign="top">
+					<th scope="row">
+						<?php _e( 'Search Request Limit', 'fetch-tweets' ); ?>
+					</th>
+					<td>
+						<?php echo $strSearchLimit; ?>
+					</td>
+				</tr>				
+			</tbody>
+		</table>
+					
+		<?php
+	}
+	
 	public function validation_fetch_tweets_settings_general( $arrInput, $arrOriginal ) {
 		
 		$arrInput['fetch_tweets_settings']['default_values']['count'] = $this->oUtil->fixNumber(
