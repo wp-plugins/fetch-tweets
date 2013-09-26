@@ -175,8 +175,9 @@ abstract class FetchTweets_AdminPageFramework_WPUtilities {
 		if ( $strTabSlug && $strPageSlug )
 			$arrFilters[] = "{$strPrefix}{$strPageSlug}_{$strTabSlug}";
 		if ( $strPageSlug )	
-			$arrFilters[] = "{$strPrefix}{$strPageSlug}";
-		$arrFilters[] = "{$strPrefix}{$strClassName}";
+			$arrFilters[] = "{$strPrefix}{$strPageSlug}";			
+		if ( $strClassName )
+			$arrFilters[] = "{$strPrefix}{$strClassName}";
 		
 		return $fReverse ? array_reverse( $arrFilters ) : $arrFilters;	
 		
@@ -538,7 +539,7 @@ abstract class FetchTweets_AdminPageFramework_Help extends FetchTweets_AdminPage
 	 * 
 	 * This adds a user-defined help information into the help screen placed just below the top admin bar.
 	 * 
-	 * @remark			The callback of the <em>load-{page slug}</em> action hook.
+	 * @remark			The callback of the <em>admin_head</em> action hook.
 	 * @see				http://codex.wordpress.org/Plugin_API/Action_Reference/load-%28page%29
 	 * @remark			the screen object is supported in WordPress 3.3 or above.
 	 * @since			2.1.0
@@ -664,6 +665,7 @@ abstract class FetchTweets_AdminPageFramework_Pages extends FetchTweets_AdminPag
 		'do_form_'		=> 'do_form_',
 		'do_'			=> 'do_',
 		'content_'		=> 'content_',
+		'load_'			=> 'load_',
 		'head_'			=> 'head_',
 		'foot_'			=> 'foot_',
 		'validation_'	=> 'validation_',
@@ -1447,7 +1449,10 @@ abstract class FetchTweets_AdminPageFramework_Menu extends FetchTweets_AdminPage
 				$strPageSlug = $this->oUtil->sanitizeSlug( $arrArgs['strPageSlug'] ),	// menu_slug
 				array( $this, $strPageSlug ) 				// triggers the __call() magic method with the method name of this slug.
 			);			
-							
+				
+			add_action( "load-" . $arrResult[ $strPageSlug ] , array( $this, "load_pre_" . $strPageSlug ) );
+			
+				
 		} else if ( $strType == 'link' )
 			$GLOBALS['submenu'][ $strRootPageSlug ][] = array ( 
 				$strTitle, 
@@ -1542,7 +1547,7 @@ abstract class FetchTweets_AdminPageFramework_SettingsAPI extends FetchTweets_Ad
 		'fIf' => true,	
 		'numOrder' => null,	// do not set the default number here because incremented numbers will be added when registering the sections.
 		'strHelp' => null,
-		'strHelpOnSide' => null,
+		'strHelpAside' => null,
 	);	
 	
 	/**
@@ -1574,7 +1579,7 @@ abstract class FetchTweets_AdminPageFramework_SettingsAPI extends FetchTweets_Ad
 		'fIf' 				=> true,
 		'numOrder'			=> null,	// do not set the default number here for this key.		
 		'strHelp'			=> null,	// since 2.1.0
-		'strHelpOnSide'		=> null,	// since 2.1.0
+		'strHelpAside'		=> null,	// since 2.1.0
 	);	
 	
 	/**
@@ -1663,6 +1668,8 @@ abstract class FetchTweets_AdminPageFramework_SettingsAPI extends FetchTweets_Ad
 	* <li><strong>strCapability</strong> - ( optional, string ) the <a href="http://codex.wordpress.org/Roles_and_Capabilities">access level</a> of the section. If the page visitor does not have sufficient capability, the section will be invisible to them.</li>
 	* <li><strong>fIf</strong> - ( optional, boolean ) if the passed value is false, the section will not be registered.</li>
 	* <li><strong>numOrder</strong> - ( optional, integer ) the order number of the section. The higher the number is, the lower the position it gets.</li>
+	* <li><strong>strHelp</strong> - ( optional, string ) the help description added to the contextual help tab.</li>
+	* <li><strong>strHelpAside</strong> - ( optional, string ) the additional help description for the side bar of the contextual help tab.</li>
 	* </ul>
 	* 
 	* <h4>Example</h4>
@@ -1780,6 +1787,8 @@ abstract class FetchTweets_AdminPageFramework_SettingsAPI extends FetchTweets_Ad
 	* 	<li><strong>vClassAttribute</strong> - ( optional, string|array ) the value(s) assigned to the input tag's <em>class</em>.</li>
 	* 	<li><strong>vLabelMinWidth</strong> - ( optional, string|array ) the inline style property of the <em>min-width</em> of the label tag for the field.</li>
 	* 	<li><strong>vDisable</strong> - ( optional, boolean|array ) if this is set to true, the <em>disabled</em> attribute will be inserted into the field input tag.</li>
+	*	<li><strong>strHelp</strong> - ( optional, string ) the help description added to the contextual help tab.</li>
+	*	<li><strong>strHelpAside</strong> - ( optional, string ) the additional help description for the side bar of the contextual help tab.</li>
 	* </ul>
 	* <h4>Field Types</h4>
 	* <p>Each field type uses specific array keys.</p>
@@ -2056,7 +2065,23 @@ abstract class FetchTweets_AdminPageFramework_SettingsAPI extends FetchTweets_Ad
 		$this->oProps->strScript .= FetchTweets_AdminPageFramework_Properties::getImageSelectorScript( "admin_page_framework", $this->oProps->strThickBoxTitle, $this->oProps->strThickBoxButtonUseThis );
 		
 	}
-			 	
+		
+	/**
+	 * Redirects the callback of the load-{page} action hook to the framework's callback.
+	 * 
+	 * @since			2.1.0
+	 * @access			protected
+	 * @internal
+	 * @remark			This method will be triggered before the header gets sent.
+	 * @return			void
+	 */ 
+	protected function doPageLoadCall( $strPageSlug, $strTabSlug, $arrArg ) {
+
+		// Do actions, class name -> page -> in-page tab.
+		$this->oUtil->addAndDoActions( $this, $this->oUtil->getFilterArrayByPrefix( "load_", $this->oProps->strClassName, $strPageSlug, $strTabSlug, true ) );
+		
+	}
+			
 	/**
 	 * Validates the submitted user input.
 	 * 
@@ -2492,7 +2517,7 @@ abstract class FetchTweets_AdminPageFramework_SettingsAPI extends FetchTweets_Ad
 						'strHelpTabTitle'			=> $arrSection['strTitle'],
 						'strHelpTabID'				=> $arrSection['strSectionID'],
 						'strHelpTabContent'			=> $arrSection['strHelp'],
-						'strHelpTabSidebarContent'	=> $arrSection['strHelpOnSide'] ? $arrSection['strHelpOnSide'] : "",
+						'strHelpTabSidebarContent'	=> $arrSection['strHelpAside'] ? $arrSection['strHelpAside'] : "",
 					)
 				);
 				
@@ -2527,7 +2552,7 @@ abstract class FetchTweets_AdminPageFramework_SettingsAPI extends FetchTweets_Ad
 						'strHelpTabID'				=> $arrField['strSectionID'],
 						'strHelpTabContent'			=> "<span class='contextual-help-tab-title'>" . $arrField['strTitle'] . "</span> - " . PHP_EOL
 														. $arrField['strHelp'],
-						'strHelpTabSidebarContent'	=> $arrField['strHelpOnSide'] ? $arrField['strHelpOnSide'] : "",
+						'strHelpTabSidebarContent'	=> $arrField['strHelpAside'] ? $arrField['strHelpAside'] : "",
 					)
 				);
 
@@ -2743,7 +2768,10 @@ if ( ! class_exists( 'FetchTweets_AdminPageFramework' ) ) :
  * The class methods corresponding to the name of the below actions and filters can be extended to modify the page output. Those methods are the callbacks of the filters and actions.</p>
  * <h3>Methods and Action Hooks</h3>
  * <ul>
- * 	<li><code>start_ + extended class name</code> – triggered at the end of the class constructor.</li>
+ * 	<li><code>start_ + extended class name</code> – triggered at the end of the class constructor. This will be triggered in any admin page.</li>
+ * 	<li><code>load_ + extended class name</code>[2.1.0+] – triggered when the framework's page is loaded before the header gets sent. This will not be triggered in the admin pages that are not registered by the framework.</li>
+ * 	<li><code>load_ + page slug</code>[2.1.0+] – triggered when the framework's page is loaded before the header gets sent. This will not be triggered in the admin pages that are not registered by the framework.</li>
+ * 	<li><code>load_ + page slug + _ + tab slug</code>[2.1.0+] – triggered when the framework's page is loaded before the header gets sent. This will not be triggered in the admin pages that are not registered by the framework.</li>
  * 	<li><code>do_before_ + extended class name</code> – triggered before rendering the page. It applies to all pages created by the instantiated class object.</li>
  * 	<li><code>do_before_ + page slug</code> – triggered before rendering the page.</li>
  * 	<li><code>do_before_ + page slug + _ + tab slug</code> – triggered before rendering the page.</li>
@@ -2807,6 +2835,9 @@ if ( ! class_exists( 'FetchTweets_AdminPageFramework' ) ) :
  * <blockquote>------ When the class is instantiated ------
  *  
  *  start_ + extended class name
+ *  load_ + extended class name
+ *  load_ + page slug
+ *  load_ + page slug + _ + tab slug
  *  
  *  ------ Start Rendering HTML ------
  *  
@@ -3019,6 +3050,9 @@ abstract class FetchTweets_AdminPageFramework extends FetchTweets_AdminPageFrame
 		
 		// register_setting() callback
 		if ( substr( $strMethodName, 0, strlen( 'validation_pre_' ) )	== 'validation_pre_' ) return $this->doValidationCall( $strMethodName, $arrArgs[ 0 ] );  // section_pre_
+
+		// load-{page} callback
+		if ( substr( $strMethodName, 0, strlen( 'load_pre_' ) )	== 'load_pre_' ) return $this->doPageLoadCall( substr( $strMethodName, strlen( 'load_pre_' ) ), $strTabSlug, $arrArgs[ 0 ] );  // load_pre_
 		
 		// If it's one of the framework's callback methods, do nothing.	
 		if ( $this->isFrameworkCallbackMethod( $strMethodName ) )
@@ -3737,7 +3771,7 @@ class FetchTweets_AdminPageFramework_MetaBox_Properties extends FetchTweets_Admi
 		'vLabel'			=> '',		// sets the label for the field. Setting a non-null value will let it parsed with the loop ( foreach ) of the input element rendering method.
 		'fIf'				=> true,
 		'strHelp'			=> null,	// since 2.1.0
-		'strHelpOnSide'		=> null,	// since 2.1.0
+		'strHelpAside'		=> null,	// since 2.1.0
 		
 		// The followings may need to uncommented.
 		// 'strClassName' => null,		// This will be assigned automatically in the formatting method.
@@ -4058,6 +4092,13 @@ class FetchTweets_AdminPageFramework_Properties extends FetchTweets_AdminPageFra
 	 * @since			2.0.0
 	 */ 					
 	public $strFormEncType = 'multipart/form-data';	
+	
+	/**
+	 * Stores the label for for the "Insert to Post" button in the media uploader box.
+	 * @since			2.0.0
+	 * @internal
+	 */ 	
+	public $strThickBoxButtonUseThis = '';
 	
 	/**
 	 * Decides whether the setting form tag is rendered or not.	
@@ -6609,7 +6650,7 @@ abstract class FetchTweets_AdminPageFramework_MetaBox extends FetchTweets_AdminP
 				&& $arrField['strHelp']
 			) {
 				
-				$this->addHelpTextForFormFields( $arrField['strTitle'], $arrField['strHelp'], $arrField['strHelpOnSide'] );
+				$this->addHelpTextForFormFields( $arrField['strTitle'], $arrField['strHelp'], $arrField['strHelpAside'] );
 								
 			}
 		

@@ -51,6 +51,8 @@ final class FetchTweets_InitialLoader {
 		$GLOBALS['arrFetchTweets_FinalClasses'] = isset( $GLOBALS['arrFetchTweets_FinalClasses'] ) && is_array( $GLOBALS['arrFetchTweets_FinalClasses'] ) ? $GLOBALS['arrFetchTweets_FinalClasses'] : array();
 		$GLOBALS['arrFetchTweets_Classes'] = isset( $GLOBALS['arrFetchTweets_Classes'] ) && is_array( $GLOBALS['arrFetchTweets_Classes'] ) ? $GLOBALS['arrFetchTweets_Classes'] : array();
 				
+		$GLOBALS['arrFetchTweets_oEmbed'] = array();		
+				
 	}
 	
 	private function loadClasses( $strFilePath ) {
@@ -203,6 +205,9 @@ final class FetchTweets_InitialLoader {
 		if ( is_admin() )
 			$GLOBALS['oFetchTweetsUserAds'] = isset( $GLOBALS['oFetchTweetsUserAds'] ) ? $GLOBALS['oFetchTweetsUserAds'] : new FetchTweets_UserAds;
 		
+		// 10. WordPress version backward compatibility.
+		$this->defineConstantesForBackwardCompatibility();
+		
 	}
 
 	public function enqueueStyle() {
@@ -213,5 +218,20 @@ final class FetchTweets_InitialLoader {
 		
     }		
 
+	/**
+	 * Defines constants that are not defined in WordPress v3.4.x or below.
+	 * 
+	 * @since			1.3.0
+	 */
+	protected function defineConstantesForBackwardCompatibility() {
+		
+		if ( ! defined( 'MINUTE_IN_SECONDS' ) ) define( 'MINUTE_IN_SECONDS', 60 );
+		if ( ! defined( 'HOUR_IN_SECONDS' ) ) define( 'HOUR_IN_SECONDS',   60 * MINUTE_IN_SECONDS );
+		if ( ! defined( 'DAY_IN_SECONDS' ) ) define( 'DAY_IN_SECONDS',    24 * HOUR_IN_SECONDS   );
+		if ( ! defined( 'WEEK_IN_SECONDS' ) ) define( 'WEEK_IN_SECONDS',    7 * DAY_IN_SECONDS    );
+		if ( ! defined( 'YEAR_IN_SECONDS' ) ) define( 'YEAR_IN_SECONDS',  365 * DAY_IN_SECONDS    );	
+
+	}
+		
 	
 }

@@ -17,13 +17,19 @@ abstract class FetchTweets_Event_ {
 
 	public function __construct() {
 		
-		// For transient (cache) renewal events
-		if ( isset( $_GET['doing_wp_cron'] ) )	// if WP Cron is the one which loaded the page,
+		// if WP Cron is the one which loaded the page,
+		if ( isset( $_GET['doing_wp_cron'] ) )	{
+			
+			// For transient (cache) renewal events
 			add_action( 'fetch_tweets_action_transient_renewal', array( $this, 'renewTransients' ) );	
 			
-		// For SimplePie cache renewal events 
-		if ( isset( $_GET['doing_wp_cron'] ) )	// if WP Cron is the one which loaded the page,
+			// For transient (cache) formatting events - adds oEmbed elements.
+			add_action( 'fetch_tweets_action_transient_add_oembed_elements', array( $this, 'addOEmbedElements' ) );
+			
+			// For SimplePie cache renewal events 
 			add_action( 'fetch_tweets_action_simplepie_renew_cache', array( $this, 'renewSimplePieCaches' ) );
+			
+		}
 				
 		// Redirects
 		if ( isset( $_GET['fetch_tweets_link'] ) && $_GET['fetch_tweets_link'] ) {			
@@ -84,5 +90,31 @@ abstract class FetchTweets_Event_ {
 		$oFetch = new FetchTweets_Fetch;
 		$oFetch->setAPIGETRequestCache( $arrRequestURI['URI'], $arrRequestURI['key'] );
 
+	}
+	
+	/**
+	 * Re-saves the cache after adding oEmbed elements.
+	 * 
+	 * @since			1.3.0
+	 */
+	public function addOEmbedElements( $strTransientKey ) {
+
+		$oFetch = new FetchTweets_Fetch;
+		
+		// structure: array( 'mod' => time(), 'data' => $this->oBase64->encode( $vData ) ), 
+		$arrTransient = $oFetch->getTransient( $strTransientKey );			
+	
+		// If the mandatory keys are not set, it's broken.
+		if ( ! isset( $arrTransient['mod'], $arrTransient['data'] ) ) {
+			delete_transient( $strTransientKey );
+			return;
+		}
+		
+		$arrTweets = ( array ) $this->oBase64->decode( $arrTransient['data'] );		
+		$oFetch->addEmbeddableMediaElements( $arrTweets );		// the array is passed as reference.
+
+		// Re-save the cache.
+		$oFetch->setTransient( $strTransientKey, $arrTweets, $arrTransient['mod'] );	// the method handles the encoding.
+		
 	}
 }

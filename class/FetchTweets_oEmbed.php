@@ -8,6 +8,40 @@ require_once( ABSPATH . WPINC . '/class-oembed.php' );
  */ 
 class FetchTweets_oEmbed extends WP_oEmbed {
 
+	function __construct() {
+		
+		parent::__construct();
+		
+		// This should be done by the bootstrap script but just in case.
+		if ( ! isset( $GLOBALS['arrFetchTweets_oEmbed'] ) ) $GLOBALS['arrFetchTweets_oEmbed'] = array();
+		
+	}
+	
+	/**
+	 * The do-it-all function that takes a URL and attempts to return the HTML.
+	 *
+	 * @see WP_oEmbed::discover()
+	 * @see WP_oEmbed::fetch()
+	 * @see WP_oEmbed::data2html()
+	 *
+	 * @param string $url The URL to the content that should be attempted to be embedded.
+	 * @param array $args Optional arguments. Usually passed from a shortcode.
+	 * @return bool|string False on failure, otherwise the UNSANITIZED (and potentially unsafe) HTML that should be used to embed.
+	 */
+	public function get_html( $strURL, $arrArgs=array() ) {
+		
+		if ( isset( $GLOBALS['arrFetchTweets_oEmbed'][ $strURL ] ) )
+			return $GLOBALS['arrFetchTweets_oEmbed'][ $strURL ];
+			
+		$strHTML = parent::get_html( $strURL, $arrArgs );
+		
+		// Store the result in the global array.
+		$GLOBALS['arrFetchTweets_oEmbed'][ $strURL ] = $strHTML;
+		
+		return $strHTML;
+		
+	}
+
 	/**
 	 * Attempts to find oEmbed provider discovery <link> tags at the given URL.
 	 *

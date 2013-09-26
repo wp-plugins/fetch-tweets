@@ -164,8 +164,13 @@ function FetchTweets_AddSampleTemplateDirPath( $arrDirPaths ) {
 
 == Frequently Asked Questions ==
 
+= Do I need to a API key to use it ? =
+As of v1.3.0, it is not necessary. Just click on the *Connect* button in the Authentication page of the plugin and it will redirect to the Twitter's authentication page. Then you log in to Twitter there and authorize the plugin.
+
+Though you can use your own keys as the existing method. In that case, click on the *Set Keys Manually* button that redirects you to the page to set the keys manually.
+
 = Where can I get the API keys? =
-First you need to create an application to access the Twitter API [here](https://dev.twitter.com/apps). Then create *consumer key*, *consumer secret*, *access token*, and *access token secret*. Without these, you won't be able to fetch tweets.
+If you set authentication keys manually, you need to create an application to access the Twitter API [here](https://dev.twitter.com/apps). Then create *consumer key*, *consumer secret*, *access token*, and *access token secret*. Without these, you won't be able to fetch tweets.
 
 = How can I create my own template file? =
 See the How to Create Own Template section of the **[Other Notes](http://wordpress.org/plugins/fetch-tweets/other_notes/)** page.
@@ -173,13 +178,21 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 == Screenshots ==
 
 1. ***Tweets Displayed in Page and Sidebar***
-2. ***Fetching Rule List***
+2. ***Fetching Rule Listing Table***
 3. ***Widget Settings***
 4. ***Manage Templates***
+5. ***Authentication***
 
 == Changelog ==
 
+= 1.3.0 - 09/27/2013 =
+* Fixed a bug that an undefined constant warning occurred in WordPress v3.4.x or below.
+* Added the ability to perform authentication without creating an application by the user.
+* Tweaked the caching system for embedded media elements.
+* Tweaked the default template styles for embedded images to keep the aspect ratio.
+
 = 1.2.0 - 09/21/2013 =
+* Added the ability to automatically embed media elements.
 * Fixed the minimum required WordPress version to 3.3.
 * Removed redundant functions from the default template functions file.
 * Added authentication information in the setting page.
@@ -191,7 +204,7 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 * Tweaked the default template styles for right to left text display.
 * Updated the Admin Page Framework library to v2.1.0.
 * Added the option to set access rights to the setting pages.
-* Added the ability to clear caches.
+* Added the option to clear caches.
 * Added the ability to fetch tweets by list.
 
 = 1.1.1 - 09/08/2013 =

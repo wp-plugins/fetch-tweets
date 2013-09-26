@@ -9,6 +9,10 @@ abstract class FetchTweets_Option_ {
 				'access_token' => '',
 				'access_secret' => '',
 			),
+			'twitter_connect' => array(
+				'access_token' => '',
+				'access_secret' => '',
+			),
 			'default_values' => array(),
 			'capabilities' => array(),
 		),
@@ -122,6 +126,53 @@ abstract class FetchTweets_Option_ {
 	/*
 	 * Front end methods
 	 * */
+	 
+	 
+	public function getAccessTokenAuto() {
+		return $this->arrOptions['fetch_tweets_settings']['twitter_connect']['access_token'];
+	}	
+	public function getAccessTokenSecretAuto() {
+		return $this->arrOptions['fetch_tweets_settings']['twitter_connect']['access_secret'];
+	}		 
+	/**
+	 * Saves the given access token and the access secret key in the option table.
+	 * 
+	 * @remark			This uses different keys than the ones for v1.2.0 or below because these are for the automatic authentication.
+	 * @since			1.3.0
+	 * @return			void
+	 */	 
+	public function saveAccessToken( $strAccessToken, $strAccessSecret ) {
+		
+		$this->arrOptions['fetch_tweets_settings']['twitter_connect']['access_token'] = $strAccessToken;
+		$this->arrOptions['fetch_tweets_settings']['twitter_connect']['access_secret'] = $strAccessSecret;
+		$this->saveOptions();
+		
+	}
+	/**
+	 * Returns whether the plugin has set the API authentication keys automatically.
+	 * 
+	 * since			1.3.0
+	 */
+	public function isAuthKeysAutomaticallySet() {
+		return ( $this->getAccessTokenAuto() && $this->getAccessTokenSecretAuto() )
+			? true
+			: false;
+	}
+	/**
+	 * Returns whether the user has set the API authentication keys manually.
+	 * 
+	 * As of v1.3.0, automatic authentication is supported. If the user already sets the keys by themselves already, no need to re-authorize. 
+	 * Also if the consumer key and consumer secret are provided by miunosoft, if they become invalid for some reasons, the user can set them by themselves.
+	 * 
+	 * since			1.3.0
+	 * return			boolean
+	 */
+	public function isAuthKeysManuallySet() {
+		return ( $this->getConsumerKey() && $this->getConsumerSecret() && $this->getAccessToken() && $this->getAccessTokenSecret() )
+			? true 
+			: false;
+	}
+	
 	public function getConsumerKey() {
 		return $this->arrOptions['fetch_tweets_settings']['authentication_keys']['consumer_key'];
 	}

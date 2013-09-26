@@ -67,12 +67,15 @@ Text Domain: fetch-tweets
 .fetch-tweets-retweet-credit a {
 	text-decoration: none;
 }
-.fetch-tweets-external-media {
+.fetch-tweets .fetch-tweets-external-media {
 	clear: both;
 }
-.fetch-tweets-media-photo {
-}
 .fetch-tweets .fetch-tweets-media-photo {
+}
+.fetch-tweets .fetch-tweets-external-media img,
+.fetch-tweets .fetch-tweets-media-photo img {
+	max-width: 100%;
+	height: auto;	
 }
 .fetch-tweets .fetch-tweets-media {
 }

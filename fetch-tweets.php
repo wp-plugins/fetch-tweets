@@ -5,7 +5,7 @@
 	Description: Fetches and displays tweets from Twitter with the the Twitter REST API v1.1.
 	Author: miunosoft (Michael Uno)
 	Author URI: http://michaeluno.jp
-	Version: 1.2.0
+	Version: 1.3.0
 	Requirements: PHP 5.2.4 or above, WordPress 3.2 or above.
 */ 
 
@@ -28,6 +28,8 @@ final class FetchTweets_Commons {
 	const AdminOptionKey = 'fetch_tweets_admin';
 	const PageSettingsSlug = 'fetch_tweets_settings';
 	const TransientPrefix = 'FTWS';
+	const ConsumerKey = '97LqHiMs06VhV2rf5tUQw';
+	const ConsumerSecoret = 'FIH9cr0eXtd7q9caYVqBjd5mvfUS6hZqREYsUhh9wA';
 	
 	public static function getPluginKey() {
 		return self::$strPluginKey;

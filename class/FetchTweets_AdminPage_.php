@@ -3,6 +3,9 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 
 	public function start_FetchTweets_AdminPage() {
 		
+		// Set the option property.
+		$this->oOption = & $GLOBALS['oFetchTweets_Option'];
+		
 		// For the list table bulk actions. The WP_List_Table class does not set the post type query string in the redirected page.
 		// http://.../wp-admin/edit.php?page=fetch_tweets_templates&tab=&_wpnonce=ebed1d5343&_wp_http_referer=%2Fwp360%2Fwp-admin%2Fedit.php%3Fpost_type%3Dfetch_tweets%26page%3Dfetch_tweets_templates&action=activate&paged=1&action2=-1
 		if ( 
@@ -30,7 +33,8 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 
     public function setUp() {
     	
-		$this->checkAPIKeys();
+		// Show the warning message if the authentication key is not set.
+		$this->checkAPIKeys(); 
 	
 		if ( isset( $this->oProps->arrOptions['fetch_tweets_settings']['capabilities']['setting_page_capability'] ) 
 			&& ! empty( $this->oProps->arrOptions['fetch_tweets_settings']['capabilities']['setting_page_capability'] )
@@ -78,8 +82,35 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 				'strPageSlug'	=> 'fetch_tweets_settings',
 				'strTabSlug'	=> 'authentication',
 				'strTitle'		=> __( 'Authentication', 'fetch-tweets' ),
-				'numOrder'		=> 1,				
+				'strParentTabSlug' => 'twitter_connect',
+				'fHide'			=> true,
+				// 'numOrder'		=> 1,				
 			),
+			array(
+				'strPageSlug'	=> 'fetch_tweets_settings',
+				'strTabSlug'	=> 'twitter_clear_session',
+				'strTitle'		=> 'Clear Session',
+				'fHide'			=> true,
+			),
+			array(
+				'strPageSlug'	=> 'fetch_tweets_settings',
+				'strTabSlug'	=> 'twitter_connect',
+				'strTitle'		=> __( 'Authentication', 'fetch-tweets' ),
+				'numOrder'		=> 1,				
+				// 'fHide'			=> true,
+			),			
+			array(
+				'strPageSlug'	=> 'fetch_tweets_settings',
+				'strTabSlug'	=> 'twitter_redirect',
+				'strTitle'		=> 'Redirect',
+				'fHide'			=> true,
+			),					
+			array(
+				'strPageSlug'	=> 'fetch_tweets_settings',
+				'strTabSlug'	=> 'twitter_callback',
+				'strTitle'		=> 'Callback',
+				'fHide'			=> true,
+			),				
 			array(
 				'strPageSlug'	=> 'fetch_tweets_settings',
 				'strTabSlug'	=> 'general',
@@ -132,6 +163,12 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 	
 		$this->addSettingSections(
 			array(
+				'strSectionID'		=> 'twitter_connect',
+				'strPageSlug'		=> 'fetch_tweets_settings',
+				'strTabSlug'		=> 'twitter_connect',
+				'strTitle'			=> __( 'Authenticate', 'fetch-tweets' ),
+			),		
+			array(
 				'strSectionID'		=> 'authentication_keys',
 				'strPageSlug'		=> 'fetch_tweets_settings',
 				'strTabSlug'		=> 'authentication',
@@ -180,6 +217,42 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		);
 		
 		// Add setting fields
+ 		$this->addSettingFields(
+			array(	
+				'strFieldID' => 'connect_to_twitter',
+				'strSectionID' => 'twitter_connect',
+				'strTitle' => __( 'Connect to Twitter', 'fetch-tweets' ),
+				'vLabel' => __( 'Connect', 'fetch-tweets' ),
+				'vLink' => add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'twitter_redirect' ), admin_url( $GLOBALS['pagenow'] ) ),
+				'strType' => 'submit',
+			),	
+			// array(	
+				// 'strFieldID' => 'disconnect_from_twitter',
+				// 'strSectionID' => 'twitter_connect',
+				// 'strTitle' => '',
+				// 'fIf' => $this->oOption->isAuthKeysAutomaticallySet(),
+				// 'vLabel' => array( 
+					// 'disconnect' => __( 'Disconnect from Twitter', 'fetch-tweets' ),
+				// ),
+				// 'vClassAttribute' => array(
+					// 'disconnect' => 'button button-secondary',
+				// ),
+				// 'vLink' => array(
+					// 'disconnect' => add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'twitter_connect' ), admin_url( $GLOBALS['pagenow'] ) ),
+				// ),
+				// 'strType' => 'submit',
+			// ),	
+			
+			array(	
+				'strFieldID' => 'manual_authentication',
+				'strSectionID' => 'twitter_connect',
+				'strTitle' => __( 'Manual', 'fetch-tweets' ),
+				'vClassAttribute' => 'button button-secondary',
+				'vLabel' => __( 'Set Keys Manually', 'fetch-tweets' ),
+				'vLink' => add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'authentication', 'settings-updated' => false ) ),
+				'strType' => 'submit',
+			)			
+		); 
 		$this->addSettingFields(
 			array(	
 				'strFieldID' => 'consumer_key',
@@ -371,14 +444,10 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 	}
 	protected function checkAPIKeys() {
 		
-		$oOption = & $GLOBALS['oFetchTweets_Option'];
-		if ( 
-			empty( $oOption->arrOptions['fetch_tweets_settings']['authentication_keys']['consumer_key'] )
-			|| empty( $oOption->arrOptions['fetch_tweets_settings']['authentication_keys']['consumer_secret'] )
-			|| empty( $oOption->arrOptions['fetch_tweets_settings']['authentication_keys']['access_token'] )
-			|| empty( $oOption->arrOptions['fetch_tweets_settings']['authentication_keys']['access_secret'] )
-		)
+		if ( $this->oOption->isAuthKeysManuallySet() || $this->oOption->isAuthKeysAutomaticallySet() ) return;
+
 		add_action( 'admin_notices', array( $this, 'showAdminNotice' ) );
+		
 	}
 	public function showAdminNotice() {
 			
@@ -388,7 +457,7 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		) ) return; 
 		
 		// http://.../wp-admin/edit.php?post_type=fetch_tweets&page=fetch_tweets_settings
-		$strSettingPageURL = admin_url( 'edit.php?post_type=fetch_tweets&page=fetch_tweets_settings&tab=authentication#authentication_keys' ); 
+		$strSettingPageURL = add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'twitter_redirect' ), admin_url( 'edit.php' ) ); 
 		echo "<div class='error'>"
 			. "<p>" 
 			. "<strong>" . FetchTweets_Commons::PluginName . "</strong>: "
@@ -553,77 +622,236 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		
 	}
 	
-	
 	/*
-	 * Settings Page
+	 * Authentication In-Page Tabs
 	 */
-	public function do_before_fetch_tweets_settings() {	// do_before_ + page slug
-		$this->showPageTitle( false );
+	public function load_fetch_tweets_settings() { // load_ + page slug
+		session_start();	// Start session to store access token.
 	}
+	public function load_fetch_tweets_settings_twitter_connect() {
+				
+		// If the access token and the access token secret key are set, do nothing.
+		// $oOption = & $GLOBALS['oFetchTweets_Option'];
+		// if ( $oOption->isAuthKeysManuallySet() ) return;
 		
-	public function do_fetch_tweets_settings () {	// do_ + page slug
+		// Check if the session array to have the access token; otherwise, clear the session.
+		if ( 
+			empty( $_SESSION['access_token'] ) 
+			|| empty( $_SESSION['access_token']['oauth_token'] ) 
+			|| empty( $_SESSION['access_token']['oauth_token_secret'] ) 
+		) 		
+			session_destroy();
+			// wp_redirect( admin_url( $GLOBALS['pagenow'] . "?page=fetch_tweets_settings&tab=twitter_clear_session" ) );
+						
+	}
+	public function load_fetch_tweets_settings_twitter_clear_session() {
+
+		/* Clear sessions */
+		session_destroy();
+		 
+		/* Redirect to page with the connect to Twitter option. */
+		wp_redirect( admin_url( $GLOBALS['pagenow'] . "?page=fetch_tweets_settings&tab=twitter_connect" ) );
+	
+	}
+	
+	/**
+	 * Redirects to the twitter to get authenticated.
+	 * 
+	 * @since			1.3.0
+	 * @remark			This is redirected from the "Connect to Twitter" button.
+	 */
+	public function load_fetch_tweets_settings_twitter_redirect() {	// load_ + page slug + tab
+	
+		/* Build TwitterOAuth object with client credentials. */
+		$oConnect = new TwitterOAuth( FetchTweets_Commons::ConsumerKey, FetchTweets_Commons::ConsumerSecoret );
+		 
+		/* Get temporary credentials. */
+		// Requesting authentication tokens, the parameter is the URL we will be redirected to		
+		// $arrRequestToken = $oConnect->getRequestToken( add_query_arg( array( 'page' => 'fetch_tweets_settings', 'tab' => 'twitter_callback' ), null, admin_url() ) );
+		// $arrRequestToken = $oConnect->getRequestToken( admin_url( $GLOBALS['pagenow'] . "?post_type=fetch_tweets&page=fetch_tweets_settings&tab=twitter_callback" ) );
+		$arrRequestToken = $oConnect->getRequestToken( add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'twitter_callback' ), admin_url( $GLOBALS['pagenow'] ) ) );
+
+		/* Save temporary credentials to session. */
+		$_SESSION['oauth_token'] = $strTemporaryToken = $arrRequestToken['oauth_token'];
+		$_SESSION['oauth_token_secret'] = $arrRequestToken['oauth_token_secret'];
 		
-		// submit_button();
-// echo "<h3>Variables</h3>";
-// echo $this->oDebug->getArray( $GLOBALS['option_page'] );
+		/* If last connection failed don't display authorization link. */
+		switch ( $oConnect->http_code ) {
+		  case 200:	/* Build authorize URL and redirect user to Twitter. */
+			wp_redirect( $oConnect->getAuthorizeURL( $strTemporaryToken ) );	// goes to twitter.com
+			break;
+		  default:	/* Show notification if something went wrong. */
+			die( __( 'Could not connect to Twitter. Refresh the page or try again later.', 'fetch-tweets' ) );
+		}
+		exit;
+	
+	}	
+	
+	/**
+	 * Receives the callback from Twitter authentication and saves the access token.
+	 * 
+	 * @remark			This method is triggered when the user get redirected back to the admin page
+	 */
+	public function load_fetch_tweets_settings_twitter_callback() {
+				
+		/* If the oauth_token is old redirect to the authentication page. */
+		if (
+			isset( $_REQUEST['oauth_token'] ) 
+			&& $_SESSION['oauth_token'] !== $_REQUEST['oauth_token']
+		) {
+			$_SESSION['oauth_status'] = 'oldtoken';
+			wp_redirect( add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'authentication' ), admin_url( $GLOBALS['pagenow'] ) ) );
+			// wp_redirect( admin_url( $GLOBALS['pagenow'] . "?page=fetch_tweets_settings&tab=twitter_clear_session" ) );
+		}
+		
+		$oOption = & $GLOBALS['oFetchTweets_Option'];
 
-// echo "<h3>Properties</h3>";
-// echo $this->oDebug->getArray( $this->oProps ); 
-// echo $this->oDebug->getArray( $this->oProps->arrOptions ); 
+		/* Create TwitteroAuth object with app key/secret and token key/secret from default phase */
+		$oConnect = new TwitterOAuth( FetchTweets_Commons::ConsumerKey, FetchTweets_Commons::ConsumerSecoret, $_SESSION['oauth_token'], $_SESSION['oauth_token_secret'] );
 
-// echo "<h3>Options</h3>";
-// $arrOptions = get_option( FetchTweets_Commons::AdminOptionKey );
-// echo $this->oDebug->getArray( $arrOptions );
+		/* Request access tokens from twitter */
+		$arrAccessTokens = $oConnect->getAccessToken( $_REQUEST['oauth_verifier'] );
 
+		/* Save the access tokens. Normally these would be saved in a database for future use. */
+		$_SESSION['access_token'] = $arrAccessTokens;
+		$oOption->saveAccessToken( $arrAccessTokens['oauth_token'], $arrAccessTokens['oauth_token_secret'] );
 
-// echo "<h3>Registered Pages</h3>";
-// echo $this->oDebug->getArray( $this->oProps->arrPages );
-// echo "<h3>Registered Tabs</h3>";
-// echo $this->oDebug->getArray( $this->oProps->arrInPageTabs[ 'fetch_tweets_settings' ] );
+		/* Remove no longer needed request tokens */
+		unset( $_SESSION['oauth_token'] );
+		unset( $_SESSION['oauth_token_secret'] );
+
+		/* If HTTP response is 200 continue otherwise send to connect page to retry */
+		if ( 200 == $oConnect->http_code ) {
+			
+			/* The user has been verified and the access tokens can be saved for future use */
+			$_SESSION['status'] = 'verified';		  
+			wp_redirect( add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'twitter_connect' ), admin_url( $GLOBALS['pagenow'] ) ) );
+
+		  
+		  
+		} else {
+			
+		  /* Save HTTP status for error dialog on authentication page.*/
+		  // Let the user set authentication keys manually		  
+		  wp_redirect( add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'authentication' ), admin_url( $GLOBALS['pagenow'] ) ) );
+		  // wp_redirect( admin_url( $GLOBALS['pagenow'] . "?page=fetch_tweets_settings&tab=authentication" ) );
+		  // wp_redirect( admin_url( $GLOBALS['pagenow'] . "?page=fetch_tweets_settings&tab=twitter_clear_session" ) );
+		  // header( 'Location: ' . admin_url( $GLOBALS['pagenow'] . "?page=twitter&tab=clear_session" ) );
+		  
+		}
+	
+	}	
+	
+	// The connect page
+	public function do_form_fetch_tweets_settings_twitter_connect() {	// do_form_ + page slug + _ + tab slug
+		
+		// Store the status array into the property. This property will be referred when the Connect to Twitter button is rendered.
+		$this->arrStatus = $this->getVerificationStatus();
+
+		$this->renderAuthenticationStatus( $this->arrStatus );
+
+		// $this->renderAuthenticationButtons( $arrStatus );
+		
+// echo $this->oDebug->getArray( $arrStatus );
+// echo $this->oDebug->getArray( $this->oOption->arrOptions['fetch_tweets_settings'] );
+		
+		
+	}
+
+	/**
+	 * Retrieves the verification status with the saved access keys.
+	 * 
+	 * This method first checks with the manually set authentication keys and if it fails, it checks with the automatically set authentication keys.
+	 * 
+	 * @since			1.3.0
+	 * @return			array			The array which contains the verification status.
+	 */
+	protected function getVerificationStatus() {
+
+		// If the access token and access secret keys have been manually set,
+		$arrStatus = $this->oOption->isAuthKeysManuallySet()
+			? $this->verifyCrediential( $this->oOption->getConsumerKey(), $this->oOption->getConsumerSecret(), $this->oOption->getAccessToken(), $this->oOption->getAccessTokenSecret() )
+			: array();
+			
+		if ( ! empty( $arrStatus ) ) return $arrStatus;
+			
+		// If the access token and secret keys have been automatically set,
+		if ( $this->oOption->isAuthKeysAutomaticallySet() )
+			$arrStatus = $this->verifyCrediential( FetchTweets_Commons::ConsumerKey, FetchTweets_Commons::ConsumerSecoret, $this->oOption->getAccessTokenAuto(), $this->oOption->getAccessTokenSecretAuto() );
+			
+		if ( $arrStatus ) return $arrStatus;
+	
+	}
+	
+	/**
+	 * Checks the API credential is valid or not.
+	 * 	 
+	 * @since			1.3.0
+	 * @return			array			the retrieved data.
+	 * @remark			The returned data is a merged result of 'account/verify_credientials' and 'rate_limit_status'.
+	 */
+	protected function verifyCrediential( $strConsumerKey, $strConsumerSecret, $strAccessToken, $strAccessSecret ) {
+		
+		// Return the cached response if available.
+		$strCachID = FetchTweets_Commons::TransientPrefix . '_' . md5( serialize( array( $strConsumerKey, $strConsumerSecret, $strAccessToken, $strAccessSecret ) ) );
+		$vData = get_transient( $strCachID );
+		if ( $vData !== false ) return $vData;
+		
+		// Perform the requests.
+		$oTwitterOAuth =  new FetchTweets_TwitterOAuth( $strConsumerKey, $strConsumerSecret, $strAccessToken, $strAccessSecret );
+		$arrUser = $oTwitterOAuth->get( 'account/verify_credentials' );
+		
+		// If the user id could not be retrieved, it means it failed.
+		if ( ! isset( $arrUser['id'] ) || ! $arrUser['id'] ) return array();
+			
+		// Otherwise, it is okay. Retrieve the current status.
+		$arrStatus = $oTwitterOAuth->get( 'https://api.twitter.com/1.1/application/rate_limit_status.json?resources=help,users,search,statuses' );
+		
+		// Set the cache.
+		$arrData = is_array( $arrStatus ) ? $arrUser + $arrStatus : $arrUser;
+		set_transient( $strCachID, $arrData, 60 * 2 );	// stores the cache only for 120 seconds. It is allowed 15 requests in 15 minutes.
+		return $arrData;
 
 	}
 	
-	public function do_fetch_tweets_settings_authentication() {
+	public function do_form_fetch_tweets_settings_authentication() {
 		
-		$oOption = & $GLOBALS['oFetchTweets_Option'];		
-		$oTwitterOAuth =  new FetchTweets_TwitterOAuth( 
-			$oOption->getConsumerKey(), 
-			$oOption->getConsumerSecret(), 
-			$oOption->getAccessToken(), 
-			$oOption->getAccessTokenSecret()
-		);		
-					
-		// Rate Limit Status			
-		$arrContent = $oOption->getConsumerKey() && $oOption->getConsumerSecret() && $oOption->getAccessToken() && $oOption->getAccessTokenSecret()
-			? $oTwitterOAuth->get( 'https://api.twitter.com/1.1/application/rate_limit_status.json?resources=help,users,search,statuses' )
-			: array();
-		$strUserTimelineLimit = isset( $arrContent['resources']['statuses']['/statuses/user_timeline'] )
-			? $arrContent['resources']['statuses']['/statuses/user_timeline']['remaining'] . ' / ' . $arrContent['resources']['statuses']['/statuses/user_timeline']['limit'] 
-				. "&nbsp;&nbsp;&nbsp;( " . __( 'Will be reset at', 'fetch-tweets' ) . ' ' . date( "F j, Y, g:i a" , $arrContent['resources']['statuses']['/statuses/user_timeline']['reset'] + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) . " )"
+		$this->arrStatus = $this->getVerificationStatus();
+		$this->renderAuthenticationStatus( $this->arrStatus );
+		
+	}
+	
+	/**
+	 * Renders the authentication status table.
+	 * 
+	 * @since			1.3.0
+	 * @param			array			$arrStatus			This arrays should be the merged array of the results of 'account/verify_credientials' and 'rate_limit_status' requests.
+	 * 
+	 */
+	protected function renderAuthenticationStatus( $arrStatus ) {
+		
+		$fIsValid = isset( $arrStatus['id'] ) && $arrStatus['id'] ? true : false;
+		$strScreenName = isset( $arrStatus['screen_name'] ) ? $arrStatus['screen_name'] : "";
+		
+		$strUserTimelineLimit = isset( $arrStatus['resources']['statuses']['/statuses/user_timeline'] )
+		? $arrStatus['resources']['statuses']['/statuses/user_timeline']['remaining'] . ' / ' . $arrStatus['resources']['statuses']['/statuses/user_timeline']['limit'] 
+			. "&nbsp;&nbsp;&nbsp;( " . __( 'Will be reset at', 'fetch-tweets' ) . ' ' . date( "F j, Y, g:i a" , $arrStatus['resources']['statuses']['/statuses/user_timeline']['reset'] + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) . " )"
+		: "";		
+		$strSearchLimit = isset( $arrStatus['resources']['search']['/search/tweets'] ) 
+			? $arrStatus['resources']['search']['/search/tweets']['remaining'] . ' / ' . $arrStatus['resources']['search']['/search/tweets']['limit'] 
+				. "&nbsp;&nbsp;&nbsp;( " . __( 'Will be reset at', 'fetch-tweets' ) . ' ' . date( "F j, Y, g:i a" , $arrStatus['resources']['search']['/search/tweets']['reset'] + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) . " )"
 			: "";		
-		$strSearchLimit = isset( $arrContent['resources']['search']['/search/tweets'] ) 
-			? $arrContent['resources']['search']['/search/tweets']['remaining'] . ' / ' . $arrContent['resources']['search']['/search/tweets']['limit'] 
-				. "&nbsp;&nbsp;&nbsp;( " . __( 'Will be reset at', 'fetch-tweets' ) . ' ' . date( "F j, Y, g:i a" , $arrContent['resources']['search']['/search/tweets']['reset'] + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) . " )"
-			: "";
-				
-		// Credientials Verification
-		$arrUser = $oOption->getConsumerKey() && $oOption->getConsumerSecret() && $oOption->getAccessToken() && $oOption->getAccessTokenSecret()
-			? $oTwitterOAuth->get( 'account/verify_credentials' )
-			: array();
-		$fIsValid = isset( $arrUser['id'] ) && $arrUser['id'] ? true : false;
-		$strScreenName = isset( $arrUser['screen_name'] ) ? $arrUser['screen_name'] : "";
-
-				
-		?>
 		
-		<table class="form-table">
+	?>		
+		<h3><?php _e( 'Status', 'fetch-tweets' ); ?></h3>
+		<table class="form-table auth-status">
 			<tbody>
 				<tr valign="top">
 					<th scope="row">
 						<?php _e( 'Status', 'fetch-tweets' ); ?>
 					</th>
 					<td>
-						<?php echo $fIsValid ? __( 'Authenticated', 'fetch-tweets' ) : __( 'Not authenticated', 'fetch-tweets' ); ?>
+						<?php echo $fIsValid ? '<span class="authenticated">' . __( 'Authenticated', 'fetch-tweets' ) . '</span>': '<span class="unauthenticated">' . __( 'Not authenticated', 'fetch-tweets' ) . '</span>'; ?>
 					</td>
 				</tr>
 				<tr valign="top">
@@ -654,6 +882,105 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		</table>
 					
 		<?php
+// echo $this->oDebug->getArray( $arrStatus );		
+	}
+	/**
+	 * Renders the authentication link buttons.
+	 * @since			1.3.0
+	 */
+	protected function renderAuthenticationButtons( $arrStatus ) {
+		
+		$fIsValid = isset( $arrStatus['id'] ) && $arrStatus['id'] ? true : false;
+	?>		
+		<h3><?php _e( 'Authenticate', 'fetch-tweets' ); ?></h3>
+		<table class="form-table auth-status">
+			<tbody>
+				<tr valign="top">
+					<th scope="row">
+						<?php _e( 'Connect to Twitter', 'fetch-tweets' ); ?>
+					</th>
+					<td>
+						<a href="http://www.google.com">
+							<input type="submit" class="button button-primary" value="<?php echo $fIsValid ? __( 'Disconnect', 'fetch-tweets' ) : __( 'Connect', 'fetch-tweets' ) ; ?>" />
+						</a>
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<?php _e( 'Manual', 'fetch-tweets' ); ?>
+					</th>
+					<td>
+						<a href="<?php echo add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'authentication' ), admin_url( $GLOBALS['pagenow'] ) ); ?>">
+							<input type="submit" class="button button-secondary" value="<?php _e( 'Set Keys Manually', 'fetch-tweets' ); ?>"/>
+						</a>
+					</td>
+				</tr>		
+			</tbody>
+		</table>
+					
+		<?php		
+	}
+	
+	
+	/**
+	 * Filters the output of the Connect To Twitter button.
+	 * 
+	 * If it's not authenticated yet, the label becomes "Connect"; otherwise, "Disconnect"
+	 */
+	public function FetchTweets_AdminPage_field_connect_to_twitter( $strField ) {	// extended class name + _ + section_ + section ID
+		
+		return ! ( isset( $this->arrStatus['id'] ) && $this->arrStatus['id'] )
+			? $strField		// the connect button
+			: '<span style="display: inline-block; min-width:120px;">'
+					. '<input id="twitter_connect_connect_to_twitter_0" class="button button-primary" type="submit" name="disconnect_from_twitter" value="' . __( 'Disconnect', 'fetch-tweets' ) . '">&nbsp;&nbsp;'
+				.'</span>'; // the disconnect button
+				
+	}
+	
+	public function validation_fetch_tweets_settings( $arrInput, $arrOriginal ) {
+		
+		// If the disconnect button is pressed, delete the authentication keys.
+		if ( isset( $_POST['disconnect_from_twitter'] ) ) {
+			
+			$arrInput = is_array( $arrInput ) ? $arrInput : array();	// in WP v3.4.2, when the Disconnect button is pressed an $arrInput was passed as an empty string. Something went wrong.
+			delete_transient( FetchTweets_Commons::TransientPrefix . '_' . md5( serialize( array( $this->oOption->getConsumerKey(), $this->oOption->getConsumerSecret(), $this->oOption->getAccessToken(), $this->oOption->getAccessTokenSecret() ) ) ) );
+			delete_transient( FetchTweets_Commons::TransientPrefix . '_' . md5( serialize( array( FetchTweets_Commons::ConsumerKey, FetchTweets_Commons::ConsumerSecoret, $this->oOption->getAccessTokenAuto(), $this->oOption->getAccessTokenSecretAuto() ) ) ) );
+			unset( $arrInput['fetch_tweets_settings']['authentication_keys'] );
+			unset( $arrInput['fetch_tweets_settings']['twitter_connect'] );
+			
+		}
+
+		return $arrInput;
+		
+	}
+	
+	/*
+	 * Settings Page
+	 */
+	public function do_before_fetch_tweets_settings() {	// do_before_ + page slug
+		$this->showPageTitle( false );
+	}
+		
+	public function do_fetch_tweets_settings () {	// do_ + page slug
+		
+		// submit_button();
+// echo "<h3>Variables</h3>";
+// echo $this->oDebug->getArray( $GLOBALS['option_page'] );
+
+// echo "<h3>Properties</h3>";
+// echo $this->oDebug->getArray( $this->oProps ); 
+// echo $this->oDebug->getArray( $this->oProps->arrOptions ); 
+
+// echo "<h3>Options</h3>";
+// $arrOptions = get_option( FetchTweets_Commons::AdminOptionKey );
+// echo $this->oDebug->getArray( $arrOptions );
+
+
+// echo "<h3>Registered Pages</h3>";
+// echo $this->oDebug->getArray( $this->oProps->arrPages );
+// echo "<h3>Registered Tabs</h3>";
+// echo $this->oDebug->getArray( $this->oProps->arrInPageTabs[ 'fetch_tweets_settings' ] );
+
 	}
 	
 	public function validation_fetch_tweets_settings_general( $arrInput, $arrOriginal ) {
@@ -756,6 +1083,25 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		'numCurrRowPos'		=>	0,
 		'numCurrColPos'		=> 	0,
 	);	
+	
+	public function style_fetch_tweets_settings( $strStyle ) {
+		
+		return $strStyle . PHP_EOL
+			. '
+			.auth-status {
+				margin-bottom: 2em;
+			}
+			.authenticated {
+				font-weight:bold;
+				color: green;				
+			}
+			.unauthenticated {
+				font-weight:bold;
+				color: red;				
+			}
+			';
+		
+	}	
 	
 	/*
 	 * Template Page
@@ -983,20 +1329,8 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		echo '<div class="ftws_extension_container">' . $strOut . '</div>';
 		
 	}
-
-	// public function style_fetch_tweets_settings( $strStyle ) {
-		
-		// return $strStyle . PHP_EOL
-			// . " .right-button {
-					// float: right;
-				// }
-				// input.read-only {
-					// background-color: #F6F6F6;
-				// }	
-			// ";
-		
-	// }
-
+	
+	
 	/*
 	 * Styling
 	 */

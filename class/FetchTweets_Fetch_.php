@@ -7,6 +7,7 @@
  * @copyright		Michael Uno
  * @filters			fetch_tweets_template_path - specifies the template path.
  * @actions			fetch_tweets_action_transient_renewal - for WP Cron single event.
+ * @actions			fetch_tweets_action_transient_add_oembed_elements - for WP Cron single event.
  */
 abstract class FetchTweets_Fetch_ {
 
@@ -16,12 +17,20 @@ abstract class FetchTweets_Fetch_ {
 	
 		// Set up the connection.
 		$this->oOption = & $GLOBALS['oFetchTweets_Option'];		
-		$this->oTwitterOAuth =  new FetchTweets_TwitterOAuth( 
-			$this->oOption->getConsumerKey(), 
-			$this->oOption->getConsumerSecret(), 
-			$this->oOption->getAccessToken(), 
-			$this->oOption->getAccessTokenSecret()
-		);		
+		
+		$this->oTwitterOAuth =  $this->oOption->isAuthKeysManuallySet()
+			? new FetchTweets_TwitterOAuth( 
+				$this->oOption->getConsumerKey(), 
+				$this->oOption->getConsumerSecret(), 
+				$this->oOption->getAccessToken(), 
+				$this->oOption->getAccessTokenSecret()
+			)
+			: new FetchTweets_TwitterOAuth( 
+				FetchTweets_Commons::ConsumerKey, 
+				FetchTweets_Commons::ConsumerSecoret, 
+				$this->oOption->getAccessTokenAuto(), 
+				$this->oOption->getAccessTokenSecretAuto()
+			);
 			
 		// Objects
 		$this->oEmbed = new FetchTweets_oEmbed;
@@ -370,11 +379,15 @@ abstract class FetchTweets_Fetch_ {
 		
 		// Insert external media files at the bottom of the tweet.
 		if ( $fExternalMedia )
-			$arrTweet['text'] .= $this->getExternalMedia( $arrTweet['entities']['urls'] );
+			$arrTweet['text'] .= isset( $arrTweet['entities']['embed_external_media'] )
+				? $arrTweet['entities']['embed_external_media']
+				: $this->getExternalMedia( $arrTweet['entities']['urls'] );
 			
 		// Insert twitter media files at the bottom of the tweet. 
 		if ( $fTwitterMedia ) 
-			$arrTweet['text'] .= $this->getTwitterMedia( $arrTweet['entities']['media'] );
+			$arrTweet['text'] .= isset( $arrTweet['entities']['embed_twitter_media'] )
+				? $arrTweet['entities']['embed_twitter_media']
+				: $this->getTwitterMedia( $arrTweet['entities']['media'] );
 					
 		// Adjust the profile image size.
 		$arrTweet['user']['profile_image_url'] = $this->adjustProfileImageSize( $arrTweet['user']['profile_image_url'], $intProfileImageSize );
@@ -382,6 +395,45 @@ abstract class FetchTweets_Fetch_ {
 
 		// Convert the 'created_at' value to be numeric time.
 		$arrTweet['created_at'] = strtotime( $arrTweet['created_at'] );		
+		
+		return $arrTweet;
+		
+	}
+	
+	/**
+	 * Adds the embeddable media elements to the tweets array.
+	 * 
+	 * @remark			This should be called from an action event which runs in the background because this takes some time.
+	 * @since			1.3.0
+	 */
+	public function addEmbeddableMediaElements( &$arrTweets ) {
+
+		foreach( $arrTweets as $intIndex => &$arrTweet ) {
+							
+			if ( isset( $arrTweet['retweeted_status']['text'] ) ) 	// Check if it is a re-tweet.
+				$arrTweet['retweeted_status'] = $this->addEmbeddableMediaElement( $arrTweet['retweeted_status'] );
+			
+			$arrTweet = $this->addEmbeddableMediaElement( $arrTweet );
+						
+		}					
+	
+	}
+	/**
+	 * Adds the embeddable media element to the single tweet element.
+	 * 
+	 * This is a helper method for the above addEmbeddableMediaElements() method.
+	 * 
+	 * @since			1.3.0
+	 * @remark			The element with the keys 'embed_external_media' and 'embed_twitter_media' will be inserted into the 'entities' key element.
+	 * @return			array			The modified tweet element array.
+	 */
+	protected function addEmbeddableMediaElement( $arrTweet ) {
+		
+		if ( isset( $arrTweet['entities']['urls'] ) ) 
+			$arrTweet['entities']['embed_external_media'] = $this->getExternalMedia( $arrTweet['entities']['urls'] );
+						
+		if ( isset( $arrTweet['entities']['media'] ) ) 
+			$arrTweet['entities']['embed_twitter_media'] = $this->getTwitterMedia( $arrTweet['entities']['media'] );
 		
 		return $arrTweet;
 		
@@ -599,14 +651,24 @@ abstract class FetchTweets_Fetch_ {
 	 * A wrapper method for the set_transient() function.
 	 * 
 	 * @since			1.2.0
+	 * @since			1.3.0			Made it public as the event method uses it.
 	 */
-	protected function setTransient( $strTransientKey, $vData ) {
+	public function setTransient( $strTransientKey, $vData, $intTime=null ) {
 		
 		set_transient(
 			$strTransientKey, 
-			array( 'mod' => time(), 'data' => $this->oBase64->encode( $vData ) ), 
+			array( 'mod' => $intTime ? $intTime : time(), 'data' => $this->oBase64->encode( $vData ) ), 
 			9999999999 // this barely expires by itself. $intCacheDuration 
 		);
+			
+		// Schedules the action to run in the background with WP Cron. If already scheduled, skip.
+		// This adds the embedding elements which takes some time to process.
+		if ( wp_next_scheduled( 'fetch_tweets_action_transient_add_oembed_elements', array( $strTransientKey ) ) ) return;
+		wp_schedule_single_event( 
+			time(), 
+			'fetch_tweets_action_transient_add_oembed_elements', 	// the FetchTweets_Event class will check this action hook and executes it with WP Cron.
+			array( $strTransientKey )	// must be enclosed in an array.
+		);	
 		
 	}
 	
@@ -615,9 +677,11 @@ abstract class FetchTweets_Fetch_ {
 	 * 
 	 * This method does retrieves the transient with the given transient key. In addition, it checks if it is an array; otherwise, it makes it an array.
 	 * 
+	 * @access			public
 	 * @since			1.2.0
+	 * @since			1.3.0				Made it public as the event method uses it.
 	 */ 
-	protected function getTransient( $strTransientKey, $fForceArray=true ) {
+	public function getTransient( $strTransientKey, $fForceArray=true ) {
 		
 		$vData = get_transient( $strTransientKey );
 		
@@ -860,7 +924,7 @@ abstract class FetchTweets_Fetch_ {
 			
 			// Schedules the action to run in the background with WP Cron.
 			// If already scheduled, skip.
-			if ( wp_next_scheduled( 'fetch_tweets_action_transient_renewal', $arrExpiredCacheRequest ) ) continue; 
+			if ( wp_next_scheduled( 'fetch_tweets_action_transient_renewal', array( $arrExpiredCacheRequest ) ) ) continue; 
 			
 			wp_schedule_single_event( 
 				time(), 
