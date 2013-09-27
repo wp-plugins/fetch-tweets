@@ -10,11 +10,13 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Fetches and displays tweets from twitter.com with the Twitter API.
 
 == Description ==
-It enables to display tweets anywhere you want such as in the sidebar, posts, and pages. It does not rely on JavaScript so the tweets will be displayed for visitors disabling JavaScript in their browsers. Not only can you show your own tweets but also the mashed up results of multple user's timelines.
+It enables to display tweets anywhere you want such as in the sidebar, posts, and pages. It does not rely on JavaScript so the tweets will be displayed for visitors disabling JavaScript in their browsers. Not only can you show your own tweets but also the mashed up results of multiple user's timelines.
 
-It is easy to set up for WordPress beginners. Plus, it allows developers to write additional add-ons and templates.
+It is easy to set up for WordPress beginners. It does not require you to provide authentication keys. 
 
-One of the extensions, [Feeder](http://en.michaeluno.jp/fetch-tweets/extensions/feeder/), supports feeds so you can subscribe your favorite person’s tweets as RSS, which has become harder as the Twitter API was upgraded and the previous version no longer support tweet feed without authentication keys. With this addon, if you are a programmer, you can import the tweet data as JSON to your application by making the WordPress as own Twitter API server.
+Media files are automatically displayed such as YouTube videos and photos posted in tweets. You can disable them with the setting. 
+
+It allows developers to write additional add-ons and templates. One of the extensions, [Feeder](http://en.michaeluno.jp/fetch-tweets/extensions/feeder/), supports feeds so you can subscribe your favorite person’s tweets as RSS, which has become harder as the Twitter API was upgraded and the previous version no longer support tweet feed without authentication keys. With this addon, if you are a programmer, you can import the tweet data as JSON to your application by making the WordPress as own Twitter API server.
 
 If you are a theme developer, you can easily customize the template for the tweet outputs. Just copy the existing template and modify the copied files and rename the template name. Then place the copied folder into the theme folder. And there you go! Your own template will be listed in the plugin’s setting page. This way, when the plugin updates, you won’t loose your modifications.
 
@@ -29,6 +31,7 @@ If you are a theme developer, you can easily customize the template for the twee
 * **PHP Code** - with the PHP function, the fetched tweets can be embedded in the templates.
 * **Custom Templates** - you can change the design by modifying/creating the template file.
 * **Background Cache Renewal** - it renews the caches in the background so it will prevent the page load from suddenly getting stuck for fetching external sources. 
+* **Embedded Media** - urls of media elements can be automatically converted to embedded elements.
  
 == Installation ==
 
