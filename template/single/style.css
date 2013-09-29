@@ -118,6 +118,9 @@ div.fetch-tweets-single-body p.fetch-tweets-single-text {
 .fetch-tweets-single-intent-buttons li {
 	display: inline;
 }
+ul.fetch-tweets-single-intent-buttons li {
+	margin-left: 0;
+}
 .fetch-tweets-single-intent-buttons-text {
 	vertical-align: middle;
 }
