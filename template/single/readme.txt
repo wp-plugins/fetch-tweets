@@ -1,5 +1,12 @@
 == Change log ==
 
+= 1.3.1 =
+Added the option to set follower count and screen name for the Follow button.
+Added the Retweet, Reply, Favourite buttons and their visibility option.
+
+= 1.3.0 =
+Adjusted the style embedded images' to keep their aspect ratios.
+
 = 1.2.0 =
 Adjusted the style for right to left.
 Added the avatar location option.

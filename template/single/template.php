@@ -7,12 +7,6 @@
  * */
  
 /*
- * For debugs - uncomment the below line to see the contents of the array.
- */  
-// echo "<pre>" . htmlspecialchars( print_r( $arrTweets, true ) ) . "</pre>";	
-// echo "<pre>" . htmlspecialchars( print_r( $arrArgs, true ) ) . "</pre>";	
-
-/*
  * Prepare variables for options.
  */
 // Retrieve the user avatar and the screen name.
@@ -39,12 +33,19 @@ $arrDefaultTemplateValues = array(
 	'fetch_tweets_template_single_width' => array( 'size' => 100, 'unit' => '%' ),
 	'fetch_tweets_template_single_height' => array( 'size' => 400, 'unit' => 'px' ),
 	'fetch_tweets_template_single_background_color' => 'transparent',
+	'fetch_tweets_template_single_intent_buttons' => 2,
+	'fetch_tweets_template_single_intent_script' => 1,	
+	'fetch_tweets_template_single_follow_button_elements' => array(
+		'screen_name' => 0,
+		'follower_count' => 0,	
+	),
 	'fetch_tweets_template_single_visibilities' => array(
 		'avatar' => true,
 		'user_name' => true,
 		'follow_button' => true,
 		'user_description' => true,
-		'time' => true,			
+		'time' => true,	
+		'intent_buttons' => true,
 	),
 	'fetch_tweets_template_single_margins' => array(
 		'top' => array( 'size' => '', 'unit' => 'px' ),
@@ -65,7 +66,7 @@ if ( ! isset( $arrOptions['fetch_tweets_templates']['fetch_tweets_template_singl
 	update_option( FetchTweets_Commons::AdminOptionKey, $arrOptions );
 }
 // Some new setting items are not be stored in the database, so merge the saved options with the defined default values.
-$arrTemplateOptions = $arrOptions['fetch_tweets_templates']['fetch_tweets_template_single'] + $arrDefaultTemplateValues;
+$arrTemplateOptions = FetchTweets_Utilities::uniteArrays( $arrOptions['fetch_tweets_templates']['fetch_tweets_template_single'], $arrDefaultTemplateValues );	// unites arrays recursively.
 
 // Set the template option values.
 $arrArgs['avatar_size']				= isset( $arrArgs['avatar_size'] ) ? $arrArgs['avatar_size'] : $arrTemplateOptions['fetch_tweets_template_single_avatar_size'];
@@ -92,6 +93,11 @@ $arrArgs['padding_bottom']			= isset( $arrArgs['padding_bottom'] ) ? $arrArgs['p
 $arrArgs['padding_bottom_unit']		= isset( $arrArgs['padding_bottom_unit'] ) ? $arrArgs['padding_bottom_unit'] : $arrTemplateOptions['fetch_tweets_template_single_paddings']['bottom']['unit'];
 $arrArgs['padding_left']			= isset( $arrArgs['padding_left'] ) ? $arrArgs['padding_left'] : $arrTemplateOptions['fetch_tweets_template_single_paddings']['left']['size'];
 $arrArgs['padding_left_unit']		= isset( $arrArgs['padding_left_unit'] ) ? $arrArgs['padding_left_unit'] : $arrTemplateOptions['fetch_tweets_template_single_paddings']['left']['unit'];
+$arrArgs['intent_buttons']			= isset( $arrArgs['intent_buttons'] ) ? $arrArgs['intent_buttons'] : ( ! $arrArgs['visibilities']['intent_buttons'] ? 0 : $arrTemplateOptions['fetch_tweets_template_single_intent_buttons'] );	// 0: do not show, 1: icons and text, 2: only icons, 3: only text.
+$arrArgs['intent_button_script']	= isset( $arrArgs['intent_button_script'] ) ? $arrArgs['intent_button_script'] : $arrTemplateOptions['fetch_tweets_template_single_intent_script'];
+$arrArgs['follow_button_elements']	= isset( $arrArgs['follow_button_elements'] ) ? $arrArgs['follow_button_elements'] : $arrTemplateOptions['fetch_tweets_template_single_follow_button_elements'];
+$arrArgs['follow_button_screen_name'] = isset( $arrArgs['follow_button_screen_name'] ) ? $arrArgs['follow_button_screen_name'] : ( $arrArgs['follow_button_elements']['screen_name'] ? $arrArgs['follow_button_elements']['screen_name'] : "false" );
+$arrArgs['follow_button_count'] = isset( $arrArgs['follow_button_count'] ) ? $arrArgs['follow_button_count'] : ( $arrArgs['follow_button_elements']['follower_count'] ? $arrArgs['follow_button_elements']['follower_count'] : "false" );
 $strWidth = $arrArgs['width'] . $arrArgs['width_unit'];
 $strHeight = $arrArgs['height'] . $arrArgs['height_unit'];
 $strMarginTop = empty( $arrArgs['margin_top'] ) ? "" : $arrArgs['margin_top'] . $arrArgs['margin_top_unit'];
@@ -105,6 +111,14 @@ $strPaddingLeft = empty( $arrArgs['padding_left'] ) ? "" : $arrArgs['padding_lef
 $strMargins = ( $strMarginTop ? "margin-top: {$strMarginTop}; " : "" ) . ( $strMarginRight ? "margin-right: {$strMarginRight}; " : "" ) . ( $strMarginBottom ? "margin-bottom: {$strMarginBottom}; " : "" ) . ( $strMarginLeft ? "margin-left: {$strMarginLeft}; " : "" );
 $strPaddings = ( $strPaddingTop ? "padding-top: {$strPaddingTop}; " : "" ) . ( $strPaddingRight ? "padding-right: {$strPaddingRight}; " : "" ) . ( $strPaddingBottom ? "padding-bottom: {$strPaddingBottom}; " : "" ) . ( $strPaddingLeft ? "padding-left: {$strPaddingLeft}; " : "" );
 $strMarginForImage = $arrArgs['visibilities']['avatar'] ? ( ( $arrArgs['avatar_position'] == 'left' ? "margin-left: " : "margin-right: " ) . ( ( int ) $arrArgs['avatar_size'] + 10 ) . "px" ) : "";
+
+/*
+ * For debugs - uncomment the below line to see the contents of the array.
+ */  
+// echo "<pre>" . htmlspecialchars( print_r( $arrTweets, true ) ) . "</pre>";	
+// echo "<pre>" . htmlspecialchars( print_r( $arrArgs, true ) ) . "</pre>";	
+// return;
+
 /*
  * Start rendering
  */ 
@@ -138,8 +152,8 @@ $strMarginForImage = $arrArgs['visibilities']['avatar'] ? ( ( $arrArgs['avatar_p
 			
 			<?php if ( $arrArgs['visibilities']['follow_button'] ) : ?>
 			<div class='fetch-tweets-single-follow-button'>
-				<a href="https://twitter.com/<?php echo $strUserScreenName;?>" class="twitter-follow-button" data-show-count="false" data-lang="<?php echo $strUserLang; ?>" target="_blank">Follow @<?php echo $strUserScreenName; ?></a>
-				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+				<a href="https://twitter.com/<?php echo $strUserScreenName;?>" class="twitter-follow-button" target="_blank" data-lang="<?php echo $strUserLang; ?>" data-show-count="<?php echo $arrArgs['follow_button_count']; ?>" data-show-screen-name="<?php echo $arrArgs['follow_button_screen_name']; ?>"><?php echo __( 'Follow', 'fetch-tweets' ) . '@' . $strUserScreenName; ?></a>
+				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>				
 			</div>		
 			<?php endif; ?>
 			
@@ -191,6 +205,45 @@ $strMarginForImage = $arrArgs['visibilities']['avatar'] ? ( ( $arrArgs['avatar_p
 					
 				</span>
 			</p>
+
+			<?php if ( $arrArgs['intent_buttons'] ) : ?>
+				<?php if ( $arrArgs['intent_button_script'] ) : ?>
+				<script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
+				<?php endif; ?>
+				<ul class='fetch-tweets-single-intent-buttons'>
+					<li class='fetch-tweets-single-intent-reply'>
+						<a href='https://twitter.com/intent/tweet?in_reply_to=<?php echo $arrDetail['id_str']; ?>' rel='nofollow' target='_blank' title='<?php _e( 'Reply', 'fetch-tweets' ); ?>'>
+							<?php if ( $arrArgs['intent_buttons'] == 1 || $arrArgs['intent_buttons'] == 2 ) : ?>
+							<span class='fetch-tweets-single-intent-icon' style='background-image: url("<?php echo FetchTweets_Commons::getPluginURL( 'image/reply_48x16.png' ); ?>");' ></span>
+							<?php endif; ?>
+							<?php if ( $arrArgs['intent_buttons'] == 1 || $arrArgs['intent_buttons'] == 3 ) : ?>
+							<span class='fetch-tweets-single-intent-buttons-text'><?php _e( 'Reply', 'fetch-tweets' ); ?></span>
+							<?php endif; ?>
+						</a>
+					</li>
+					<li class='fetch-tweets-single-intent-retweet'>
+						<a href='https://twitter.com/intent/retweet?tweet_id=<?php echo $arrDetail['id_str'];?>' rel='nofollow' target='_blank' title='<?php _e( 'Retweet', 'fetch-tweets' ); ?>'>
+							<?php if ( $arrArgs['intent_buttons'] == 1 || $arrArgs['intent_buttons'] == 2 ) : ?>
+							<span class='fetch-tweets-single-intent-icon' style='background-image: url("<?php echo FetchTweets_Commons::getPluginURL( 'image/retweet_48x16.png' ); ?>");' ></span>
+							<?php endif; ?>
+							<?php if ( $arrArgs['intent_buttons'] == 1 || $arrArgs['intent_buttons'] == 3 ) : ?>
+							<span class='fetch-tweets-single-intent-buttons-text'><?php _e( 'Retweet', 'fetch-tweets' ); ?></span>
+							<?php endif; ?>
+						</a>
+					</li>
+					<li class='fetch-tweets-single-intent-favorite'>
+						<a href='https://twitter.com/intent/favorite?tweet_id=<?php echo $arrDetail['id_str'];?>' rel='nofollow' target='_blank' title='<?php _e( 'Favorite', 'fetch-tweets' ); ?>'>
+							<?php if ( $arrArgs['intent_buttons'] == 1 || $arrArgs['intent_buttons'] == 2 ) : ?>
+							<span class='fetch-tweets-single-intent-icon' style='background-image: url("<?php echo FetchTweets_Commons::getPluginURL( 'image/favorite_48x16.png' ); ?>");' ></span>
+							<?php endif; ?>
+							<?php if ( $arrArgs['intent_buttons'] == 1 || $arrArgs['intent_buttons'] == 3 ) : ?>
+							<span class='fetch-tweets-single-intent-buttons-text'><?php _e( 'Favorite', 'fetch-tweets' ); ?></span>
+							<?php endif; ?>
+						</a>
+					</li>
+				</ul>
+			<?php endif; ?>			
+			
 		</div>
     </div>
 	<?php endforeach; ?>	

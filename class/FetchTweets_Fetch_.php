@@ -27,7 +27,7 @@ abstract class FetchTweets_Fetch_ {
 			)
 			: new FetchTweets_TwitterOAuth( 
 				FetchTweets_Commons::ConsumerKey, 
-				FetchTweets_Commons::ConsumerSecoret, 
+				FetchTweets_Commons::ConsumerSecret, 
 				$this->oOption->getAccessTokenAuto(), 
 				$this->oOption->getAccessTokenSecretAuto()
 			);

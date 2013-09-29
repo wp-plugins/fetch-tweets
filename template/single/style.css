@@ -101,3 +101,35 @@ div.fetch-tweets-single-body p.fetch-tweets-single-text {
 	max-width: 100%;
 	height: auto;	
 }
+
+.fetch-tweets-single-intent-buttons {
+	float: right;
+	clear: right;
+	font-size: smaller;
+	margin: 0;
+	padding: 0;		
+}
+.fetch-tweets-single-intent-buttons a {
+	text-decoration: none;	
+}
+.fetch-tweets-single-intent-icon a:hover {
+	text-decoration: none;
+}
+.fetch-tweets-single-intent-buttons li {
+	display: inline;
+}
+.fetch-tweets-single-intent-buttons-text {
+	vertical-align: middle;
+}
+.fetch-tweets-single-intent-icon {
+	display: inline-block;
+	vertical-align: middle;
+	width: 16px;
+	height: 16px;
+	background-position: 0 0;
+	background-repeat:no-repeat;
+}
+.fetch-tweets-single-intent-icon:hover  {
+	background-position: -16px 0;
+}
+

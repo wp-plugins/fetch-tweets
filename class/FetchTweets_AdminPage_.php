@@ -663,7 +663,7 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 	public function load_fetch_tweets_settings_twitter_redirect() {	// load_ + page slug + tab
 	
 		/* Build TwitterOAuth object with client credentials. */
-		$oConnect = new TwitterOAuth( FetchTweets_Commons::ConsumerKey, FetchTweets_Commons::ConsumerSecoret );
+		$oConnect = new TwitterOAuth( FetchTweets_Commons::ConsumerKey, FetchTweets_Commons::ConsumerSecret );
 		 
 		/* Get temporary credentials. */
 		// Requesting authentication tokens, the parameter is the URL we will be redirected to		
@@ -707,7 +707,7 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		$oOption = & $GLOBALS['oFetchTweets_Option'];
 
 		/* Create TwitteroAuth object with app key/secret and token key/secret from default phase */
-		$oConnect = new TwitterOAuth( FetchTweets_Commons::ConsumerKey, FetchTweets_Commons::ConsumerSecoret, $_SESSION['oauth_token'], $_SESSION['oauth_token_secret'] );
+		$oConnect = new TwitterOAuth( FetchTweets_Commons::ConsumerKey, FetchTweets_Commons::ConsumerSecret, $_SESSION['oauth_token'], $_SESSION['oauth_token_secret'] );
 
 		/* Request access tokens from twitter */
 		$arrAccessTokens = $oConnect->getAccessToken( $_REQUEST['oauth_verifier'] );
@@ -777,7 +777,7 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 			
 		// If the access token and secret keys have been automatically set,
 		if ( $this->oOption->isAuthKeysAutomaticallySet() )
-			$arrStatus = $this->verifyCrediential( FetchTweets_Commons::ConsumerKey, FetchTweets_Commons::ConsumerSecoret, $this->oOption->getAccessTokenAuto(), $this->oOption->getAccessTokenSecretAuto() );
+			$arrStatus = $this->verifyCrediential( FetchTweets_Commons::ConsumerKey, FetchTweets_Commons::ConsumerSecret, $this->oOption->getAccessTokenAuto(), $this->oOption->getAccessTokenSecretAuto() );
 			
 		if ( $arrStatus ) return $arrStatus;
 	
@@ -944,7 +944,7 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 			
 			$arrInput = is_array( $arrInput ) ? $arrInput : array();	// in WP v3.4.2, when the Disconnect button is pressed an $arrInput was passed as an empty string. Something went wrong.
 			delete_transient( FetchTweets_Commons::TransientPrefix . '_' . md5( serialize( array( $this->oOption->getConsumerKey(), $this->oOption->getConsumerSecret(), $this->oOption->getAccessToken(), $this->oOption->getAccessTokenSecret() ) ) ) );
-			delete_transient( FetchTweets_Commons::TransientPrefix . '_' . md5( serialize( array( FetchTweets_Commons::ConsumerKey, FetchTweets_Commons::ConsumerSecoret, $this->oOption->getAccessTokenAuto(), $this->oOption->getAccessTokenSecretAuto() ) ) ) );
+			delete_transient( FetchTweets_Commons::TransientPrefix . '_' . md5( serialize( array( FetchTweets_Commons::ConsumerKey, FetchTweets_Commons::ConsumerSecret, $this->oOption->getAccessTokenAuto(), $this->oOption->getAccessTokenSecretAuto() ) ) ) );
 			unset( $arrInput['fetch_tweets_settings']['authentication_keys'] );
 			unset( $arrInput['fetch_tweets_settings']['twitter_connect'] );
 			

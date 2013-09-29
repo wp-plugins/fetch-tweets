@@ -30,7 +30,7 @@ class FetchTweets_Template_Settings_Plain extends FetchTweets_Template_Settings_
 			'strPageSlug'		=> $this->strParentPageSlug,
 			'strTabSlug'		=> $this->strParentTabSlug,
 			'strTitle'			=> $this->strTemplateName,
-			'strDescription'	=> sprintf( 'Options for the %1$s template.', $this->strTemplateName ) . ' ' 
+			'strDescription'	=> sprintf( __( 'Options for the %1$s template.', 'fetch-tweets' ), $this->strTemplateName ) . ' ' 
 				. __( 'These will be the default values and be overridden by the arguments passed directly by the widgets, the shortcode, or the PHP function.', 'fetch-tweets' ),
 		);
 		return $arrSections;
@@ -132,24 +132,47 @@ class FetchTweets_Template_Settings_Plain extends FetchTweets_Template_Settings_
 			'strType' => 'color',
 			'vDefault' => 'transparent',
 		);		
+		$arrFields[] = array(
+			'strFieldID' => 'fetch_tweets_template_plain_intent_buttons',
+			'strSectionID' => 'fetch_tweets_template_plain',
+			'strTitle' => __( 'Intent Buttons', 'fetch-tweets' ),
+			'strDescription' => __( 'These are for Favourite, Reply, and Retweet buttons.', 'fetch-tweets' ),
+			'strType' => 'radio',
+			'vLabel' => array(  
+				1 => __( 'Both icons and text', 'fetch-tweets' ),
+				2 => __( 'Only icons', 'fetch-tweets' ),
+				3 => __( 'Only text', 'fetch-tweets' ),
+			),
+			'vDefault' => 2,
+		);
+		$arrFields[] = array(
+			'strFieldID' => 'fetch_tweets_template_plain_intent_script',
+			'strSectionID' => 'fetch_tweets_template_plain',
+			'strTitle' => __( 'Intent Button Script', 'fetch-tweets' ),
+			'strType' => 'checkbox',
+			'vLabel' => __( 'Insert the intent button script that enables a pop-up window for Favorite, Reply, and Retweet.', 'fetch-tweets' ),
+			'vDefault' => 1,
+		);
 		$arrFields[] = array(	// visibilities
 			'strFieldID' => 'fetch_tweets_template_plain_visibilities',
 			'strSectionID' => 'fetch_tweets_template_plain',
 			'strTitle' => __( 'Visibilities', 'fetch-tweets' ),
 			'strType' => 'checkbox',
 			'vLabel' => array(
-				'avatar' => __( 'Profile Image', 'fetch-tweets' ),
-				'user_name' => __( 'User Name', 'fetch-tweets' ),
+				'avatar'			=> __( 'Profile Image', 'fetch-tweets' ),
+				'user_name'			=> __( 'User Name', 'fetch-tweets' ),
 				// 'follow_button' => __( 'Follow Button', 'fetch-tweets' ),
 				// 'user_description' => __( 'User Description', 'fetch-tweets' ),
-				'time' => __( 'Time', 'fetch-tweets' ),
+				'time'				=> __( 'Time', 'fetch-tweets' ),
+				'intent_buttons'	=> __( 'Intent Buttons', 'fetch-tweets' ),
 			),
 			'vDefault' => array(
-				'avatar' => true,
-				'user_name' => true,
+				'avatar'			=> true,
+				'user_name'			=> true,
 				// 'follow_button' => true,
 				// 'user_description' => true,
-				'time' => true,
+				'time'				=> true,
+				'intent_buttons'	=> true,
 			),
 		);			
 		$arrFields[] = array(  // single button

@@ -133,24 +133,61 @@ class FetchTweets_Template_Settings_Single extends FetchTweets_Template_Settings
 			'strType' => 'color',
 			'vDefault' => 'transparent',
 		);	
+		$arrFields[] = array(
+			'strFieldID' => 'fetch_tweets_template_single_intent_buttons',
+			'strSectionID' => 'fetch_tweets_template_single',
+			'strTitle' => __( 'Intent Buttons', 'fetch-tweets' ),
+			'strDescription' => __( 'These are for Favourite, Reply, and Retweet buttons.', 'fetch-tweets' ),
+			'strType' => 'radio',
+			'vLabel' => array(  
+				1 => __( 'Both icons and text', 'fetch-tweets' ),
+				2 => __( 'Only icons', 'fetch-tweets' ),
+				3 => __( 'Only text', 'fetch-tweets' ),
+			),
+			'vDefault' => 2,
+		);
+		$arrFields[] = array(
+			'strFieldID' => 'fetch_tweets_template_single_intent_script',
+			'strSectionID' => 'fetch_tweets_template_single',
+			'strTitle' => __( 'Intent Button Script', 'fetch-tweets' ),
+			'strType' => 'checkbox',
+			'vLabel' => __( 'Insert the intent button script that enables a pop-up window for Favorite, Reply, and Retweet.', 'fetch-tweets' ),
+			'vDefault' => 1,
+		);	
+		$arrFields[] = array(
+			'strFieldID' => 'fetch_tweets_template_single_follow_button_elements',
+			'strSectionID' => 'fetch_tweets_template_single',
+			'strTitle' => __( 'Follow Button Elements', 'fetch-tweets' ),
+			'strType' => 'checkbox',
+			'vLabel' => array(
+				'screen_name' => __( 'Screen Name', 'fetch-tweets' ),
+				'follower_count' => __( 'Follower Count', 'fetch-tweets' ),
+			),
+			'vDefault' => array(
+				'screen_name' => 0,
+				'follower_count' => 0,
+			),
+		);		
 		$arrFields[] = array(	// visibilities
 			'strFieldID' => 'fetch_tweets_template_single_visibilities',
 			'strSectionID' => 'fetch_tweets_template_single',
 			'strTitle' => __( 'Visibilities', 'fetch-tweets' ),
 			'strType' => 'checkbox',
 			'vLabel' => array(
-				'avatar' => __( 'Profile Image', 'fetch-tweets' ),
-				'user_name' => __( 'User Name', 'fetch-tweets' ),
-				'follow_button' => __( 'Follow Button', 'fetch-tweets' ),
-				'user_description' => __( 'User Description', 'fetch-tweets' ),
-				'time' => __( 'Time', 'fetch-tweets' ),
+				'avatar'			=> __( 'Profile Image', 'fetch-tweets' ),
+				'user_name'			=> __( 'User Name', 'fetch-tweets' ),
+				'follow_button'		=> __( 'Follow Button', 'fetch-tweets' ),
+				'user_description'	=> __( 'User Description', 'fetch-tweets' ),
+				'time'				=> __( 'Time', 'fetch-tweets' ),
+				'intent_buttons'	=> __( 'Intent Buttons', 'fetch-tweets' ),
 			),
 			'vDefault' => array(
-				'avatar' => true,
-				'user_name' => true,
-				'follow_button' => true,
-				'user_description' => true,
-				'time' => true,
+				'avatar'			=> true,
+				'user_name'			=> true,
+				'follow_button'		=> true,
+				'user_description'	=> true,
+				'time'				=> true,
+				'intent_buttons'	=> true,
 			),
 		);		
 		$arrFields[] = array(  // single button
