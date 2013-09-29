@@ -60,6 +60,9 @@ Text Domain: fetch-tweets
 .fetch-tweets-text {
 	margin-bottom: 0;
 }
+div.fetch-tweets-body p.fetch-tweets-text {
+	margin-bottom: 0;
+}
 .fetch-tweets-retweet-credit {
 	float: right;
 	margin-left: 0.5em;
@@ -87,8 +90,15 @@ Text Domain: fetch-tweets
 	margin: 0;
 	padding: 0;		
 }
+.fetch-tweets-intent-buttons a ,
+.fetch-tweets-intent-icon a:hover {
+	text-decoration: none;
+}
 .fetch-tweets-intent-buttons li {
 	display: inline;
+}
+ul.fetch-tweets-intent-buttons li {
+	margin-left: 0;
 }
 .fetch-tweets-intent-buttons-text {
 	vertical-align: middle;
