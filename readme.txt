@@ -189,6 +189,8 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 == Changelog ==
 
 = 1.3.2 =
+* Added the CSS links in the template listing table.
+* Fixed an issue that bullets of list tags appeared in some themes with the default templates.
 * Fixed a possible issue that profile images do not get aligned properly in some themes in the default templates.
 * Fixed a possible issue that profile images do not get sized properly in some themes in the default templates.
 * Fixed the GMT time difference for the time output in the default templates.

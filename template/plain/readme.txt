@@ -1,6 +1,7 @@
 == Change log ==
 
 = 1.3.2 =
+Fixed an issue that bullets of list tags appeared in some themes.
 Fixed a possible issue that profile images do not get aligned properly in some themes.
 Fixed a possible issue that profile images do not get sized properly in some themes.
 Fixed the GMT time difference for the time output.

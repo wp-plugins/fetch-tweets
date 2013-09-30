@@ -196,7 +196,6 @@ abstract class FetchTweets_Fetch_ {
 		}
 	
 		// Format the array.
-// var_dump( $arrTweets );		
 		$this->formatTweetArrays( $arrTweets, $arrArgs['avatar_size'], $arrArgs['twitter_media'], $arrArgs['external_media'] ); // the array is passed as reference.
 	
 		// Sort by time.

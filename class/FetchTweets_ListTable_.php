@@ -54,6 +54,7 @@ class FetchTweets_ListTable_ extends WP_List_Table {
 				$arrActions = array(
 					'version'	=> sprintf( __( 'Version', 'fetch-tweets' ) . '&nbsp;' . $arrItem['strVersion'] ),
 					'author'	=> sprintf( '<a href="%s">' . $arrItem['strAuthor'] . '</a>', $arrItem['strAuthorURI'] ),
+					'css'		=> sprintf( '<a href="%s">' . __( 'CSS', 'fetch-tweets' ) . '</a>', site_url() . "?fetch_tweets_style={$arrItem['strSlug']}" ),
 				);
 				
 				//Return the title contents
@@ -109,7 +110,7 @@ class FetchTweets_ListTable_ extends WP_List_Table {
     public function column_cb( $arrItem ){	// column_ + cb
         return sprintf(
             '<input type="checkbox" name="%1$s[]" value="%2$s" />',
-            /*$1%s*/ $this->_args['singular'],  //Let's simply repurpose the table's singular label ("movie")
+            /*$1%s*/ $this->_args['singular'],  
             /*$2%s*/ $arrItem['strSlug']                //The value of the checkbox should be the record's id
         );
     }
