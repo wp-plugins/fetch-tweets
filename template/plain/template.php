@@ -114,9 +114,9 @@ $strGMTOffset = ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
     <div class='fetch-tweets-item <?php echo $strRetweetClassProperty; ?>' >
 
 		<?php if ( $arrArgs['avatar_size'] > 0  && $arrArgs['visibilities']['avatar'] ) : ?>
-		<div class='fetch-tweets-profile-image' style="max-width:<?php echo $arrArgs['avatar_size'];?>px; float:<?php echo $arrArgs['avatar_position']; ?>;">
+		<div class='fetch-tweets-profile-image' style="max-width:<?php echo $arrArgs['avatar_size'];?>px; float:<?php echo $arrArgs['avatar_position']; ?>; clear:<?php echo $arrArgs['avatar_position']; ?>;">
 			<a href='https://twitter.com/<?php echo $arrTweet['user']['screen_name']; ?>' target='_blank'>
-				<img src='<?php echo $arrTweet['user']['profile_image_url']; ?>' />
+				<img src='<?php echo $arrTweet['user']['profile_image_url']; ?>' style="max-width:<?php echo $arrArgs['avatar_size'];?>px;" />
 			</a>
 		</div>
 		<?php endif; ?>
