@@ -105,7 +105,7 @@ $strMarginForImage = $arrArgs['visibilities']['avatar'] ? ( ( $arrArgs['avatar_p
 		// If the necessary key is set,
 		if ( ! isset( $arrDetail['user'] ) ) continue;
 		
-		// Chewck if it's a retweet.
+		// Check if it's a retweet.
 		$arrTweet = isset( $arrDetail['retweeted_status']['text'] ) ? $arrDetail['retweeted_status'] : $arrDetail;
 		$strRetweetClassProperty = isset( $arrDetail['retweeted_status']['text'] ) ? 'fetch-tweets-retweet' : '';
 		
