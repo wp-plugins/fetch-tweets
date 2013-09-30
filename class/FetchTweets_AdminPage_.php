@@ -630,10 +630,6 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 	}
 	public function load_fetch_tweets_settings_twitter_connect() {
 				
-		// If the access token and the access token secret key are set, do nothing.
-		// $oOption = & $GLOBALS['oFetchTweets_Option'];
-		// if ( $oOption->isAuthKeysManuallySet() ) return;
-		
 		// Check if the session array to have the access token; otherwise, clear the session.
 		if ( 
 			empty( $_SESSION['access_token'] ) 
@@ -641,7 +637,6 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 			|| empty( $_SESSION['access_token']['oauth_token_secret'] ) 
 		) 		
 			session_destroy();
-			// wp_redirect( admin_url( $GLOBALS['pagenow'] . "?page=fetch_tweets_settings&tab=twitter_clear_session" ) );
 						
 	}
 	public function load_fetch_tweets_settings_twitter_clear_session() {
@@ -667,8 +662,6 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		 
 		/* Get temporary credentials. */
 		// Requesting authentication tokens, the parameter is the URL we will be redirected to		
-		// $arrRequestToken = $oConnect->getRequestToken( add_query_arg( array( 'page' => 'fetch_tweets_settings', 'tab' => 'twitter_callback' ), null, admin_url() ) );
-		// $arrRequestToken = $oConnect->getRequestToken( admin_url( $GLOBALS['pagenow'] . "?post_type=fetch_tweets&page=fetch_tweets_settings&tab=twitter_callback" ) );
 		$arrRequestToken = $oConnect->getRequestToken( add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'twitter_callback' ), admin_url( $GLOBALS['pagenow'] ) ) );
 
 		/* Save temporary credentials to session. */
@@ -731,13 +724,10 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		  
 		} else {
 			
-		  /* Save HTTP status for error dialog on authentication page.*/
+		  /* Save HTTP status for error dialogue on authentication page.*/
 		  // Let the user set authentication keys manually		  
 		  wp_redirect( add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'authentication' ), admin_url( $GLOBALS['pagenow'] ) ) );
-		  // wp_redirect( admin_url( $GLOBALS['pagenow'] . "?page=fetch_tweets_settings&tab=authentication" ) );
-		  // wp_redirect( admin_url( $GLOBALS['pagenow'] . "?page=fetch_tweets_settings&tab=twitter_clear_session" ) );
-		  // header( 'Location: ' . admin_url( $GLOBALS['pagenow'] . "?page=twitter&tab=clear_session" ) );
-		  
+	  
 		}
 	
 	}	
@@ -749,13 +739,10 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		$this->arrStatus = $this->getVerificationStatus();
 
 		$this->renderAuthenticationStatus( $this->arrStatus );
-
-		// $this->renderAuthenticationButtons( $arrStatus );
-		
+	
 // echo $this->oDebug->getArray( $arrStatus );
 // echo $this->oDebug->getArray( $this->oOption->arrOptions['fetch_tweets_settings'] );
-		
-		
+				
 	}
 
 	/**

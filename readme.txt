@@ -187,6 +187,9 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 == Changelog ==
 
+= 1.3.2 =
+Fixed the GMT time difference for the time output.
+
 = 1.3.1 - 09/30/2013 =
 * Added the option to set follower count and screen name for the Follow button for the default templates.
 * Added the Retweet, Reply, Favourite buttons and their visibility option for the default templates.

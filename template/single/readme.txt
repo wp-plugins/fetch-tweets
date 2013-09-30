@@ -1,5 +1,8 @@
 == Change log ==
 
+= 1.3.2 =
+Fixed the GMT time difference for the time output.
+
 = 1.3.1 =
 Added the option to set follower count and screen name for the Follow button.
 Added the Retweet, Reply, Favourite buttons and their visibility option.

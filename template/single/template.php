@@ -111,6 +111,7 @@ $strPaddingLeft = empty( $arrArgs['padding_left'] ) ? "" : $arrArgs['padding_lef
 $strMargins = ( $strMarginTop ? "margin-top: {$strMarginTop}; " : "" ) . ( $strMarginRight ? "margin-right: {$strMarginRight}; " : "" ) . ( $strMarginBottom ? "margin-bottom: {$strMarginBottom}; " : "" ) . ( $strMarginLeft ? "margin-left: {$strMarginLeft}; " : "" );
 $strPaddings = ( $strPaddingTop ? "padding-top: {$strPaddingTop}; " : "" ) . ( $strPaddingRight ? "padding-right: {$strPaddingRight}; " : "" ) . ( $strPaddingBottom ? "padding-bottom: {$strPaddingBottom}; " : "" ) . ( $strPaddingLeft ? "padding-left: {$strPaddingLeft}; " : "" );
 $strMarginForImage = $arrArgs['visibilities']['avatar'] ? ( ( $arrArgs['avatar_position'] == 'left' ? "margin-left: " : "margin-right: " ) . ( ( int ) $arrArgs['avatar_size'] + 10 ) . "px" ) : "";
+$strGMTOffset = ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 
 /*
  * For debugs - uncomment the below line to see the contents of the array.
@@ -198,7 +199,7 @@ $strMarginForImage = $arrArgs['visibilities']['avatar'] ? ( ( $arrArgs['avatar_p
 					<?php if ( $arrArgs['visibilities']['time'] ) : ?>
 					<span class='fetch-tweets-single-tweet-created-at'>
 						<a href='https://twitter.com/<?php echo $arrTweet['user']['screen_name']; ?>/status/<?php echo $arrTweet['id_str'] ;?>' target='_blank'>
-							<?php echo human_time_diff( $arrTweet['created_at'], current_time('timestamp') ) . ' ' . __( 'ago', 'fetch-tweets' ); ?>
+							<?php echo human_time_diff( $arrTweet['created_at'] , current_time('timestamp') - $strGMTOffset ) . ' ' . __( 'ago', 'fetch-tweets' ); ?>
 						</a>			
 					</span>
 					<?php endif; ?>
