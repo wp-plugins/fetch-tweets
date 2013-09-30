@@ -132,7 +132,7 @@ $strGMTOffset = ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 		<?php if ( $arrArgs['avatar_size'] > 0  && $arrArgs['visibilities']['avatar'] ) : ?>
 		<div class='fetch-tweets-single-profile-image' style="max-width:<?php echo $arrArgs['avatar_size'];?>px; float:<?php echo $arrArgs['avatar_position']; ?>; clear:<?php echo $arrArgs['avatar_position']; ?>;">
 			<a href='https://twitter.com/<?php echo $strUserScreenName; ?>' target='_blank'>
-				<img src='<?php echo $strUserAvatarURL; ?>' style="max-width:<?php echo $arrArgs['avatar_size'];?>px; />
+				<img src='<?php echo $strUserAvatarURL; ?>' style="max-width:<?php echo $arrArgs['avatar_size'];?>px;" />
 			</a>		
 		</div>
 		<?php endif; ?>
