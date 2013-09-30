@@ -111,9 +111,10 @@ In order to set mutiple tags, pass them with commas as the delimiter. e.g.
 
 = How to Create Own Template =
 
+
 **Step 1**
 
-Copy the folder named ***plain*** in the plugin's template folder. Rename the copied folder to something you like.
+Copy the folder named ***plain*** or ***single*** in the plugin's template folder. Rename the copied folder to something you like.
 
 **Step 2**
 
@@ -188,9 +189,9 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 == Changelog ==
 
 = 1.3.2 =
-Fixed a possible issue that profile images do not get aligned properly in some themes in the default templates.
-Fixed a possible issue that profile images do not get sized properly in some themes in the default templates.
-Fixed the GMT time difference for the time output in the default templates.
+* Fixed a possible issue that profile images do not get aligned properly in some themes in the default templates.
+* Fixed a possible issue that profile images do not get sized properly in some themes in the default templates.
+* Fixed the GMT time difference for the time output in the default templates.
 
 = 1.3.1 - 09/30/2013 =
 * Added the option to set follower count and screen name for the Follow button for the default templates.
