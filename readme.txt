@@ -47,7 +47,7 @@ If you are a theme developer, you can easily customize the template for the twee
 
 `[fetch_tweets id="123"]` 
 
-where 123 is the rule ID you just created. The ID can be found in the *Fetch Tweets* page in the administratin panel.
+where 123 is the rule ID you just created. The ID can be found in the *Fetch Tweets* page in the administration panel.
 
 Go to the [Other Notes](http://wordpress.org/extend/plugins/fetch-tweets/other_notes/) section for more usage details.
 
@@ -74,7 +74,7 @@ In order to set multiple IDs, pass them with commas as the delimiter. e.g.
 
 `<?php fetchTweets( array( 'tag' => 'WordPress' ) ); ?>`
 
-In order to set mutiple tags, pass them with commas as the delimiter. e.g.
+In order to set multiple tags, pass them with commas as the delimiter. e.g.
 
 `[fetch_tweets tag="WordPress, developer"]`
 
