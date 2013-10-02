@@ -178,6 +178,12 @@ If you set authentication keys manually, you need to create an application to ac
 = How can I create my own template file? =
 See the How to Create Own Template section of the **[Other Notes](http://wordpress.org/plugins/fetch-tweets/other_notes/)** page.
 
+= How do I display tweets with a certain hashtag from a specific user? =
+
+* Go to Dashboard -> Fetch Tweets -> Add Rule by Keyword Search.
+* Type `#HASHTAG AND from:SCREENNAME` in the Search Keyword meta box option field. Change the part, `#HASHTAG`, to your searching hash tag and the part, `SCREENNAME`, to the account's screen name to fetch tweets from.
+* Create a rule by pressing the Publish button.
+
 == Screenshots ==
 
 1. ***Tweets Displayed in Page and Sidebar***
