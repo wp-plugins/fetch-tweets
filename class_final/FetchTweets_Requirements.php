@@ -54,7 +54,7 @@ final class FetchTweets_Requirements {
 
 		if ( ! empty( $strHook ) ) 
 			add_action( $strHook, array( $this, 'checkRequirements' ) );
-		else if ( $strHook == '' )		
+		else if ( $strHook === '' )		
 			$this->checkRequirements();
 		else if ( is_null( $strHook ) )
 			return $this;	// do nothing if it's null
