@@ -17,6 +17,9 @@ abstract class FetchTweets_Event_ {
 
 	public function __construct() {
 		
+		// Objects
+		$this->oBase64 = new FetchTweets_Base64;
+		
 		// if WP Cron is the one which loaded the page,
 		if ( isset( $_GET['doing_wp_cron'] ) )	{
 			
