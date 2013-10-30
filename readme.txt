@@ -3,7 +3,7 @@ Contributors: Michael Uno, miunosoft
 Donate link: http://en.michaeluno.jp/donate
 Tags: twitter, twitter widget, tweets, tweet, widget, widgets, post, posts, page, pages, custom post type, API, Twitter API, REST, oAuth, shortcode, sidebar, plugin, template
 Requires at least: 3.3
-Tested up to: 3.7
+Tested up to: 3.7.1
 Stable tag: 1.3.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -194,7 +194,7 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 == Changelog ==
 
-= 1.3.2.1b = 
+= 1.3.2.1 - 10/30/2013 = 
 * Fixed a bug that a fatal error occurred in the background, Fatal error:  Call to a member function decode() on a non-object.
 * Fixed a bug that an undefined index typenow warning occurred when a third-party script peforms a custom database query with the WP_Query class in the edit.php admin page.
 
