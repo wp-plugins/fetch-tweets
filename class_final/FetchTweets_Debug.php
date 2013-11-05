@@ -39,7 +39,7 @@ final class FetchTweets_Debug {
 		
 	} 		
 
-    static public function getMemoryUsage( $intType=1 ) {	// since 1.1.4
+    static public function getMemoryUsage( $intType=1 ) {
        
 		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) return;
 	   

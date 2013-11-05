@@ -194,10 +194,9 @@ abstract class FetchTweets_Fetch_ {
 			echo '<strong>Fetch Tweets</strong>: ' . $arrTweets['errors'][ 0 ]['message'] . ' Code:' . $arrTweets['errors'][ 0 ]['code'];			
 			return;
 		}
-	
+
 		// Format the array.
 		$this->formatTweetArrays( $arrTweets, $arrArgs['avatar_size'], $arrArgs['twitter_media'], $arrArgs['external_media'] ); // the array is passed as reference.
-	
 		// Sort by time.
 		$this->sortTweetArrays( $arrTweets, $arrArgs['sort'] ); // the array is passed as reference.
 
@@ -207,6 +206,7 @@ abstract class FetchTweets_Fetch_ {
 	
 // For debug
 // echo "<pre>" . htmlspecialchars( print_r( $arrTweets, true ) ) . "</pre>";		
+// echo FetchTweets_Debug::getMemoryUsage();	
 // return;
 		
 		/*
@@ -336,10 +336,22 @@ abstract class FetchTweets_Fetch_ {
 		return $arrTweets;
 		
 	}
+	
+	/**
+	 * Formats the tweets.
+	 * 
+	 * @since			1.x
+	 * @since			1.3.3			Added the ability to eliminate duplicated items for mash up results.
+	 */
 	protected function formatTweetArrays( & $arrTweets, $intProfileImageSize, $fTwitterMedia=true, $fExternalMedia=true ) {
 		
+		$arrTweetIDs = array();
+		
 		foreach( $arrTweets as $intIndex => &$arrTweet ) {
-							
+			
+			if ( in_array( $arrTweet[ 'id_str' ], $arrTweetIDs ) ) continue;
+			$arrTweetIDs[] = $arrTweet[ 'id_str' ];
+										
 			// Check if it is a re-tweet.
 			if ( isset( $arrTweet['retweeted_status']['text'] ) ) 				
 				$arrTweet['retweeted_status'] = $this->formatTweetArray( $arrTweet['retweeted_status'], $intProfileImageSize, $fTwitterMedia, $fExternalMedia );
@@ -437,7 +449,7 @@ abstract class FetchTweets_Fetch_ {
 		return $arrTweet;
 		
 	}
-	
+		
 	protected function sortTweetArrays( & $arrTweets, $strOrderedBy='descending' ) {
 		switch( strtolower( $strOrderedBy ) ) {
 			case 'ascending':
@@ -469,6 +481,7 @@ abstract class FetchTweets_Fetch_ {
 		$intCount = ( ( int ) $intCount ) > 100 ? 100 : $intCount;
 		$strRequestURI = "https://api.twitter.com/1.1/search/tweets.json"
 			. "?q=" . urlencode_deep( $strKeyword )
+			// . "?q=" . urlencode_deep( 'from:personA+OR+from:personB+OR+from:personC+OR+from:personC' )  
 			. "&result_type={$strResultType}"	//  mixed, recent, popular
 			. "&count={$intCount}"
 			. ( $strLang == 'none' ? "" : "&lang={$strLang}" )
