@@ -56,7 +56,7 @@ Go to the [Other Notes](http://wordpress.org/extend/plugins/fetch-tweets/other_n
 = Shortcode and Function Parameters =
 The following parameters can be used for the shortcode or the PHP function of the plugin, <code>fetchTweets()</code>
 
-* **id** - the ID(s) of the rule set. This cannot be used with the `tag` or 'q' parameter. e.g.
+* **id** - the ID(s) of the rule set. This cannot be used with the `tag`, `q`, or `screen_name` parameter. e.g.
 
 `[fetch_tweets id="123"]`
 
@@ -68,7 +68,7 @@ In order to set multiple IDs, pass them with commas as the delimiter. e.g.
 
 `<?php fetchTweets( array( 'id' => 123, 234, 345 ) ); ?>`
 
-* **tag** - the tag(s) associated with the rule sets. This cannot be used with the `id` or 'q' parameter. e.g.
+* **tag** - the tag(s) associated with the rule sets. This cannot be used with the `id`, `q`, or `screen_name` parameter. e.g.
 
 `[fetch_tweets tag="WordPress"]`
 
@@ -90,11 +90,17 @@ In order to set multiple tags, pass them with commas as the delimiter. e.g.
 
 `<?php fetchTweets( array( 'tag' => 'developer', 'operator' => 'NOT IN' ) ); ?>`
 
-* **q** - the search keyword. This cannot be used with the `id` or 'tag' parameter. e.g.
+* **q** - the search keyword. This cannot be used with the `id`, `tag`, or `screen_name` parameter. e.g.
 
 `[fetch_tweets q="#wordpress" lang="en"]`
 
 `<?php fetchTweets( array( 'q' => '#wordpress', 'lang' => 'en' ) ); ?>`
+
+* **screen_name** - the screen name(s). To pass multiple screen names, pass them separated by commas. This cannot be used with the `id`, `tag`, or `q` parameter. e.g.
+
+`[fetch_tweets screen_name="WordPress,photomatt"]`
+
+`<?php fetchTweets( array( 'screen_name' => 'WordPress,photomatt' ) ); ?>`
 
 * **count** - the maximum number of tweets to display. e.g.
 
@@ -201,8 +207,9 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 == Changelog ==
 
 = 1.3.3 =
+* Added the `screen_name` parameter to the shortcode that displays the tweets by specified Twitter accounts.
+* Added the `q` parameter to the shortcode that displays the result of Twitter keyword searches.
 * Fixed an issue that duplicated tweets were displayed in mush-up results.
-* Added the `q` parameter to the shortcode that allows to perform Twitter keyword searches.
 
 = 1.3.2.1 - 10/30/2013 = 
 * Fixed a bug that a fatal error occurred in the background, Fatal error:  Call to a member function decode() on a non-object.

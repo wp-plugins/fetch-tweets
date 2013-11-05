@@ -69,4 +69,45 @@ final class FetchTweets_Utilities {
 		return $arrPrecedence;		
 	}
 	
+	/**
+	 * Converts the given string with delimiters to a multi-dimensional array.
+	 * 
+	 * Parameters: 
+	 * 1: haystack string
+	 * 2, 3, 4...: delimiter
+	 * e.g. $arr = convertStringToArray( 'a-1,b-2,c,d|e,f,g', "|", ',', '-' );
+	 * 
+	 * @since			1.3.3
+	 */
+	static public function convertStringToArray() {
+		
+		$intArgs = func_num_args();
+		$arrArgs = func_get_args();
+		$strInput = $arrArgs[ 0 ];			
+		$strDelimiter = $arrArgs[ 1 ];
+		
+		if ( ! is_string( $strDelimiter ) || $strDelimiter == '' ) return $strInput;
+		if ( is_array( $strInput ) ) return $strInput;	// note that is_string( 1 ) yields false.
+			
+		$arrElems = preg_split( "/[{$strDelimiter}]\s*/", trim( $strInput ), 0, PREG_SPLIT_NO_EMPTY );
+		if ( ! is_array( $arrElems ) ) return array();
+		
+		foreach( $arrElems as &$strElem ) {
+			
+			$arrParams = $arrArgs;
+			$arrParams[0] = $strElem;
+			unset( $arrParams[ 1 ] );	// remove the used delimiter.
+			// now $strElem becomes an array.
+			if ( count( $arrParams ) > 1 ) // if the delimiters are gone, 
+				$strElem = call_user_func_array( 'AmazonAutoLinks_Utilities::convertStringToArray', $arrParams );
+			
+			// Added this because the function was not trimming the elements sometimes... not fully tested with multi-dimensional arrays. 
+			if ( is_string( $strElem ) )
+				$strElem = trim( $strElem );
+			
+		}
+
+		return $arrElems;
+
+	}			
 }

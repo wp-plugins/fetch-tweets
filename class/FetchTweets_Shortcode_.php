@@ -17,9 +17,9 @@ abstract class FetchTweets_Shortcode_ {
 		else if ( isset( $arrArgs['tag'] ) || isset( $arrArgs['tags'] ) ) 
 			return $this->oFetch->getTweetsOutputByTag( $arrArgs );
 			
-		if ( isset( $arrArgs['q'] ) ) 
+		if ( isset( $arrArgs['q'] ) || isset( $arrArgs['screen_name'] ) ) 
 			return $this->oFetch->getTweetsOutput( $arrArgs );
-			
+				
 	}	
 
 }

@@ -283,21 +283,21 @@ abstract class FetchTweets_Fetch_ {
 	 * Fetches tweets based on the argument.
 	 * 
 	 * @param			array			$arrArgs			The argument array that is merged with the default option values.
-	 * @param			array			$arrRawArgs			The raw argument array that is not merged with any. Used by the getTweetsAsArrayByPostID() method that fetches tweets by post ID.
+	 * @param			array			$arrRawArgs			The raw argument array that is not merged with any. Used by the getTweetsAsArrayByPostIDs() method that fetches tweets by post ID.
 	 */
 	public function getTweetsAsArray( $arrArgs, $arrRawArgs ) {	// this is public as the feed extension uses it.
 	
 		if ( isset( $arrArgs['q'] ) )	// custom call by search keyword
 			return $this->getTweetsBySearch( $arrArgs['q'], $arrArgs['count'], $arrArgs['lang'], $arrArgs['result_type'], $arrArgs['cache'] );
 		else if ( isset( $arrArgs['screen_name'] ) )	// custom call by screen name
-			return $this->getTweetsByScreenName( $arrArgs['screen_name'], $arrArgs['count'], $arrArgs['include_rts'], $arrArgs['exclude_replies'], $arrArgs['cache'] );
+			return $this->getTweetsByScreenNames( $arrArgs['screen_name'], $arrArgs['count'], $arrArgs['include_rts'], $arrArgs['exclude_replies'], $arrArgs['cache'] );
 		else if ( isset( $arrArgs['list_id'] ) ) 	
 			return $this->getTweetsByListID( $arrArgs['list_id'], $arrArgs['count'], $arrArgs['include_rts'], $arrArgs['cache'] );
 		else	// normal
-			return $this->getTweetsAsArrayByPostID( $arrArgs['id'], $arrArgs, $arrRawArgs );
+			return $this->getTweetsAsArrayByPostIDs( $arrArgs['id'], $arrArgs, $arrRawArgs );
 		
 	}
-	protected function getTweetsAsArrayByPostID( $vPostIDs, $arrArgs, $arrRawArgs ) {	
+	protected function getTweetsAsArrayByPostIDs( $vPostIDs, $arrArgs, $arrRawArgs ) {	
 	
 		$arrTweets = array();
 		foreach( ( array ) $vPostIDs as $intPostID ) {
@@ -325,7 +325,7 @@ abstract class FetchTweets_Fetch_ {
 					$arrArgs['screen_name'] = get_post_meta( $intPostID, 'screen_name', true );	
 					$arrArgs['exclude_replies'] = get_post_meta( $intPostID, 'exclude_replies', true );	
 					$arrArgs = FetchTweets_Utilities::uniteArrays( $arrRawArgs, $arrArgs ); // The direct input takes its precedence.
-					$arrRetrievedTweets = $this->getTweetsByScreenName( $arrArgs['screen_name'], $arrArgs['count'], $arrArgs['include_retweets'], $arrArgs['exclude_replies'], $arrArgs['cache'] );
+					$arrRetrievedTweets = $this->getTweetsByScreenNames( $arrArgs['screen_name'], $arrArgs['count'], $arrArgs['include_retweets'], $arrArgs['exclude_replies'], $arrArgs['cache'] );
 					break;				
 			}	
 
@@ -550,6 +550,24 @@ abstract class FetchTweets_Fetch_ {
 		
 		return $this->doAPIRequest_Get( $strRequestURI, null, $intCacheDuration );
 	
+	}
+	
+	/**
+	 * Fetches tweets by screen names.
+	 * 
+	 * The plural form of the getTweetsByScreenName() method. Multiple screen names can be passed separated by commas.
+	 * 
+	 * @since			1.3.3
+	 */
+	protected function getTweetsByScreenNames( $strUsers, $intCount, $fIncludeRetweets=false, $fExcludeReplies=false, $intCacheDuration=1200 ) {
+			
+		$arrTweets = array();
+		$arrScreenNames = FetchTweets_Utilities::convertStringToArray( $strUsers, ',' );
+		foreach( $arrScreenNames as $strScreenName ) 			
+			$arrTweets = array_merge( $this->getTweetsByScreenName( $strScreenName, $intCount, $fIncludeRetweets, $fExcludeReplies, $intCacheDuration ), $arrTweets );
+			
+		return $arrTweets;
+		
 	}
 	
 	/**
