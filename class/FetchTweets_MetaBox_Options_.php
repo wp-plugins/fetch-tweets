@@ -100,7 +100,19 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 				'strTitle'			=> __( 'Include Retweets', 'fetch-tweets' ),
 				'vLabel'			=> __( 'Retweets will be included.', 'fetch-tweets' ),
 				'strType'			=> 'checkbox',
-			),				
+			),			
+			array(	// since 1.3.3
+				'strFieldID'		=> 'until',
+				'strType'			=> 'hidden',
+			),			
+			array(	// since 1.3.3
+				'strFieldID'		=> 'geocentric_coordinate',
+				'strType'			=> 'hidden',
+			),
+			array(	// since 1.3.3
+				'strFieldID'		=> 'geocentric_radius',
+				'strType'			=> 'hidden',
+			),					
 			array()
 		);	
 	
@@ -202,7 +214,7 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 			),				
 			array(
 				'strFieldID'		=> 'result_type',
-				'strTitle'			=> 'Result Type',
+				'strTitle'			=> __( 'Result Type', 'fetch-tweets' ),
 				'strType'			=> 'radio',
 				'vLabel' => array( 
 					'mixed' => 'mixed' . ' - ' . __( 'includes both popular and real time results in the response.', 'fetch-tweets' ),
@@ -210,7 +222,34 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 					'popular' => 'popular' . ' - ' . __( 'return only the most popular results in the response.', 'fetch-tweets' ),
 				),
 				'vDefault' => 'mixed',
-			),		
+			),
+			array(	// since 1.3.3
+				'strFieldID'		=> 'until',
+				'strTitle'			=> __( 'Date Until', 'fetch-tweets' ) . " <span class='description'>(" . __( 'optional', 'fetch-tweets' ) . ")</span>",
+				'strDescription'	=> __( 'Returns tweets generated before the given date. Set blank not to specify any date.', 'fetch-tweets' ),
+				'strType'			=> 'date',
+				'vDateFormat' 		=> 'yy-mm-dd',	// yy/mm/dd is the default format.
+			),
+			array(	// since 1.3.3
+				'strFieldID'		=> 'geocentric_coordinate',
+				'strTitle'			=> __( 'Geometric Coordinate', 'fetch-tweets' ) . " <span class='description'>(" . __( 'optional', 'fetch-tweets' ) . ")</span>",
+				'strDescription'	=> __( 'Restricts tweets to users located within a given radius of the given latitude/longitude. Set them empty not to set any.', 'fetch-tweets' ),
+				'strType'			=> 'text',
+				'vLabel'			=> array(
+					'latitude' => __( 'Latitude', 'fetch-tweets' ),
+					'longitude' => __( 'Longitude', 'fetch-tweets' ),
+				),
+			),
+			array(	// since 1.3.3
+				'strFieldID'		=> 'geocentric_radius',
+				'strTitle'			=> __( 'Geometric Radius', 'fetch-tweets' ) . " <span class='description'>(" . __( 'optional', 'fetch-tweets' ) . ")</span>",
+				'strType'			=> 'size',
+				'vDefault'			=> array( 'size' => '', 'unit' => 'mi' ),
+				'vSizeUnits'		=> array(
+					'mi' => __( 'miles', 'fetch-tweets' ), 'km' => __( 'kilometers', 'fetch-tweets' ) 
+				),
+				'strDescription'	=> __( 'Set this empty not to set any. In order to perform the geometric search, this option and the above coordinate must be specified.', 'fetch-tweets' ),
+			),			
 			array(
 				'strFieldID'		=> 'exclude_replies',
 				'strType'			=> 'hidden',
@@ -287,6 +326,18 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 				'vLabel'			=> __( 'Retweets will be included.', 'fetch-tweets' ),
 				'strType'			=> 'checkbox',
 			),				
+			array(	// since 1.3.3
+				'strFieldID'		=> 'until',
+				'strType'			=> 'hidden',
+			),		
+			array(	// since 1.3.3
+				'strFieldID'		=> 'geocentric_coordinate',
+				'strType'			=> 'hidden',
+			),
+			array(	// since 1.3.3
+				'strFieldID'		=> 'geocentric_radius',
+				'strType'			=> 'hidden',
+			),					
 			array()
 		);
 				

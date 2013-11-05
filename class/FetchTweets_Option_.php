@@ -42,6 +42,16 @@ abstract class FetchTweets_Option_ {
 		'cache'				=> 1200,	// Cache lifespan in seconds.
 		'lang'				=> null,	// 
 		'result_type'		=> 'mixed',	// 
+		'until'				=> '',		// since 1.3.3
+		'geocode'			=> '',		// since 1.3.3 - this is for shortcode parametrs while geocentric_coordinate and geocentric_radius are for the meta box options.
+		'geocentric_coordinate'	=> array(	// since 1.3.3
+			'latitude' => '',
+			'longitude' => '',
+		),
+		'geocentric_radius' => array(	// since 1.3.3
+			'size' => '',
+			'unit' => 'mi',
+		),
 		
 		// since 1.2.0
 		'list_id'			=> null,	

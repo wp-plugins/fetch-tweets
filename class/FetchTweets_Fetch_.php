@@ -288,7 +288,7 @@ abstract class FetchTweets_Fetch_ {
 	public function getTweetsAsArray( $arrArgs, $arrRawArgs ) {	// this is public as the feed extension uses it.
 	
 		if ( isset( $arrArgs['q'] ) )	// custom call by search keyword
-			return $this->getTweetsBySearch( $arrArgs['q'], $arrArgs['count'], $arrArgs['lang'], $arrArgs['result_type'], $arrArgs['cache'] );
+			return $this->getTweetsBySearch( $arrArgs['q'], $arrArgs['count'], $arrArgs['lang'], $arrArgs['result_type'], $arrArgs['until'], $arrArgs['geocode'], $arrArgs['cache'] );
 		else if ( isset( $arrArgs['screen_name'] ) )	// custom call by screen name
 			return $this->getTweetsByScreenNames( $arrArgs['screen_name'], $arrArgs['count'], $arrArgs['include_rts'], $arrArgs['exclude_replies'], $arrArgs['cache'] );
 		else if ( isset( $arrArgs['list_id'] ) ) 	
@@ -312,8 +312,22 @@ abstract class FetchTweets_Fetch_ {
 					$arrArgs['q'] = get_post_meta( $intPostID, 'search_keyword', true );	
 					$arrArgs['result_type'] = get_post_meta( $intPostID, 'result_type', true );
 					$arrArgs['lang'] = get_post_meta( $intPostID, 'language', true );
+					$arrArgs['until'] = get_post_meta( $intPostID, 'until', true );
+					$arrArgs['geocentric_coordinate'] = get_post_meta( $intPostID, 'geocentric_coordinate', true );
+					$arrArgs['geocentric_radius'] = get_post_meta( $intPostID, 'geocentric_radius', true );
+					$strGeoCode = '';
+					if ( 
+						is_array( $arrArgs['geocentric_coordinate'] ) && is_array( $arrArgs['geocentric_radius'] )
+						&& isset( $arrArgs['geocentric_coordinate']['latitude'], $arrArgs['geocentric_radius']['size'] ) 
+						&& $arrArgs['geocentric_coordinate']['latitude'] !== '' && $arrArgs['geocentric_coordinate']['longitude'] !== ''	// the coordinate can be 0
+						&& $arrArgs['geocentric_radius']['size'] !== '' 
+					) {
+						// "latitude,longitude,radius",
+						$strGeoCode = trim( $arrArgs['geocentric_coordinate']['latitude'] ) . "," . trim( $arrArgs['geocentric_coordinate']['longitude'] ) 
+							. "," . trim( $arrArgs['geocentric_radius']['size'] ) . $arrArgs['geocentric_radius']['unit'] ;
+					}
 					$arrArgs = FetchTweets_Utilities::uniteArrays( $arrRawArgs, $arrArgs ); // The direct input takes its precedence.
-					$arrRetrievedTweets = $this->getTweetsBySearch( $arrArgs['q'], $arrArgs['count'], $arrArgs['lang'], $arrArgs['result_type'], $arrArgs['cache'] );
+					$arrRetrievedTweets = $this->getTweetsBySearch( $arrArgs['q'], $arrArgs['count'], $arrArgs['lang'], $arrArgs['result_type'], $arrArgs['until'], $strGeoCode, $arrArgs['cache'] );
 					break;
 				case 'list':
 					$arrArgs['list_id'] = get_post_meta( $intPostID, 'list_id', true );					
@@ -475,18 +489,18 @@ abstract class FetchTweets_Fetch_ {
 	 * 
 	 * @see			https://dev.twitter.com/docs/api/1.1/get/search/tweets
 	 */ 
-	protected function getTweetsBySearch( $strKeyword, $intCount, $strLang='en', $strResultType='mixed', $intCacheDuration=600 ) {
+	protected function getTweetsBySearch( $strKeyword, $intCount, $strLang='en', $strResultType='mixed', $strUntil='', $strGeoCode='', $intCacheDuration=600 ) {
 
 		// Compose the request URI.
 		$intCount = ( ( int ) $intCount ) > 100 ? 100 : $intCount;
 		$strRequestURI = "https://api.twitter.com/1.1/search/tweets.json"
-			. "?q=" . urlencode_deep( $strKeyword )
-			// . "?q=" . urlencode_deep( 'from:personA+OR+from:personB+OR+from:personC+OR+from:personC' )  
+			. "?q=" . urlencode_deep( $strKeyword )	// . "?q=" . urlencode_deep( 'from:personA+OR+from:personB+OR+from:personC+OR+from:personC' )  
 			. "&result_type={$strResultType}"	//  mixed, recent, popular
 			. "&count={$intCount}"
 			. ( $strLang == 'none' ? "" : "&lang={$strLang}" )
-			. "&include_entities=1";
-						
+			. ( empty( $strUntil ) ? "" : "&until={$strUntil}" )
+			. ( empty( $strGeoCode ) ? "" : "&geocode={$strGeoCode}" )
+			. "&include_entities=1";				
 		return $this->doAPIRequest_Get( $strRequestURI, 'statuses', $intCacheDuration );
 					
 	}
