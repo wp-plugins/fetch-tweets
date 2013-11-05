@@ -207,6 +207,7 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 == Changelog ==
 
 = 1.3.3 =
+* Added the more languages for the search rule.
 * Added the `screen_name` parameter to the shortcode that displays the tweets by specified Twitter accounts.
 * Added the `q` parameter to the shortcode that displays the result of Twitter keyword searches.
 * Fixed an issue that duplicated tweets were displayed in mush-up results.
