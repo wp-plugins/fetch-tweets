@@ -23,7 +23,7 @@ abstract class FetchTweets_WidgetByTag_ extends FetchTweets_Widget_ {
 	
 	protected function echoTweets( $arrInstance ) {
 		
-		echo fetchTweets( 
+		fetchTweets( 
 			array( 	
 				'tags'	=> $arrInstance['selected_tag_slugs'],
 				'tag_field_type' => 'slug',

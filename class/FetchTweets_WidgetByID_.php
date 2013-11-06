@@ -19,7 +19,7 @@ abstract class FetchTweets_WidgetByID_ extends FetchTweets_Widget_ {
 
 	protected function echoTweets( $arrInstance ) {
 		
-		echo fetchTweets( 
+		fetchTweets( 
 			array( 	// $arrArgs
 				'ids'	=> $arrInstance['selected_ids'],
 				'count' => $arrInstance['count'],
