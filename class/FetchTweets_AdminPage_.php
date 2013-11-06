@@ -184,6 +184,12 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 										. __( 'These values will be overridden by the argument set directly to the widget options or shortcode.', 'fetch-tweets' ),
 			),			
 			array(
+				'strSectionID'		=> 'cache_settings',
+				'strPageSlug'		=> 'fetch_tweets_settings',
+				'strTabSlug'		=> 'general',
+				'strTitle'			=> __( 'Cache Settings', 'fetch-tweets' ),
+			),			
+			array(
 				'strSectionID'		=> 'capabilities',
 				'strCapability'		=> 'manage_options',
 				'strPageSlug'		=> 'fetch_tweets_settings',
@@ -338,6 +344,25 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 				'vLabel' => __( 'Save Changes', 'fetch-tweets' ),
 				'vClassAttribute' => 'button button-primary',
 			)			
+		);
+		$this->addSettingFields(
+			array(
+				'strFieldID'		=> 'cache_for_errors',
+				'strSectionID' 		=> 'cache_settings',
+				'strTitle'			=> __( 'Cache for Errors', 'fetch-tweets' ),
+				'strType'			=> 'checkbox',
+				'vLabel'			=> __( 'Cache fetched results even for an error. This reduces the chances to reach the Twitter API rate limit.', 'fetch-tweets' ),
+			),
+			array(  // single button
+				'strFieldID' => 'submit_cache_settings',
+				'strSectionID' => 'cache_settings',
+				'strType' => 'submit',
+				'strBeforeField' => "<div class='right-button'>",
+				'strAfterField' => "</div>",
+				'vLabelMinWidth' => 0,
+				'vLabel' => __( 'Save Changes', 'fetch-tweets' ),
+				'vClassAttribute' => 'button button-primary',
+			)		
 		);
 		$this->addSettingFields(
 			array(

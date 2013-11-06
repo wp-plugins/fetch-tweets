@@ -618,7 +618,7 @@ abstract class FetchTweets_Fetch_ {
 	 * @return			array
 	 */ 
 	protected function doAPIRequest_Get( $strRequestURI, $strArrayKey=null, $intCacheDuration=600 ) {
-	
+
 		// Create an ID from the URI.
 		$strRequestID = FetchTweets_Commons::TransientPrefix . "_" . md5( trim( $strRequestURI ) );
 
@@ -675,12 +675,14 @@ abstract class FetchTweets_Fetch_ {
 		if ( ! is_array( $arrTweets ) )
 			return ( array ) $arrTweets;
 		
-		// If an error occurs, do not set the cache.
-		if ( isset( $arrTweets['errors'][ 0 ]['message'], $arrTweets['errors'][ 0 ]['code'] ) ) {
-			$arrTweets['errors'][ 0 ]['message'] .= "<!-- Request URI: {$strRequestURI} -->";	
-			return ( array ) $arrTweets;
+		// If an error occurs, do not set the cache.	
+		if ( ! $this->oOption->arrOptions['fetch_tweets_settings']['cache_settings']['cache_for_errors'] ) {
+			if ( isset( $arrTweets['errors'][ 0 ]['message'], $arrTweets['errors'][ 0 ]['code'] ) ) {
+				$arrTweets['errors'][ 0 ]['message'] .= "<!-- Request URI: {$strRequestURI} -->";	
+				return ( array ) $arrTweets;
+			}
 		}
-			
+		
 		// Save the cache
 		$strRequestID = empty( $strRequestID ) 
 			? FetchTweets_Commons::TransientPrefix . "_" . md5( trim( $strRequestURI ) )
