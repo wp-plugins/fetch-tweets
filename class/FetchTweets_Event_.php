@@ -115,7 +115,7 @@ abstract class FetchTweets_Event_ {
 		
 		$arrTweets = ( array ) $this->oBase64->decode( $arrTransient['data'] );		
 		$oFetch->addEmbeddableMediaElements( $arrTweets );		// the array is passed as reference.
-
+		
 		// Re-save the cache.
 		$oFetch->setTransient( $strTransientKey, $arrTweets, $arrTransient['mod'] );	// the method handles the encoding.
 		

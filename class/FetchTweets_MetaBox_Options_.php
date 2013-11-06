@@ -20,7 +20,7 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 		// Common fields among the other field types including search, screen_name, and list.
 		$this->addSettingFields(									
 			array(
-				'strFieldID'		=> 'cache_duration',
+				'strFieldID'		=> 'cache',
 				'strTitle'			=> __( 'Cache Duration', 'fetch-tweets' ),
 				'strDescription'	=> __( 'The cache lifespan in seconds. For no cache, set 0.', 'fetch-tweets' ) . ' ' . __( 'Default:', 'fetch-tweets' ) . ': 1200',
 				'strType'			=> 'number',

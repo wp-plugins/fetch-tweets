@@ -13,22 +13,36 @@
 
 final class FetchTweets_Debug {
 
+	static public function dumpArray( $arr, $strFilePath=null ) {
+		
+		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) return;
+		
+		echo self::getArray( $arr, $strFilePath );
+		
+	}
+
 	static public function getArray( $arr, $strFilePath=null ) {
 		
 		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) return;
 		
-		if ( $strFilePath ) {
+		if ( $strFilePath ) 
+			self::logArray( $arr, $strFilePath );			
 			
-			file_put_contents( 
-				$strFilePath , 
-				date( "Y/m/d H:i:s" ) . PHP_EOL
-				. print_r( $arr, true ) . PHP_EOL . PHP_EOL
-				, FILE_APPEND 
-			);					
-			
-		}
-		return '<pre class="dump-array">' . esc_html( print_r( $arr, true ) ) . '</pre>';
+		// esc_html() has a bug that breaks with complex HTML code.
+		return "<div><pre class='dump-array'>" . htmlspecialchars( print_r( $arr, true ) ) . "</pre><div>";	
 		
+	}
+	static public function logArray( $arr, $strFilePath=null ) {
+		
+		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) return;
+					
+		file_put_contents( 
+			$strFilePath ? $strFilePath : dirname( __FILE__ ) . '/array_log.txt', 
+			date( "Y/m/d H:i:s" ) . PHP_EOL
+			. print_r( $arr, true ) . PHP_EOL . PHP_EOL
+			, FILE_APPEND 
+		);					
+							
 	}
 	
 	static public function echoMemoryUsage() {

@@ -286,7 +286,7 @@ abstract class FetchTweets_Fetch_ {
 	 * @param			array			$arrRawArgs			The raw argument array that is not merged with any. Used by the getTweetsAsArrayByPostIDs() method that fetches tweets by post ID.
 	 */
 	public function getTweetsAsArray( $arrArgs, $arrRawArgs ) {	// this is public as the feed extension uses it.
-	
+
 		if ( isset( $arrArgs['q'] ) )	// custom call by search keyword
 			return $this->getTweetsBySearch( $arrArgs['q'], $arrArgs['count'], $arrArgs['lang'], $arrArgs['result_type'], $arrArgs['until'], $arrArgs['geocode'], $arrArgs['cache'] );
 		else if ( isset( $arrArgs['screen_name'] ) )	// custom call by screen name
@@ -574,7 +574,7 @@ abstract class FetchTweets_Fetch_ {
 	 * @since			1.3.3
 	 */
 	protected function getTweetsByScreenNames( $strUsers, $intCount, $fIncludeRetweets=false, $fExcludeReplies=false, $intCacheDuration=1200 ) {
-			
+
 		$arrTweets = array();
 		$arrScreenNames = FetchTweets_Utilities::convertStringToArray( $strUsers, ',' );
 		foreach( $arrScreenNames as $strScreenName ) 			
@@ -591,7 +591,7 @@ abstract class FetchTweets_Fetch_ {
 	 * @since			1.0.0
 	 */ 
 	protected function getTweetsByScreenName( $strUser, $intCount, $fIncludeRetweets=false, $fExcludeReplies=false, $intCacheDuration=1200 ) {
-		
+
 		// Compose the request URI.
 		$intCount = ( ( int ) $intCount ) > 200 ? 200 : $intCount;
 		$strRequestURI = "https://api.twitter.com/1.1/statuses/user_timeline.json"
@@ -700,7 +700,7 @@ abstract class FetchTweets_Fetch_ {
 	 * @since			1.3.0			Made it public as the event method uses it.
 	 */
 	public function setTransient( $strTransientKey, $vData, $intTime=null ) {
-		
+
 		set_transient(
 			$strTransientKey, 
 			array( 'mod' => $intTime ? $intTime : time(), 'data' => $this->oBase64->encode( $vData ) ), 
@@ -709,13 +709,13 @@ abstract class FetchTweets_Fetch_ {
 			
 		// Schedules the action to run in the background with WP Cron. If already scheduled, skip.
 		// This adds the embedding elements which takes some time to process.
-		if ( wp_next_scheduled( 'fetch_tweets_action_transient_add_oembed_elements', array( $strTransientKey ) ) ) return;
+		if ( $intTime || wp_next_scheduled( 'fetch_tweets_action_transient_add_oembed_elements', array( $strTransientKey ) ) ) return;
 		wp_schedule_single_event( 
 			time(), 
 			'fetch_tweets_action_transient_add_oembed_elements', 	// the FetchTweets_Event class will check this action hook and executes it with WP Cron.
 			array( $strTransientKey )	// must be enclosed in an array.
 		);	
-		
+
 	}
 	
 	/**
