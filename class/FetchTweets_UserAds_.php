@@ -167,7 +167,7 @@ abstract class FetchTweets_UserAds_ {
 		
 	}	
 	public function getTextAd( $numItems=1 ) { 
-	
+
 		return '<div align="left" style="padding: 8px 20px 4px 0px;">' 
 			. $this->fetchItems( $this->arrURLFeedText, $numItems )
 			. "</div>"; 

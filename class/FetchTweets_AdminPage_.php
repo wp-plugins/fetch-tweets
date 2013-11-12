@@ -560,7 +560,7 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 			<tbody>
 			<tr>
 			<td valign="top">'
-			. '<div style="margin-top: 10px;">'
+			. '<div style="margin-top: 10px;">'		
 			. $oUserAds->getTextAd()
 			. '</div>';
 			

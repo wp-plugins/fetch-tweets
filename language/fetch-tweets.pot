@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Fetch Tweets package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Fetch Tweets 1.0.0.4\n"
+"Project-Id-Version: Fetch Tweets 1.3.3.1\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/fetch-tweets\n"
-"POT-Creation-Date: 2013-07-29 05:12:14+00:00\n"
+"POT-Creation-Date: 2013-11-12 22:29:59+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -12,186 +12,838 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: class/FetchTweets_AdminPage_.php:18
+#: class/FetchTweets_AdminPage_.php:47
 msgid "Add Rule by User Name"
 msgstr ""
 
-#: class/FetchTweets_AdminPage_.php:25
+#: class/FetchTweets_AdminPage_.php:54
 msgid "Add Rule by Keyword Search"
 msgstr ""
 
-#: class/FetchTweets_AdminPage_.php:31 library/admin-page-framework.php:2432
+#: class/FetchTweets_AdminPage_.php:60
+msgid "Add Rule by List"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:65
+#: library/admin-page-framework-for-fetch-tweets.php:4880
+#: template/plain/settings.php:262 template/single/settings.php:278
 msgid "Settings"
 msgstr ""
 
-#: class/FetchTweets_AdminPage_.php:36
+#: class/FetchTweets_AdminPage_.php:70
 msgid "Extensions"
 msgstr ""
 
-#: class/FetchTweets_AdminPage_.php:55
+#: class/FetchTweets_AdminPage_.php:75
+msgid "Templates"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:84 class/FetchTweets_AdminPage_.php:98
 msgid "Authentication"
 msgstr ""
 
-#: class/FetchTweets_AdminPage_.php:106
+#: class/FetchTweets_AdminPage_.php:117
+msgid "General"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:123
+msgid "Misc"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:129 class/FetchTweets_AdminPage_.php:403
+msgid "Reset"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:137
+msgid "Get Extensions"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:145
+msgid "Installed Templates"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:151
+msgid "Get Templates"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:169 class/FetchTweets_AdminPage_.php:301
+#: class/FetchTweets_AdminPage_.php:907
+msgid "Authenticate"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:175
+msgid "Authentication Keys"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:176
+msgid "These keys are required to process oAuth requests of the twitter API."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:182
+msgid "Default Values"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:183
+msgid ""
+"Set the default option values which will be applied when the argument values "
+"are not set."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:184
+msgid ""
+"These values will be overridden by the argument set directly to the widget "
+"options or shortcode."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:190
+msgid "Cache Settings"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:197
+msgid "Access Rights"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:198
+msgid "Set the access levels to the plugin setting pages."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:205
+msgid "Reset Settings"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:206
+msgid "If you get broken options, initialize them by performing reset."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:212
+msgid "Caches"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:213
+msgid "If you need to refresh the fetched tweets, clear the cashes."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:220
+msgid "Specify the Screen Name"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:221
+msgid ""
+"In order to select list, the user name(screen name) of the account that owns "
+"the list must be specified."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:230 class/FetchTweets_AdminPage_.php:912
+msgid "Connect to Twitter"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:231 class/FetchTweets_AdminPage_.php:916
+msgid "Connect"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:255 class/FetchTweets_AdminPage_.php:922
+msgid "Manual"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:257 class/FetchTweets_AdminPage_.php:926
+msgid "Set Keys Manually"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:266
+msgid "Consumer Key"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:273
+msgid "Consumer Secret"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:280
+msgid "Access Token"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:287
+msgid "Access Secret"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:291
 msgid ""
 "You can obtain those keys by logging in to <a href=\"%1$s\" target=\"_blank"
 "\">Twitter Developers</a>"
 msgstr ""
 
-#: class/FetchTweets_AdminPage_.php:113
+#: class/FetchTweets_AdminPage_.php:310
+msgid "Number of Items"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:311
+msgid "The number of tweets to display."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:312 class/FetchTweets_AdminPage_.php:373
+#: class/FetchTweets_ListTable_.php:104
+#: class/FetchTweets_MetaBox_Options_.php:71
+#: class/FetchTweets_MetaBox_Options_.php:150
+#: class/FetchTweets_MetaBox_Options_.php:306
+#: class/FetchTweets_WidgetByID_.php:80 class/FetchTweets_WidgetByID_.php:107
+#: class/FetchTweets_WidgetByID_.php:127 class/FetchTweets_WidgetByID_.php:147
+#: class/FetchTweets_WidgetByTag_.php:96
+#: class/FetchTweets_WidgetByTag_.php:123
+#: class/FetchTweets_WidgetByTag_.php:143
+#: class/FetchTweets_WidgetByTag_.php:163 template/plain/settings.php:51
+#: template/plain/settings.php:71 template/plain/settings.php:87
+#: template/single/settings.php:51 template/single/settings.php:71
+#: template/single/settings.php:87
+msgid "Default"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:313
+msgid ""
+"This option corresponds to the <code>count</code> argument value. For "
+"instance, with this shortcode, <code>[fetch_tweets id=\"10\" count=\"30\"]</"
+"code>, the count value, 30, will override this option. If the <code>count</"
+"code> parameter is not set, this option value will be used."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:320
+msgid "Twitter Media"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:322
+#: class/FetchTweets_MetaBox_Media_.php:11
+msgid ""
+"Display media images posted in the tweet that are recognized as media file "
+"by Twitter."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:323
+msgid ""
+"This option corresponds to the <code>twitter_media</code> argument value. "
+"For instance, with this shortcode, <code>[fetch_tweets id=\"10\" count="
+"\"30\"]</code>, the count value, 30, will override this option. If the "
+"<code>count</code> parameter is not set, this option value will be used."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:324
+msgid "Currently only photos are supported by the Twitter API."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:330
+msgid "External Media"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:332
+#: class/FetchTweets_MetaBox_Media_.php:19
+msgid "Replace media links of external sources to an embedded element."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:333
+msgid ""
+"This option corresponds to the <code>external_media</code> argument value. "
+"For instance, with this shortcode, <code>[fetch_tweets id=\"10\" count="
+"\"30\"]</code>, the count value, 30, will override this option. If the "
+"<code>count</code> parameter is not set, this option value will be used."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:334
+#: class/FetchTweets_MetaBox_Media_.php:20
+msgid ""
+"Unlike the above media images, there are media links that are not "
+"categorized as media by the Twitter API. Thus, enabling this option will "
+"attempt to replace them to the embedded elements."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:344 class/FetchTweets_AdminPage_.php:363
+#: class/FetchTweets_AdminPage_.php:391 template/plain/settings.php:185
+#: template/single/settings.php:200
+msgid "Save Changes"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:352
+msgid "Cache for Errors"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:354
+msgid ""
+"Cache fetched results even for an error. This reduces the chances to reach "
+"the Twitter API rate limit."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:371
+msgid "Capability"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:372
+msgid ""
+"Select the user role that is allowed to access the plugin setting pages."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:373 class/FetchTweets_AdminPage_.php:377
+msgid "Administrator"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:378
+msgid "Editor"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:379
+#: library/admin-page-framework-for-fetch-tweets.php:6066
+msgid "Author"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:380
+msgid "Contributor"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:381
+msgid "Subscriber"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:399
+msgid "Options to Delete"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:422
+msgid "Clear Caches"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:424
+msgid "Clear tweet caches"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:433
+msgid "Perform"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:442
+msgid "Owner Screen Name"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:443
+msgid "The screen name(user name) that owns the list."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:456
+msgid "Proceed"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:465
 msgid "Donate"
 msgstr ""
 
-#: class/FetchTweets_AdminPage_.php:114
+#: class/FetchTweets_AdminPage_.php:466
 msgid "Order custom plugin"
 msgstr ""
 
-#: class/FetchTweets_AdminPage_.php:142
+#: class/FetchTweets_AdminPage_.php:489
 msgid ""
 "<a href=\"%1$s\">The API authentication keys need to be set</a> in order to "
 "use this plugin."
 msgstr ""
 
-#: class/FetchTweets_Fetch_.php:154
-msgid "No result has been fetched."
+#: class/FetchTweets_AdminPage_.php:516
+msgid "Manage Rules"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:618
+msgid ""
+"Something went wrong. Your input could not be received. Try again and if "
+"this happens again, contact the developer."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:629
+msgid "The screen name of the list owner must be specified: "
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:631
+msgid "There was an error in your input."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:639
+msgid "No list found."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:702
+msgid "Could not connect to Twitter. Refresh the page or try again later."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:850 class/FetchTweets_AdminPage_.php:854
+msgid "Will be reset at"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:858 class/FetchTweets_AdminPage_.php:863
+msgid "Status"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:866
+msgid "Authenticated"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:866
+msgid "Not authenticated"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:871 template/single/settings.php:163
+msgid "Screen Name"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:879
+msgid "Timeline Request Limit"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:887
+msgid "Search Request Limit"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:916 class/FetchTweets_AdminPage_.php:947
+msgid "Disconnect"
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:1021 class/FetchTweets_AdminPage_.php:1050
+msgid "Nothing changed."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:1028
+msgid "The caches have been cleared."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:1144
+msgid "Want your template to be listed here? Send the file to %1$s."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:1149 class/FetchTweets_AdminPage_.php:1283
+msgid "No extension has been found."
+msgstr ""
+
+#: class/FetchTweets_AdminPage_.php:1172 class/FetchTweets_AdminPage_.php:1306
+msgid "Get it Now"
+msgstr ""
+
+#: class/FetchTweets_Fetch_.php:190
+msgid "No result could be fetched."
 msgstr ""
 
 #: class/FetchTweets_ImageHandler.php:122
 msgid "The image data is empty."
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:19
-msgid "Include Retweets"
+#: class/FetchTweets_ListTable_.php:55
+msgid "Version"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:20
-msgid "Retweets will be included."
+#: class/FetchTweets_ListTable_.php:57
+msgid "CSS"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:25
-msgid "Cache Duration"
+#: class/FetchTweets_ListTable_.php:91 class/FetchTweets_ListTable_.php:92
+#: class/FetchTweets_ListTable_.php:145
+msgid "Deactivate"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:26
-msgid "The cache lifespan in seconds. For no cache, set 0."
+#: class/FetchTweets_ListTable_.php:94 class/FetchTweets_ListTable_.php:95
+msgid "Set Default"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:26
-msgid "Default:"
+#: class/FetchTweets_ListTable_.php:98 class/FetchTweets_ListTable_.php:144
+msgid "Activate"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:52 class/FetchTweets_MetaBox_.php:86
-#: class/FetchTweets_PostType_.php:42 class/FetchTweets_PostType_.php:107
-msgid "Tags"
+#: class/FetchTweets_ListTable_.php:123
+msgid "Template Name"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:63
+#: class/FetchTweets_ListTable_.php:124
+msgid "Thumbnail"
+msgstr ""
+
+#: class/FetchTweets_ListTable_.php:125
+msgid "Description"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Media_.php:9
+msgid "Media Images"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Media_.php:12
+msgid "Currently only photos are supported."
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Media_.php:17
+msgid "External Media Links"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Misc_.php:15
 msgid "Information"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:129 class/FetchTweets_PostType_.php:150
+#: class/FetchTweets_MetaBox_Options_.php:24
+msgid "Cache Duration"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:25
+msgid "The cache lifespan in seconds. For no cache, set 0."
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:25
+msgid "Default:"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:62
+#: class/FetchTweets_PostType_.php:163 template/plain/settings.php:163
+#: template/single/settings.php:178
 msgid "User Name"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:130
+#: class/FetchTweets_MetaBox_Options_.php:63
 msgid ""
 "The user name (screen name) that is used after the @ mark or the end of the "
 "twitter url."
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:135 class/FetchTweets_MetaBox_.php:208
+#: class/FetchTweets_MetaBox_Options_.php:68
+#: class/FetchTweets_MetaBox_Options_.php:147
+#: class/FetchTweets_MetaBox_Options_.php:303
 msgid "Item Count"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:136 class/FetchTweets_MetaBox_.php:209
+#: class/FetchTweets_MetaBox_Options_.php:69
+#: class/FetchTweets_MetaBox_Options_.php:148
+#: class/FetchTweets_MetaBox_Options_.php:304
 msgid "Set how many items should be fetched."
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:137 class/FetchTweets_MetaBox_.php:210
+#: class/FetchTweets_MetaBox_Options_.php:70
+#: class/FetchTweets_MetaBox_Options_.php:149
+#: class/FetchTweets_MetaBox_Options_.php:305
 msgid "Max"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:138 class/FetchTweets_MetaBox_.php:211
-#: class/FetchTweets_WidgetByID_.php:96 class/FetchTweets_WidgetByID_.php:106
-#: class/FetchTweets_WidgetByTag_.php:110
-#: class/FetchTweets_WidgetByTag_.php:120
-msgid "Default"
-msgstr ""
-
-#: class/FetchTweets_MetaBox_.php:159
+#: class/FetchTweets_MetaBox_Options_.php:92
 msgid "This prevents replies from appearing in the returned timeline."
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:201
+#: class/FetchTweets_MetaBox_Options_.php:100
+#: class/FetchTweets_MetaBox_Options_.php:325
+msgid "Include Retweets"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:101
+#: class/FetchTweets_MetaBox_Options_.php:326
+msgid "Retweets will be included."
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:140
 msgid "Search Keyword"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:202
+#: class/FetchTweets_MetaBox_Options_.php:141
 msgid ""
 "The keyword to search. For a complex combination of terms and operators, "
 "refer to the <strong>Search Operators</strong> section of <a href=\"%1$s\" "
 "target=\"_blank\">Using the Twitter Search API</a>."
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:221 class/FetchTweets_WidgetByTag_.php:96
-msgid "None"
+#: class/FetchTweets_MetaBox_Options_.php:157
+msgid "Language "
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:222
-msgid "Portuguese"
+#: class/FetchTweets_MetaBox_Options_.php:160
+msgid "Any Language"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:223
-msgid "Italian"
+#: class/FetchTweets_MetaBox_Options_.php:161
+msgid "Amharic (አማርኛ)"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:224
-msgid "Spanish"
+#: class/FetchTweets_MetaBox_Options_.php:162
+msgid "Arabic (العربية)"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:225
-msgid "Turkish"
+#: class/FetchTweets_MetaBox_Options_.php:163
+msgid "Bulgarian (Български)"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:226
-msgid "English"
+#: class/FetchTweets_MetaBox_Options_.php:164
+msgid "Bengali (বাংলা)"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:227
-msgid "Korean"
+#: class/FetchTweets_MetaBox_Options_.php:165
+msgid "Tibetan (བོད་སྐད)"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:228
-msgid "French"
+#: class/FetchTweets_MetaBox_Options_.php:166
+msgid "Cherokee (ᏣᎳᎩ)"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:229
-msgid "Russian"
+#: class/FetchTweets_MetaBox_Options_.php:167
+msgid "Danish (Dansk)"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:230
-msgid "German"
+#: class/FetchTweets_MetaBox_Options_.php:168
+msgid "German (Deutsch)"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:231
-msgid "Japanese"
+#: class/FetchTweets_MetaBox_Options_.php:169
+msgid "Maldivian (ދިވެހި)"
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:240
+#: class/FetchTweets_MetaBox_Options_.php:170
+msgid "Greek (Ελληνικά)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:171
+msgid "English (English)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:172
+msgid "Spanish (Español)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:173
+msgid "Persian (فارسی)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:174
+msgid "Finnish (Suomi)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:175
+msgid "French (Français)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:176
+msgid "Gujarati (ગુજરાતી)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:177
+msgid "Hebrew (עברית)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:178
+msgid "Hindi (हिंदी)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:179
+msgid "Hungarian (Magyar)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:180
+msgid "Armenian (Հայերեն)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:181
+msgid "Indonesian (Bahasa Indonesia)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:182
+msgid "Icelandic (Íslenska)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:183
+msgid "Italian (Italiano)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:184
+msgid "Inuktitut (ᐃᓄᒃᑎᑐᑦ)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:185
+msgid "Japanese (日本語)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:186
+msgid "Georgian (ქართული)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:187
+msgid "Khmer (ខ្មែរ)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:188
+msgid "Kannada (ಕನ್ನಡ)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:189
+msgid "Korean (한국어)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:190
+msgid "Lao (ລາວ)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:191
+msgid "Lithuanian (Lietuvių)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:192
+msgid "Malayalam (മലയാളം)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:193
+msgid "Myanmar (မြန်မာဘာသာ)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:194
+msgid "Nepali (नेपाली)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:195
+msgid "Dutch (Nederlands)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:196
+msgid "Norwegian (Norsk)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:197
+msgid "Oriya (ଓଡ଼ିଆ)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:198
+msgid "Panjabi (ਪੰਜਾਬੀ)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:199
+msgid "Polish (Polski)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:200
+msgid "Portuguese (Português)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:201
+msgid "Russian (Русский)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:202
+msgid "Sinhala (සිංහල)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:203
+msgid "Swedish (Svenska)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:204
+msgid "Tamil (தமிழ்)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:205
+msgid "Telugu (తెలుగు)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:206
+msgid "Thai (ไทย)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:207
+msgid "Tagalog (Tagalog)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:208
+msgid "Turkish (Türkçe)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:209
+msgid "Urdu (ﺍﺭﺩﻭ)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:210
+msgid "Vietnamese (Tiếng Việt)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:211
+msgid "Chinese (中文)"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:217
+msgid "Result Type"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:220
 msgid "includes both popular and real time results in the response."
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:241
+#: class/FetchTweets_MetaBox_Options_.php:221
 msgid "returns only the most recent results in the response."
 msgstr ""
 
-#: class/FetchTweets_MetaBox_.php:242
+#: class/FetchTweets_MetaBox_Options_.php:222
 msgid "return only the most popular results in the response."
 msgstr ""
 
-#. #-#-#-#-#  plugin.pot (Fetch Tweets 1.0.0.4)  #-#-#-#-#
+#: class/FetchTweets_MetaBox_Options_.php:228
+msgid "Date Until"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:228
+#: class/FetchTweets_MetaBox_Options_.php:235
+#: class/FetchTweets_MetaBox_Options_.php:245
+msgid "optional"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:229
+msgid ""
+"Returns tweets generated before the given date. Set blank not to specify any "
+"date."
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:235
+msgid "Geometric Coordinate"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:236
+msgid ""
+"Restricts tweets to users located within a given radius of the given "
+"latitude/longitude. Set them empty not to set any."
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:239
+msgid "Latitude"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:240
+msgid "Longitude"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:245
+msgid "Geometric Radius"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:249
+msgid "miles"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:249
+msgid "kilometers"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:251
+msgid ""
+"Set this empty not to set any. In order to perform the geometric search, "
+"this option and the above coordinate must be specified."
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Options_.php:288
+msgid "Lists"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Tag_.php:27 class/FetchTweets_MetaBox_Tag_.php:44
+#: class/FetchTweets_PostType_.php:42 class/FetchTweets_PostType_.php:120
+msgid "Tags"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Template_.php:10
+msgid "Select Template"
+msgstr ""
+
+#: class/FetchTweets_MetaBox_Template_.php:11
+msgid ""
+"Sets a default template for this rule. If a template is specified in a "
+"widget, the shortcode, or the function, this setting will be overriden."
+msgstr ""
+
+#. #-#-#-#-#  plugin.pot (Fetch Tweets 1.3.3.1b)  #-#-#-#-#
 #. Plugin Name of the plugin/theme
-#: class/FetchTweets_PostType_.php:11
+#: class/FetchTweets_PostType_.php:11 class/FetchTweets_PostType_.php:13
 msgid "Fetch Tweets"
 msgstr ""
 
@@ -199,43 +851,43 @@ msgstr ""
 msgid "Fetch Tweets Rule"
 msgstr ""
 
-#: class/FetchTweets_PostType_.php:13
+#: class/FetchTweets_PostType_.php:14
 msgid "Fetch Tweets by Screen Name"
 msgstr ""
 
-#: class/FetchTweets_PostType_.php:14
+#: class/FetchTweets_PostType_.php:15
 msgid "Add New Rule"
 msgstr ""
 
-#: class/FetchTweets_PostType_.php:15
+#: class/FetchTweets_PostType_.php:16
 msgid "Edit"
 msgstr ""
 
-#: class/FetchTweets_PostType_.php:16
+#: class/FetchTweets_PostType_.php:17
 msgid "Edit Rule"
 msgstr ""
 
-#: class/FetchTweets_PostType_.php:17
+#: class/FetchTweets_PostType_.php:18
 msgid "New Rule"
 msgstr ""
 
-#: class/FetchTweets_PostType_.php:18
+#: class/FetchTweets_PostType_.php:19
 msgid "View"
 msgstr ""
 
-#: class/FetchTweets_PostType_.php:19
+#: class/FetchTweets_PostType_.php:20
 msgid "View Fetched Tweets"
 msgstr ""
 
-#: class/FetchTweets_PostType_.php:20
+#: class/FetchTweets_PostType_.php:21
 msgid "Search Rules"
 msgstr ""
 
-#: class/FetchTweets_PostType_.php:21
+#: class/FetchTweets_PostType_.php:22
 msgid "No rule found for fetching tweets"
 msgstr ""
 
-#: class/FetchTweets_PostType_.php:22
+#: class/FetchTweets_PostType_.php:23
 msgid "No Rule Found for Fetching Tweets in Trash"
 msgstr ""
 
@@ -247,137 +899,327 @@ msgstr ""
 msgid "New Tag"
 msgstr ""
 
-#: class/FetchTweets_PostType_.php:72
+#: class/FetchTweets_PostType_.php:74
 msgid "Set the rule name here."
 msgstr ""
 
-#: class/FetchTweets_PostType_.php:104
+#: class/FetchTweets_PostType_.php:117
 msgid "Rule Name"
 msgstr ""
 
-#: class/FetchTweets_PostType_.php:105
+#: class/FetchTweets_PostType_.php:118
 msgid "Tweet Type"
 msgstr ""
 
-#: class/FetchTweets_PostType_.php:108
+#: class/FetchTweets_PostType_.php:121
 msgid "Shortcode / PHP Code"
 msgstr ""
 
-#: class/FetchTweets_PostType_.php:148
+#: class/FetchTweets_PostType_.php:161
 msgid "Search"
 msgstr ""
 
-#: class/FetchTweets_WidgetByID_.php:21
+#: class/FetchTweets_PostType_.php:165
+msgid "List"
+msgstr ""
+
+#: class/FetchTweets_Templates_.php:174
+msgid "/* The CSS file does not exist. */"
+msgstr ""
+
+#: class/FetchTweets_WidgetByID_.php:15
 msgid "A widget that fetches tweets by rule set."
 msgstr ""
 
-#: class/FetchTweets_WidgetByID_.php:57 class/FetchTweets_WidgetByTag_.php:62
-#: library/admin-page-framework.php:3315
+#: class/FetchTweets_WidgetByID_.php:41 class/FetchTweets_WidgetByTag_.php:48
+#: library/admin-page-framework-for-fetch-tweets.php:6065
 msgid "Title"
 msgstr ""
 
-#: class/FetchTweets_WidgetByID_.php:64
+#: class/FetchTweets_WidgetByID_.php:48
 msgid "Select Rules"
 msgstr ""
 
-#: class/FetchTweets_WidgetByID_.php:85 class/FetchTweets_WidgetByTag_.php:83
+#: class/FetchTweets_WidgetByID_.php:69 class/FetchTweets_WidgetByTag_.php:69
 msgid ""
 "Hold down the Ctrl (windows) / Command (Mac) key to select multiple items."
 msgstr ""
 
-#: class/FetchTweets_WidgetByID_.php:89 class/FetchTweets_WidgetByTag_.php:103
+#: class/FetchTweets_WidgetByID_.php:73 class/FetchTweets_WidgetByTag_.php:89
 msgid "The maximum number of tweets to show"
 msgstr ""
 
-#: class/FetchTweets_WidgetByID_.php:100
-#: class/FetchTweets_WidgetByTag_.php:114
+#: class/FetchTweets_WidgetByID_.php:85 class/FetchTweets_WidgetByTag_.php:101
+msgid "Select a Template"
+msgstr ""
+
+#: class/FetchTweets_WidgetByID_.php:101
+#: class/FetchTweets_WidgetByTag_.php:117
 msgid "The profile image size in pixel."
 msgstr ""
 
-#: class/FetchTweets_WidgetByID_.php:106
-#: class/FetchTweets_WidgetByTag_.php:120
+#: class/FetchTweets_WidgetByID_.php:107
+#: class/FetchTweets_WidgetByTag_.php:123
 msgid "Set 0 for no avatar."
 msgstr ""
 
-#: class/FetchTweets_WidgetByTag_.php:23
+#: class/FetchTweets_WidgetByID_.php:111
+#: class/FetchTweets_WidgetByTag_.php:127 template/plain/settings.php:71
+#: template/single/settings.php:71
+msgid "The width of the output."
+msgstr ""
+
+#: class/FetchTweets_WidgetByID_.php:127 class/FetchTweets_WidgetByID_.php:147
+#: class/FetchTweets_WidgetByTag_.php:143
+#: class/FetchTweets_WidgetByTag_.php:163
+msgid "Set 0 for no limit."
+msgstr ""
+
+#: class/FetchTweets_WidgetByID_.php:131
+#: class/FetchTweets_WidgetByTag_.php:147 template/plain/settings.php:87
+#: template/single/settings.php:87
+msgid "The height of the output."
+msgstr ""
+
+#: class/FetchTweets_WidgetByTag_.php:19
 msgid "A widget that fetches tweets by tag."
 msgstr ""
 
-#: class/FetchTweets_WidgetByTag_.php:69
+#: class/FetchTweets_WidgetByTag_.php:55
 msgid "Select Tags"
 msgstr ""
 
-#: class/FetchTweets_WidgetByTag_.php:87
+#: class/FetchTweets_WidgetByTag_.php:73
 msgid "Apply the rule sets that have:"
 msgstr ""
 
-#: class/FetchTweets_WidgetByTag_.php:90
+#: class/FetchTweets_WidgetByTag_.php:76
 msgid "All"
 msgstr ""
 
-#: class/FetchTweets_WidgetByTag_.php:93
+#: class/FetchTweets_WidgetByTag_.php:79
 msgid "Any"
 msgstr ""
 
-#: class/FetchTweets_WidgetByTag_.php:99
+#: class/FetchTweets_WidgetByTag_.php:82
+msgid "None"
+msgstr ""
+
+#: class/FetchTweets_WidgetByTag_.php:85
 msgid "of the selected tags."
 msgstr ""
 
-#: class_final/FetchTweets_InitialLoader.php:83
+#: class_final/FetchTweets_InitialLoader.php:90
 msgid "The plugin requires the %1$s to be installed."
 msgstr ""
 
-#: class_final/FetchTweets_InitialLoader.php:165
+#: class_final/FetchTweets_InitialLoader.php:171
 msgid "Options"
+msgstr ""
+
+#: class_final/FetchTweets_InitialLoader.php:185
+msgid "Template"
 msgstr ""
 
 #: class_final/FetchTweets_Requirements.php:117
 msgid "Deactivating the plugin."
 msgstr ""
 
-#: library/admin-page-framework.php:969 library/admin-page-framework.php:3646
+#: library/admin-page-framework-for-fetch-tweets.php:2061
+#: library/admin-page-framework-for-fetch-tweets.php:6740
 msgid "Upload Image"
 msgstr ""
 
-#: library/admin-page-framework.php:970 library/admin-page-framework.php:1521
-#: library/admin-page-framework.php:3647 library/admin-page-framework.php:3748
+#: library/admin-page-framework-for-fetch-tweets.php:2062
+#: library/admin-page-framework-for-fetch-tweets.php:2754
+#: library/admin-page-framework-for-fetch-tweets.php:6741
+#: library/admin-page-framework-for-fetch-tweets.php:6816
 msgid "Use This Image"
 msgstr ""
 
-#: library/admin-page-framework.php:2275
-msgid "Manage"
-msgstr ""
-
-#: library/admin-page-framework.php:2301 library/admin-page-framework.php:2422
+#: library/admin-page-framework-for-fetch-tweets.php:4660
+#: library/admin-page-framework-for-fetch-tweets.php:4774
 msgid "Powered by"
 msgstr ""
 
-#: library/admin-page-framework.php:2941
+#: library/admin-page-framework-for-fetch-tweets.php:4687
+msgid "Manage"
+msgstr ""
+
+#: library/admin-page-framework-for-fetch-tweets.php:5550
 msgid "Submit"
 msgstr ""
 
-#: library/admin-page-framework.php:3106
+#: library/admin-page-framework-for-fetch-tweets.php:5786
 msgid "Select Image"
 msgstr ""
 
-#: library/admin-page-framework.php:3316
-msgid "Author"
-msgstr ""
-
-#: library/admin-page-framework.php:3320
+#: library/admin-page-framework-for-fetch-tweets.php:6070
 msgid "Date"
 msgstr ""
 
-#: library/admin-page-framework.php:3496
+#: library/admin-page-framework-for-fetch-tweets.php:6386
 msgid "Show All"
 msgstr ""
 
-#: template/show_tweets.php:40
+#: template/plain/settings.php:33
+msgid "Options for the %1$s template."
+msgstr ""
+
+#: template/plain/settings.php:34 template/single/settings.php:34
+msgid ""
+"These will be the default values and be overridden by the arguments passed "
+"directly by the widgets, the shortcode, or the PHP function."
+msgstr ""
+
+#: template/plain/settings.php:50 template/single/settings.php:50
+msgid "Profile Image Size"
+msgstr ""
+
+#: template/plain/settings.php:51 template/single/settings.php:51
+msgid "The avatar size in pixel. Set 0 for no avatar."
+msgstr ""
+
+#: template/plain/settings.php:59 template/single/settings.php:59
+msgid "Profile Image Position"
+msgstr ""
+
+#: template/plain/settings.php:62 template/plain/settings.php:109
+#: template/plain/settings.php:123 template/single/settings.php:62
+#: template/single/settings.php:110 template/single/settings.php:124
+msgid "Left"
+msgstr ""
+
+#: template/plain/settings.php:63 template/plain/settings.php:107
+#: template/plain/settings.php:121 template/single/settings.php:63
+#: template/single/settings.php:108 template/single/settings.php:122
+msgid "Right"
+msgstr ""
+
+#: template/plain/settings.php:70 template/single/settings.php:70
+msgid "Width"
+msgstr ""
+
+#: template/plain/settings.php:86 template/single/settings.php:86
+msgid "Height"
+msgstr ""
+
+#: template/plain/settings.php:102 template/single/settings.php:103
+msgid "Margins"
+msgstr ""
+
+#: template/plain/settings.php:103 template/single/settings.php:104
+msgid ""
+"The margins of the output element. Leave them empty not to set any margin."
+msgstr ""
+
+#: template/plain/settings.php:106 template/plain/settings.php:120
+#: template/single/settings.php:107 template/single/settings.php:121
+msgid "Top"
+msgstr ""
+
+#: template/plain/settings.php:108 template/plain/settings.php:122
+#: template/single/settings.php:109 template/single/settings.php:123
+msgid "Bottom"
+msgstr ""
+
+#: template/plain/settings.php:116 template/single/settings.php:117
+msgid "Paddings"
+msgstr ""
+
+#: template/plain/settings.php:117 template/single/settings.php:118
+msgid ""
+"The paddings of the output element. Leave them empty not to set any padding."
+msgstr ""
+
+#: template/plain/settings.php:131 template/single/settings.php:132
+msgid "Background Color"
+msgstr ""
+
+#: template/plain/settings.php:138 template/plain/settings.php:167
+#: template/single/settings.php:139 template/single/settings.php:182
+msgid "Intent Buttons"
+msgstr ""
+
+#: template/plain/settings.php:139 template/single/settings.php:140
+msgid "These are for Favourite, Reply, and Retweet buttons."
+msgstr ""
+
+#: template/plain/settings.php:142 template/single/settings.php:143
+msgid "Both icons and text"
+msgstr ""
+
+#: template/plain/settings.php:143 template/single/settings.php:144
+msgid "Only icons"
+msgstr ""
+
+#: template/plain/settings.php:144 template/single/settings.php:145
+msgid "Only text"
+msgstr ""
+
+#: template/plain/settings.php:151 template/single/settings.php:152
+msgid "Intent Button Script"
+msgstr ""
+
+#: template/plain/settings.php:153 template/single/settings.php:154
+msgid ""
+"Insert the intent button script that enables a pop-up window for Favorite, "
+"Reply, and Retweet."
+msgstr ""
+
+#: template/plain/settings.php:159 template/single/settings.php:174
+msgid "Visibilities"
+msgstr ""
+
+#: template/plain/settings.php:162 template/single/settings.php:177
+msgid "Profile Image"
+msgstr ""
+
+#: template/plain/settings.php:166 template/single/settings.php:181
+msgid "Time"
+msgstr ""
+
+#: template/plain/template.php:139 template/single/template.php:202
 msgid "ago"
 msgstr ""
 
-#: template/show_tweets.php:48
+#: template/plain/template.php:149 template/single/template.php:192
 msgid "Retweeted by"
+msgstr ""
+
+#: template/plain/template.php:163 template/plain/template.php:168
+#: template/single/template.php:216 template/single/template.php:221
+msgid "Reply"
+msgstr ""
+
+#: template/plain/template.php:173 template/plain/template.php:178
+#: template/single/template.php:226 template/single/template.php:231
+msgid "Retweet"
+msgstr ""
+
+#: template/plain/template.php:183 template/plain/template.php:188
+#: template/single/template.php:236 template/single/template.php:241
+msgid "Favorite"
+msgstr ""
+
+#: template/single/settings.php:160
+msgid "Follow Button Elements"
+msgstr ""
+
+#: template/single/settings.php:164
+msgid "Follower Count"
+msgstr ""
+
+#: template/single/settings.php:179
+msgid "Follow Button"
+msgstr ""
+
+#: template/single/settings.php:180
+msgid "User Description"
+msgstr ""
+
+#: template/single/template.php:156
+msgid "Follow"
 msgstr ""
 
 #. Plugin URI of the plugin/theme
@@ -386,7 +1228,8 @@ msgstr ""
 
 #. Description of the plugin/theme
 msgid ""
-"Fetches and displays tweets from Twitter with the the Twitter REST API v1.1."
+"Fetches and displays tweets from twitter.com with the the Twitter REST API "
+"v1.1."
 msgstr ""
 
 #. Author of the plugin/theme
