@@ -637,7 +637,7 @@ abstract class FetchTweets_Fetch_ {
 					'URI'	=> $strRequestURI, 	
 					'key'	=> $strArrayKey,
 				);
-		
+
 			return ( array ) $this->oBase64->decode( $arrTransient['data'] );
 			
 		}
@@ -653,7 +653,7 @@ abstract class FetchTweets_Fetch_ {
 	 * @remark			The scope is public since the cache renewal event also uses it.
 	 */
 	public function setAPIGETRequestCache( $strRequestURI, $strArrayKey=null, $strRequestID='' ) {
-		
+
 		// Perform the API request.
 		$arrTweets =  $this->oTwitterOAuth->get( $strRequestURI );		
 			

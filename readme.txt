@@ -206,6 +206,9 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 == Changelog ==
 
+= 1.3.3.1 - 11/12/2013 =
+* Fixed an issue with instagram's images.
+
 = 1.3.3 - 11/07/2013 =
 * Fixed a bug that caused the cache to be renewed every time when the rule ID is specified.
 * Added the option to cache errors. 

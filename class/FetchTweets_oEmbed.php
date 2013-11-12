@@ -4,7 +4,8 @@ require_once( ABSPATH . WPINC . '/class-oembed.php' );
  * Fixes issues of the WordPress built-in oEmbed class.
  * 
  * 
- * @since			2.1.0
+ * @since			1.2.0
+ * @since			1.3.3.1
  */ 
 class FetchTweets_oEmbed extends WP_oEmbed {
 
@@ -14,6 +15,9 @@ class FetchTweets_oEmbed extends WP_oEmbed {
 		
 		// This should be done by the bootstrap script but just in case.
 		if ( ! isset( $GLOBALS['arrFetchTweets_oEmbed'] ) ) $GLOBALS['arrFetchTweets_oEmbed'] = array();
+		
+		// Apply a fix for recent Instagram's image url format change.
+		add_filter( 'oembed_result', array( $this, 'sanitizeOEmbedResult' ), 10, 3 );
 		
 	}
 	
@@ -52,8 +56,8 @@ class FetchTweets_oEmbed extends WP_oEmbed {
 		$providers = array();
 
 		// Fetch URL content
-		$strHTML = wp_safe_remote_get( $url );
-		if ( $html = wp_remote_retrieve_body( wp_safe_remote_get( $strHTML ) ) ) {
+		$strHTML = wp_remote_get( $url );	
+		if ( $html = wp_remote_retrieve_body( wp_remote_get( $strHTML ) ) ) {	// this is the part that causes a strict standard warning as an expression is passed as reference 
 
 			// <link> types that contain oEmbed provider URLs
 			$linktypes = apply_filters( 'oembed_linktypes', array(
@@ -97,5 +101,18 @@ class FetchTweets_oEmbed extends WP_oEmbed {
 		else
 			return false;
 	}
+	
+	/**
+	 * 
+	 * @since			1.3.3.1
+	 */
+	public function sanitizeOEmbedResult( $strHTML, $strURL, $arrArgs ) {
+		
+		// A fix for Instagram - src="http://distilleryimage7.ak.instagram.com/0a0e19404b4a11e38add1240bd2c384e_7.jpg  ---> <img src="http://distilleryimage7.ak.instagram.com/0a0e19404b4a11e38add1240bd2c384e_8.jpg
+		if ( preg_match( "/:\/\/instagr/", $strURL ) ) 				
+			$strHTML = preg_replace( '/\ssrc=(["\']).+_\K\d(?=\..+?\1)/i', '8' , $strHTML );	// ' syntax fixer
 
+		return $strHTML;
+		
+	}
 }

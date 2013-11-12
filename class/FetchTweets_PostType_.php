@@ -34,8 +34,7 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 				'show_admin_column' => true,
 			)		
 		);
-		$this->setAutoSave( false );
-		$this->setAuthorTableFilter( true );
+
 		$this->addTaxonomy( 
 			'fetch_tweets_tag', 
 			array(
@@ -60,6 +59,8 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 		// For admin
 		if ( $strCurrentPostTypeInAdmin == $this->oProps->strPostType && is_admin() ) {
 			
+			$this->setAutoSave( false );
+			$this->setAuthorTableFilter( true );			
 			add_filter( 'enter_title_here', array( $this, 'changeTitleMetaBoxFieldLabel' ) );	// add_filter( 'gettext', array( $this, 'changeTitleMetaBoxFieldLabel' ) );
 			add_action( 'edit_form_after_title', array( $this, 'addTextAfterTitle' ) );	
 			// add_action( 'admin_menu', array( $this, 'editSidebarSubMenuLabel' ) );
