@@ -206,7 +206,8 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 == Changelog ==
 
-= 1.3.3.1 - 11/12/2013 =
+= 1.3.3.1 - 11/13/2013 =
+* Fixed an issue with below the WordPress version 3.5 that the function `wp_safe_remote_get` was not found.
 * Fixed an issue with instagram's images.
 
 = 1.3.3 - 11/07/2013 =
