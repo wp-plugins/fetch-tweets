@@ -50,16 +50,13 @@ class FetchTweets_ListTable_ extends WP_List_Table {
         switch( $strColumnName ){
 
             case 'description':
-				
-				$oWPStyles = new WP_Styles();
-				$strHref = $oWPStyles->_css_href( '/' . FetchTweets_Utilities::getRelativePath( ABSPATH, $arrItem['strCSSPath'] ), '', '' );
-			
+							
 				//Build row actions
 				$arrActions = array(
 					'version'	=> sprintf( __( 'Version', 'fetch-tweets' ) . '&nbsp;' . $arrItem['strVersion'] ),
 					'author'	=> sprintf( '<a href="%s">' . $arrItem['strAuthor'] . '</a>', $arrItem['strAuthorURI'] ),
 					// 'css'		=> sprintf( '<a href="%s">' . __( 'CSS', 'fetch-tweets' ) . '</a>', site_url() . "?fetch_tweets_style={$arrItem['strSlug']}" ),	// deprecated as of v1.3.3.2
-					'css'		=> sprintf( '<a href="%s">' . __( 'CSS', 'fetch-tweets' ) . '</a>', $strHref ),
+					'css'		=> sprintf( '<a href="%s">' . __( 'CSS', 'fetch-tweets' ) . '</a>', FetchTweets_WPUtilities::getSRCFromPath( $arrItem['strCSSPath'] ) ),
 				);
 				
 				//Return the title contents
@@ -69,7 +66,8 @@ class FetchTweets_ListTable_ extends WP_List_Table {
 				);
             case 'thumbnail':
 				if ( ! file_exists( $arrItem['strThumbnailPath'] ) ) return;
-				$strImageURL = site_url() . "?fetch_tweets_image=" . base64_encode( $arrItem['strThumbnailPath'] );
+				// $strImageURL = site_url() . "?fetch_tweets_image=" . base64_encode( $arrItem['strThumbnailPath'] );	// deprecated as of v1.3.3.2
+				$strImageURL = FetchTweets_WPUtilities::getSRCFromPath( $arrItem['strThumbnailPath'] );
 				return "<a class='template-thumbnail' href='#thumb'>"
 					. "<img src='{$strImageURL}' style='max-width:80px; max-height:80px;' />"
 					. "<span>"
