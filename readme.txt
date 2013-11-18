@@ -207,13 +207,14 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 == Changelog ==
 
 = 1.3.3.2 =
+* Fixed an issue with Instagram's images. 
 * Improved: the method of loading template CSS files.
 * Tweaked: the default templates to have an `!imporatant` declaration for each rule.
 * Added the Japanese localization.
 
 = 1.3.3.1 - 11/13/2013 =
 * Fixed an issue with below the WordPress version 3.5 that the function `wp_safe_remote_get` was not found.
-* Fixed an issue with instagram's images.
+* Fixed an issue with Instagram's images.
 
 = 1.3.3 - 11/07/2013 =
 * Fixed a bug that caused the cache to be renewed every time when the rule ID is specified.

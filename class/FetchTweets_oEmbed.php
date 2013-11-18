@@ -103,16 +103,49 @@ class FetchTweets_oEmbed extends WP_oEmbed {
 	}
 	
 	/**
+	 * Sanitizes oEmebed results.
 	 * 
+	 * @remark			Currently only Instagram's images will be checked.
 	 * @since			1.3.3.1
 	 */
 	public function sanitizeOEmbedResult( $strHTML, $strURL, $arrArgs ) {
 		
 		// A fix for Instagram - src="http://distilleryimage7.ak.instagram.com/0a0e19404b4a11e38add1240bd2c384e_7.jpg  ---> <img src="http://distilleryimage7.ak.instagram.com/0a0e19404b4a11e38add1240bd2c384e_8.jpg
-		if ( preg_match( "/:\/\/instagr/", $strURL ) ) 				
-			$strHTML = preg_replace( '/\ssrc=(["\']).+_\K\d(?=\..+?\1)/i', '8' , $strHTML );	// ' syntax fixer
-
+		if ( preg_match( "/:\/\/instagr/", $strURL ) ) 	
+			$strHTML = preg_replace_callback( '/(\ssrc=(["\']))(.+_)(\d)(\..+?)(\2)/i', array( $this, 'callBackForInstagramImageURLReplacement' ) , $strHTML );	// ' syntax fixer
+			// $strHTML = preg_replace( '/\ssrc=(["\']).+_\K\d(?=\..+?\1)/i', '8' , $strHTML );	// ' syntax fixer
+			
 		return $strHTML;
 		
 	}
+		/**
+		 * A helper function for the above sanitizeOEmbedResult() method.
+		 * 
+		 * @since			1.3.3.2
+		 */
+		public function callBackForInstagramImageURLReplacement( $arrMatches ) {
+			
+			if ( count( $arrMatches ) != 7 ) return $arrMatches[ 0 ];
+			
+			/* 
+				Array (
+					[0] =>  src="http://distilleryimage0.ak.instagram.com/16d3f5fac72411e2822f22000a9f09ca_7.jpg"
+					[1] =>  src="
+					[2] => "
+					[3] => http://distilleryimage0.ak.instagram.com/16d3f5fac72411e2822f22000a9f09ca_
+					[4] => 7
+					[5] => .jpg
+					[6] => "
+				)				
+			*/
+			
+			// If the image exists, 
+			if ( @getimagesize( $arrMatches[ 3 ] . $arrMatches[ 4 ] . $arrMatches[ 5 ] ) )
+				return $arrMatches[ 0 ];	// do not change
+			
+			// Increment the suffixed number. e.g. _7 -> _8.
+			return $arrMatches[ 1 ] . $arrMatches[ 3 ] . ( $arrMatches[ 4 ] + 1 ) . $arrMatches[ 5 ] . $arrMatches[ 6 ] ;	
+			
+		}
+	
 }
