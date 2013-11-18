@@ -207,6 +207,7 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 == Changelog ==
 
 = 1.3.3.2 =
+* Improved: the method of loading template CSS files.
 * Tweaked: the default templates to have an `!imporatant` declaration for each rule.
 * Added the Japanese localization.
 

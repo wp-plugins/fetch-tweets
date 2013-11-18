@@ -165,19 +165,73 @@ abstract class FetchTweets_Templates_ {
 	 * @remark			This is called from the event class. 
 	 */
 	public function loadStyle( $strTemplateSlug ) {
-						
-		$arrTemplate = isset( $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'][ trim( $strTemplateSlug ) ] )
-			? $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'][ trim( $strTemplateSlug ) ]
+// die( '/* error */' );
+		$strTemplateSlug = trim( $strTemplateSlug );
+		$arrTemplate = isset( $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'][ $strTemplateSlug ] )
+			? $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'][ $strTemplateSlug ]
 			: $this->findDefaultTemplateDetails();
 			
 		if ( ! file_exists( $arrTemplate['strCSSPath'] ) )
 			die( __( '/* The CSS file does not exist. */', 'fetch-tweets' ) );	// the file must exist.
-		
+
+// $strCSS = "/*testign*/";			
+$strCSS = $this->getFileContents( $arrTemplate['strCSSPath'] );
+
+		ob_start( "ob_gzhandler" ); 
 		header( "Content-Type: text/css" ); 
 		header( "X-Content-Type-Options: nosniff" );	// for IE 8 or greater.
-		die( file_get_contents( $arrTemplate['strCSSPath'] ) );		// echo the contents and exit.		
+		
+        // header( 'Cache-control: max-age=' . (60*60*24*30) );
+		// header( "Cache-Control: public", false ); 
+		// header( "Cache-Control: private", false ); // required for certain browsers 
+		// header( "Content-Transfer-Encoding: binary" ); 
+        // header( 'Expires: ' . gmdate ( DATE_RFC1123, time()+60*60*24*30 ) );
+
+		
+$intCacheDuration = 60000000; // Far far away in time
+
+// Expires
+header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $intCacheDuration ) . ' GMT' );
+
+// Cache-Control
+header( 'Cache-Control: must-revalidate, max-age=' . ( time() + $intCacheDuration ) );
+
+header( 'Last-Modified: ' . $this->get_http_mdate() );
+
+// generate unique ID, using the modification date and the absolute path to the file
+$strHash = md5 ( filemtime( $_SERVER['DOCUMENT_ROOT'] . $_SERVER['PHP_SELF'] ) . $_SERVER['DOCUMENT_ROOT'] . $_SERVER['PHP_SELF'] );
+header( 'Etag: "' . $strHash . '"' );
+		
+		
+		
+		// $ctx = stream_context_create( array(
+			// 'http' => array(
+				// 'timeout' => 0.1
+				// )
+			// )
+		// );
+		
+		// die( file_get_contents( $arrTemplate['strCSSPath'], 0, $ctx) );
+		
+		die( $strCSS );		// echo the contents and exit.		
+		// die( file_get_contents( $arrTemplate['strCSSPath'] ) );		// echo the contents and exit.		
 		
 	}
+	
+		private function getFileContents( $arrFiles ) {
+			
+			$strCSSData = '';
+			foreach ( ( array ) $arrFiles as $strFilePath ) {
+				$hFile = fopen( $strFilePath, 'r' );
+				$strCSSData .= "\n" . fread( $hFile, filesize( $strFilePath ));
+				fclose( $hFile );
+			}
+			return trim( $strCSSData );
+			
+		}
+		private function get_http_mdate() {
+			return gmdate( 'D, d M Y H:i:s', filemtime( $_SERVER['DOCUMENT_ROOT'] . $_SERVER['PHP_SELF'] ) ) . ' GMT';
+		}	
 	
 	/**
 	 * Includes activated templates' functions.php files.
@@ -244,7 +298,8 @@ abstract class FetchTweets_Templates_ {
 			if ( ! file_exists( $arrTemplate['strTemplatePath'] ) ) continue;
 			if ( ! $arrTemplate['fIsActive'] ) continue;
 			
-			wp_register_style( "fetch-tweets-{$arrTemplate['strSlug']}", site_url() . "?fetch_tweets_style={$arrTemplate['strSlug']}" );
+			wp_register_style( "fetch-tweets-{$arrTemplate['strSlug']}", '/' . FetchTweets_Utilities::getRelativePath( ABSPATH, $arrTemplate['strCSSPath'] ) );		// relative path the WordPress installed path.
+			// wp_register_style( "fetch-tweets-{$arrTemplate['strSlug']}", site_url() . "?fetch_tweets_style={$arrTemplate['strSlug']}" );
 			wp_enqueue_style( "fetch-tweets-{$arrTemplate['strSlug']}" );		
 			
 		}

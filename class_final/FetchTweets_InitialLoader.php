@@ -155,6 +155,7 @@ final class FetchTweets_InitialLoader {
 		// 3. Templates
 		$GLOBALS['oFetchTweets_Templates'] = new FetchTweets_Templates;		
 		$GLOBALS['oFetchTweets_Templates']->loadFunctionsOfActiveTemplates();
+		add_action( 'wp_enqueue_scripts', array( $GLOBALS['oFetchTweets_Templates'], 'enqueueActiveTemplateStyles' ) );
 		if ( is_admin() )
 			$GLOBALS['oFetchTweets_Templates']->loadSettingsOfActiveTemplates();
 		

@@ -50,11 +50,16 @@ class FetchTweets_ListTable_ extends WP_List_Table {
         switch( $strColumnName ){
 
             case 'description':
+				
+				$oWPStyles = new WP_Styles();
+				$strHref = $oWPStyles->_css_href( '/' . FetchTweets_Utilities::getRelativePath( ABSPATH, $arrItem['strCSSPath'] ), '', '' );
+			
 				//Build row actions
 				$arrActions = array(
 					'version'	=> sprintf( __( 'Version', 'fetch-tweets' ) . '&nbsp;' . $arrItem['strVersion'] ),
 					'author'	=> sprintf( '<a href="%s">' . $arrItem['strAuthor'] . '</a>', $arrItem['strAuthorURI'] ),
-					'css'		=> sprintf( '<a href="%s">' . __( 'CSS', 'fetch-tweets' ) . '</a>', site_url() . "?fetch_tweets_style={$arrItem['strSlug']}" ),
+					// 'css'		=> sprintf( '<a href="%s">' . __( 'CSS', 'fetch-tweets' ) . '</a>', site_url() . "?fetch_tweets_style={$arrItem['strSlug']}" ),	// deprecated as of v1.3.3.2
+					'css'		=> sprintf( '<a href="%s">' . __( 'CSS', 'fetch-tweets' ) . '</a>', $strHref ),
 				);
 				
 				//Return the title contents
