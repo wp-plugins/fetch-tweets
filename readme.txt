@@ -206,6 +206,10 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 == Changelog ==
 
+= 1.3.3.2 =
+* Tweaked: the default templates to have an `!imporatant` declaration for each rule.
+* Added the Japanese localization.
+
 = 1.3.3.1 - 11/13/2013 =
 * Fixed an issue with below the WordPress version 3.5 that the function `wp_safe_remote_get` was not found.
 * Fixed an issue with instagram's images.

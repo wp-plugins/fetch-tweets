@@ -1,5 +1,8 @@
 == Change log ==
 
+= 1.3.3.2 =
+Added !important to all the rules.
+
 = 1.3.2 =
 Fixed an issue that bullets of list tags appeared in some themes.
 Fixed a possible issue that profile images do not get aligned properly in some themes.
