@@ -208,8 +208,8 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 = 1.3.3.2 - 11/20/2013 =
 * Fixed an issue with Instagram's images. 
-* Improved: the method of loading template CSS files.
-* Tweaked: the default templates to have an `!imporatant` declaration for each rule.
+* Improved the method of loading template CSS files.
+* Tweaked the default templates to have an `!imporatant` declaration for each rule.
 * Added the Japanese localization.
 
 = 1.3.3.1 - 11/13/2013 =
