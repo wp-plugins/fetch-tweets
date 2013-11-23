@@ -116,12 +116,14 @@ abstract class FetchTweets_Templates_ {
 		foreach( ( array ) $arrTemplateContainerDirs as $strTemplateDirPath ) {
 				
 			if ( ! file_exists( $strTemplateDirPath  ) ) continue;
-			$arrTemplateDirs = array_merge( glob( $strTemplateDirPath . DIRECTORY_SEPARATOR . "*", GLOB_ONLYDIR ), $arrTemplateDirs );
+			$arrFoundDirs = glob( $strTemplateDirPath . DIRECTORY_SEPARATOR . "*", GLOB_ONLYDIR );
+			if ( is_array( $arrFoundDirs ) )
+				$arrTemplateDirs = array_merge( $arrFoundDirs, $arrTemplateDirs );
 							
 		}
-
 		$arrTemplateDirs = array_unique( $arrTemplateDirs );
 		$arrTemplateDirs = apply_filters( 'fetch_tweets_filter_template_directories', $arrTemplateDirs );
+		
 		$arrTemplates = array();
 		$intIndex = 0;		
 		foreach ( $arrTemplateDirs as $strDirPath ) {
@@ -165,7 +167,7 @@ abstract class FetchTweets_Templates_ {
 	 * @remark			This is called from the event class. 
 	 */
 	public function loadStyle( $strTemplateSlug ) {
-// die( '/* error */' );
+
 		$strTemplateSlug = trim( $strTemplateSlug );
 		$arrTemplate = isset( $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'][ $strTemplateSlug ] )
 			? $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'][ $strTemplateSlug ]

@@ -134,8 +134,8 @@ Edit the following files.
 
 * **style.css**
 * **template.php**
-* **functions.php** ( optional ) - if not edited, do not include it.
-* **settings.php** ( optional ) - if not edited, do not include it.
+* **functions.php** ( optional ) - if not edited, do not include it. Be careful not to declare any PHP function or class that is already declared in the original file.
+* **settings.php** ( optional ) - if not edited, do not include it. Be careful not to declare any PHP function or class that is already declared in the original file.
 
 In the *style.css* file, include the comment area ( with /* */ ) at the top of the file with the following entries.
 
@@ -192,7 +192,7 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 = How do I display tweets with a certain hashtag from a specific user? =
 
-* Go to Dashboard -> Fetch Tweets -> Add Rule by Keyword Search.
+* Go to Dashboard -> Fetch Tweets -> Add Rule by Search.
 * Type `#HASHTAG AND from:SCREENNAME` in the Search Keyword meta box option field. Change the part, `#HASHTAG`, to your searching hash tag and the part, `SCREENNAME`, to the account's screen name to fetch tweets from.
 * Create a rule by pressing the Publish button.
 
@@ -205,6 +205,11 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 5. ***Authentication***
 
 == Changelog ==
+
+= 1.3.3.3 =
+* Added the List Request Limit status item in the authentication setting page.
+* Improved the method of renewing caches.
+* Added the `fetchTweets()` function to support `screen_name` and `q` parameters.
 
 = 1.3.3.2 - 11/20/2013 =
 * Fixed an issue with Instagram's images. 

@@ -74,7 +74,7 @@ final class FetchTweets_Debug {
 		$oOption = & $GLOBALS['oFetchTweets_Option'];		
 		if ( ! isset( $oOption->arrOptions[ $strKey ] ) ) return;
 		
-		die( self::gumpArray( $oOption->arrOptions[ $strKey ] ) );
+		self::dumpArray( $oOption->arrOptions[ $strKey ] );
 		
 	}
 }

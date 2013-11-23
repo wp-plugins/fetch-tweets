@@ -9,6 +9,7 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 			array(			// argument - for the array structure, refer to http://codex.wordpress.org/Function_Reference/register_post_type#Arguments
 				'labels' => array(
 					'name' => __( 'Fetch Tweets', 'fetch-tweets' ),
+					'all_items' => __( 'Manage Rules', 'fetch-tweets' ),	// sub menu label
 					'singular_name' => __( 'Fetch Tweets Rule', 'fetch-tweets' ),
 					'menu_name' => __( 'Fetch Tweets', 'fetch-tweets' ),	// this changes the root menu name 
 					'add_new' => __( 'Fetch Tweets by Screen Name', 'fetch-tweets' ),
@@ -32,6 +33,7 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 				'has_archive' => true,
 				'hierarchical' => false,
 				'show_admin_column' => true,
+				'screen_icon' => FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
 			)		
 		);
 
@@ -175,21 +177,6 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 			. '</p>';
 	}
 	
-	// Style for this custom post type pages
-	public function style_FetchTweets_PostType() {
-		$strNone = 'none';
-		return "#post-body-content {
-				margin-bottom: 10px;
-			}
-			#edit-slug-box {
-				display: {$strNone};
-			}
-			#icon-edit.icon32.icon32-posts-fetch_tweets {
-				background:url('" . FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ) . "') no-repeat;
-			}			
-		";
-		
-		// ""; 
-	}
+
 }
 

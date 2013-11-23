@@ -47,20 +47,36 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 				'strMenuTitle' => __( 'Add Rule by User Name', 'fetch-tweets' ),
 				'strType' => 'link',
 				'strURL' => 'post-new.php?post_type=fetch_tweets&tweet_type=screen_name',
-				'fPageHeadingTab' => false,
+				'fShowPageHeadingTab' => false,
 				'numOrder' => 1,
-			),		
+			),
+			// array(
+				// 'strMenuTitle' => __( 'Add Rule by Timeline', 'fetch-tweets' ),
+				// 'strType' => 'link',
+				// 'strURL' => 'post-new.php?post_type=fetch_tweets&tweet_type=timeline',
+				// 'fShowPageHeadingTab' => false,
+			// ),			
 			array(
-				'strMenuTitle' => __( 'Add Rule by Keyword Search', 'fetch-tweets' ),
+				'strMenuTitle' => __( 'Add Rule by Search', 'fetch-tweets' ),
 				'strType' => 'link',				
 				'strURL' => 'post-new.php?post_type=fetch_tweets&tweet_type=search',
-				'fPageHeadingTab' => false,
+				'fShowPageHeadingTab' => false,
 			),			
 			array(
 				'strPageTitle'	=> __( 'Add Rule by List', 'fetch-tweets' ),
 				'strPageSlug'	=> 'fetch_tweets_add_rule_by_list',
 				'strScreenIcon'	=> FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
 			),			
+			// array(	// since 1.3.4
+				// 'strPageTitle'	=> __( 'Add New Account', 'fetch-tweets' ),
+				// 'strPageSlug'	=> 'fetch_tweets_add_new_account',
+				// 'strScreenIcon'	=> FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
+				// 'fShowInMenu' => false,
+			// ),				
+			// array(	// since 1.3.4
+				// 'strMenuTitle'		=> __( 'Manage Accounts', 'amazon-auto-links' ),
+				// 'strURL'			=> admin_url( 'edit.php?post_type=' . FetchTweets_Commons::PostTypeSlugAccounts ),
+			// ),				
 			array(
 				'strPageTitle'	=> __( 'Settings', 'fetch-tweets' ),
 				'strPageSlug'	=> 'fetch_tweets_settings',
@@ -83,8 +99,7 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 				'strTabSlug'	=> 'authentication',
 				'strTitle'		=> __( 'Authentication', 'fetch-tweets' ),
 				'strParentTabSlug' => 'twitter_connect',
-				'fHide'			=> true,
-				// 'numOrder'		=> 1,				
+				'fHide'			=> true,	
 			),
 			array(
 				'strPageSlug'	=> 'fetch_tweets_settings',
@@ -110,7 +125,7 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 				'strTabSlug'	=> 'twitter_callback',
 				'strTitle'		=> 'Callback',
 				'fHide'			=> true,
-			),				
+			),								
 			array(
 				'strPageSlug'	=> 'fetch_tweets_settings',
 				'strTabSlug'	=> 'general',
@@ -158,9 +173,18 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 			// )
 		);		
 		
+		/*
+		 * Page Styling
+		 */
 		$this->showPageHeadingTabs( false );		// disables the page heading tabs by passing false.
 		$this->setInPageTabTag( 'h2' );				
-	
+		$this->enqueueStyle(  FetchTweets_Commons::getPluginURL( '/css/admin.css' ) );
+		$this->enqueueStyle(  FetchTweets_Commons::getPluginURL( '/css/fetch_tweets_templates.css' ), 'fetch_tweets_templates' );
+		$this->enqueueStyle(  FetchTweets_Commons::getPluginURL( '/css/fetch_tweets_settings.css' ), 'fetch_tweets_settings' );
+	 
+		/*
+		 * Form Elements
+		 */
 		$this->addSettingSections(
 			array(
 				'strSectionID'		=> 'twitter_connect',
@@ -484,10 +508,10 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		// http://.../wp-admin/edit.php?post_type=fetch_tweets&page=fetch_tweets_settings
 		$strSettingPageURL = add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'twitter_redirect' ), admin_url( 'edit.php' ) ); 
 		echo "<div class='error'>"
-			. "<p>" 
-			. "<strong>" . FetchTweets_Commons::PluginName . "</strong>: "
-			. sprintf( __( '<a href="%1$s">The API authentication keys need to be set</a> in order to use this plugin.', 'fetch-tweets' ), $strSettingPageURL ) 
-			. "</p>"
+				. "<p>" 
+					. "<strong>" . FetchTweets_Commons::PluginName . "</strong>: "
+					. sprintf( __( '<a href="%1$s">The API authentication keys need to be set</a> in order to use this plugin.', 'fetch-tweets' ), $strSettingPageURL ) 
+				. "</p>"
 			. "</div>";		
 			
 	}
@@ -511,12 +535,6 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 				continue;
 			}
 			
-			// Edit the first item
-			if ( $arrSubMenu[ 2 ] == 'edit.php?post_type=' . FetchTweets_Commons::PostTypeSlug ) {
-				$GLOBALS['submenu'][ $strPageSlug ][ $intIndex ][ 0 ] = __( 'Manage Rules', 'fetch-tweets' );
-				continue;
-			}
-
 			// Copy and remove the Tag menu element to change the position. 
 			if ( $arrSubMenu[ 2 ] == 'edit-tags.php?taxonomy=' . FetchTweets_Commons::TagSlug . '&amp;post_type=' . FetchTweets_Commons::PostTypeSlug ) {
 				$arrMenuEntry_Tag = array( $GLOBALS['submenu'][ $strPageSlug ][ $intIndex ] );
@@ -551,7 +569,7 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 	/*
 	 * Layout the setting pages
 	 * */
-	function head_FetchTweets_AdminPage( $strHead ) {
+	public function head_FetchTweets_AdminPage( $strHead ) {
 
 		$oUserAds = isset( $GLOBALS['oFetchTweetsUserAds'] ) ? $GLOBALS['oFetchTweetsUserAds'] : new FetchTweets_UserAds;
 		return $strHead 
@@ -565,7 +583,7 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 			. '</div>';
 			
 	}
-	function foot_FetchTweets_AdminPage( $strFoot ) {
+	public function foot_FetchTweets_AdminPage( $strFoot ) {
 		
 		switch ( isset( $_GET['tab'] ) ? $_GET['tab'] : 'authentication' ) {
 			case 'authentication':
@@ -817,7 +835,7 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		if ( ! isset( $arrUser['id'] ) || ! $arrUser['id'] ) return array();
 			
 		// Otherwise, it is okay. Retrieve the current status.
-		$arrStatus = $oTwitterOAuth->get( 'https://api.twitter.com/1.1/application/rate_limit_status.json?resources=help,users,search,statuses' );
+		$arrStatus = $oTwitterOAuth->get( 'https://api.twitter.com/1.1/application/rate_limit_status.json?resources=search,statuses,lists' );
 		
 		// Set the cache.
 		$arrData = is_array( $arrStatus ) ? $arrUser + $arrStatus : $arrUser;
@@ -852,7 +870,12 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		$strSearchLimit = isset( $arrStatus['resources']['search']['/search/tweets'] ) 
 			? $arrStatus['resources']['search']['/search/tweets']['remaining'] . ' / ' . $arrStatus['resources']['search']['/search/tweets']['limit'] 
 				. "&nbsp;&nbsp;&nbsp;( " . __( 'Will be reset at', 'fetch-tweets' ) . ' ' . date( "F j, Y, g:i a" , $arrStatus['resources']['search']['/search/tweets']['reset'] + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) . " )"
-			: "";		
+			: "";
+
+		$strListLimit = isset( $arrStatus['resources']['lists']['/lists/statuses'] )
+			? $arrStatus['resources']['lists']['/lists/statuses']['remaining'] . ' / ' . $arrStatus['resources']['lists']['/lists/statuses']['limit'] 
+				. "&nbsp;&nbsp;&nbsp;( " . __( 'Will be reset at', 'fetch-tweets' ) . ' ' . date( "F j, Y, g:i a" , $arrStatus['resources']['lists']['/lists/statuses']['reset'] + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) . " )"
+			: "";
 		
 	?>		
 		<h3><?php _e( 'Status', 'fetch-tweets' ); ?></h3>
@@ -889,12 +912,20 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 					<td>
 						<?php echo $strSearchLimit; ?>
 					</td>
+				</tr>	
+				<tr valign="top">
+					<th scope="row">
+						<?php _e( 'List Request Limit', 'fetch-tweets' ); ?>
+					</th>
+					<td>
+						<?php echo $strListLimit; ?>
+					</td>
 				</tr>				
 			</tbody>
 		</table>
 					
 		<?php
-// echo $this->oDebug->getArray( $arrStatus );		
+// $this->oDebug->dumpArray( $arrStatus );		
 	}
 	/**
 	 * Renders the authentication link buttons.
@@ -1096,25 +1127,6 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		'numCurrColPos'		=> 	0,
 	);	
 	
-	public function style_fetch_tweets_settings( $strStyle ) {
-		
-		return $strStyle . PHP_EOL
-			. '
-			.auth-status {
-				margin-bottom: 2em;
-			}
-			.authenticated {
-				font-weight:bold;
-				color: green;				
-			}
-			.unauthenticated {
-				font-weight:bold;
-				color: red;				
-			}
-			';
-		
-	}	
-	
 	/*
 	 * Template Page
 	 */ 
@@ -1224,51 +1236,7 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		return $arrData;
 			
 	}	
-	public function style_fetch_tweets_templates( $strStyle ) {
 		
-		return $strStyle . PHP_EOL
-			. " .widefat td	{
-					vertical-align: middle;
-				}
-				.column-thumbnail {
-					width: 20%;
-				}
-				.disabled {
-					color: #C5C5C5;
-				}
-				.right-button {
-					float: right;
-				}
-
-				.template-thumbnail{
-					position: relative;
-					z-index: 0;
-				}
-				.template-thumbnail:hover{
-					background-color: transparent;
-					z-index: 50;
-				}
-				.template-thumbnail span{ /*CSS for enlarged image*/
-					position: fixed;
-					background-color: #FCFCFC;
-					padding: 5px;		
-					border: 1px dashed gray;
-					visibility: hidden;
-					color: black;
-					text-decoration: none;
-				}
-				.template-thumbnail span img{ /*CSS for enlarged image*/
-					border-width: 0;
-					padding: 2px;
-					margin: 0 auto;
-				}
-				.template-thumbnail:hover span{ /*CSS for enlarged image on hover*/
-					visibility: visible;
-					top: 50px;				
-				}				
-			";	
-	}
-	
 	/*
 	 * Extension page
 	 */ 
@@ -1341,143 +1309,5 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		echo '<div class="ftws_extension_container">' . $strOut . '</div>';
 		
 	}
-	
-	
-	/*
-	 * Styling
-	 */
-	public function style_FetchTweets_AdminPage( $strStyle ) {
-		return $strStyle . PHP_EOL	
-			. ' 
-			.right-button {
-				float: right;
-			}
-			input.read-only {
-				background-color: #F6F6F6;
-			}	
-			.ftws_extension_container{
-				padding-right: 30px;
-				padding-left: 10px;
-				margin-top: 10px;
-				text-align: center;
-			}
-			.ftws_extension { 
-				
-			}
-			.get-now {
-				margin-bottom: 10px;
-			}
-			.ftws_extension_item {
-				margin-right: 10px;
-				padding: 20px 20px 20px 20px;
-				background-color: #FAFAFA;
-				border: 1px solid;
-				border-color: #DDD;
-				
-			}
-			.ftws_extension_item h4 {
-				margin: 0.6em 0;	
-			}
-			.ftws_extension_item img {
-				max-width: 150px;
-				max-height: 200px;
-			}
-			'
-			. '.fetch_tweets_multiple_columns {
-				padding: 4px;
-				line-height: 1.5em;
-			}
-			.fetch_tweets_multiple_columns_first_col {
-				margin-left: 0px;
-				clear: left;
-			}
-			/*  SECTIONS  ============================================================================= */
-			.fetch_tweets_multiple_columns_row {
-				clear: both;
-				padding: 0px;
-				margin: 0px;
-			}
-			/*  GROUPING  ============================================================================= */
-			.fetch_tweets_multiple_columns_box:before,
-			.fetch_tweets_multiple_columns_box:after {
-				content:"";
-				display:table;
-			}
-			.fetch_tweets_multiple_columns_box:after {
-				clear:both;
-			}
-			.fetch_tweets_multiple_columns_box {
-				float: none;
-				width: 100%;		
-				zoom:1; /* For IE 6/7 (trigger hasLayout) */
-			}
-			/*  GRID COLUMN SETUP   ==================================================================== */
-			.fetch_tweets_multiple_columns_col {
-				display: block;
-				float:left;
-				margin: 1% 0 1% 1.6%;
-			}
-			.fetch_tweets_multiple_columns_col:first-child { margin-left: 0; } /* all browsers except IE6 and lower */
-			/*  REMOVE MARGINS AS ALL GO FULL WIDTH AT 800 PIXELS */
-			@media only screen and (max-width: 800px) {
-				.fetch_tweets_multiple_columns_col { 
-					margin: 1% 0 1% 0%;
-				}
-			}
-			/*  GRID OF TWO   ============================================================================= */
-			.ftws_col_element_of_1 {
-				width: 100%;
-			}
-			.ftws_col_element_of_2 {
-				width: 49.2%;
-			}
-			.ftws_col_element_of_3 {
-				width: 32.2%; 
-			}
-			.ftws_col_element_of_4 {
-				width: 23.8%;
-			}
-			.ftws_col_element_of_5 {
-				width: 18.72%;
-			}
-			.ftws_col_element_of_6 {
-				width: 15.33%;
-			}
-			.ftws_col_element_of_7 {
-				width: 12.91%;
-			}
-			.ftws_col_element_of_8 {
-				width: 11.1%; 
-			}
-			.ftws_col_element_of_9 {
-				width: 9.68%; 
-			}
-			.ftws_col_element_of_10 {
-				width: 8.56%; 
-			}
-			.ftws_col_element_of_11 {
-				width: 7.63%; 
-			}
-			.ftws_col_element_of_12 {
-				width: 6.86%; 
-			}
-
-			/*  GO FULL WIDTH AT LESS THAN 800 PIXELS */
-			@media only screen and (max-width: 800px) {
-				.ftws_col_element_of_2,
-				.ftws_col_element_of_3,
-				.ftws_col_element_of_4,
-				.ftws_col_element_of_5,
-				.ftws_col_element_of_6,
-				.ftws_col_element_of_7,
-				.ftws_col_element_of_8,
-				.ftws_col_element_of_9,
-				.ftws_col_element_of_10,
-				.ftws_col_element_of_11,
-				.ftws_col_element_of_12
-				{	width: 49.2%;  }			
-			}
-		';		
-	}
-		
+			
 }

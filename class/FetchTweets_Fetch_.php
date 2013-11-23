@@ -500,7 +500,7 @@ abstract class FetchTweets_Fetch_ {
 			. ( $strLang == 'none' ? "" : "&lang={$strLang}" )
 			. ( empty( $strUntil ) ? "" : "&until={$strUntil}" )
 			. ( empty( $strGeoCode ) ? "" : "&geocode={$strGeoCode}" )
-			. "&include_entities=1";				
+			. "&include_entities=1";		
 		return $this->doAPIRequest_Get( $strRequestURI, 'statuses', $intCacheDuration );
 					
 	}
@@ -958,6 +958,7 @@ abstract class FetchTweets_Fetch_ {
 		// Perform multi-dimensional array_unique()
 		$this->arrExpiredTransientsRequestURIs = array_map( "unserialize", array_unique( array_map( "serialize", $this->arrExpiredTransientsRequestURIs ) ) );
 		
+		$intScheduled = 0;
 		foreach( $this->arrExpiredTransientsRequestURIs as $arrExpiredCacheRequest ) {
 			
 			/* the structure of $arrExpiredCacheRequest = array(
@@ -977,8 +978,11 @@ abstract class FetchTweets_Fetch_ {
 				'fetch_tweets_action_transient_renewal', 	// the FetchTweets_Event class will check this action hook and executes it with WP Cron.
 				array( $arrExpiredCacheRequest )	// must be enclosed in an array.
 			);	
+			$intScheduled++;
 			
 		}
+		if ( $intScheduled )
+			wp_remote_get( site_url(), array( 'timeout' => 0.01, 'sslverify'   => false, ) );	// this forces the task to be performed right away in the background.
 				
 	}
 }

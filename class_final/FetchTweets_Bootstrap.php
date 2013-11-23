@@ -8,10 +8,12 @@
  * @authorurl	http://michaeluno.jp
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  * @since		1.0.0
+ * @since		1.3.4			Renamed to FetchTweets_Bootstrap from FetchTweets_InitialLoader
+ * 
  
 */
 
-final class FetchTweets_InitialLoader {
+final class FetchTweets_Bootstrap {
 	
 	function __construct( $strPluginFilePath ) {
 	
@@ -166,6 +168,7 @@ final class FetchTweets_InitialLoader {
 		// 5. Post Type
 		// Should not use "if ( is_admin() )" for the this class because posts of custom post type can be accessed from the regular pages.
 		new FetchTweets_PostType( FetchTweets_Commons::PostTypeSlug, null, $this->strFilePath ); 	// post type slug
+		// new FetchTweets_PostType_Accounts( FetchTweets_Commons::PostTypeSlugAccounts, null, $this->strFilePath ); 	// post type slug
 		if ( is_admin() ) {
 			new FetchTweets_MetaBox_Options(
 				'fetch_tweets_options_meta_box',	// meta box ID
@@ -174,13 +177,6 @@ final class FetchTweets_InitialLoader {
 				'normal',
 				'default'
 			);			
-			// new FetchTweets_MetaBox_Media(
-				// 'fetch_tweets_media_meta_box',	// meta box ID
-				// __( 'Media', 'fetch-tweets' ),		// meta box title
-				// array( FetchTweets_Commons::PostTypeSlug ),	// post, page, etc.
-				// 'normal',
-				// 'default'			
-			// );
 			new FetchTweets_MetaBox_Template(
 				'fetch_tweets_template_meta_box',	// meta box ID
 				__( 'Template', 'fetch-tweets' ),		// meta box title
