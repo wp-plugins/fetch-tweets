@@ -82,14 +82,37 @@ abstract class FetchTweets_Event_ {
 		
 	}
 	
+	/**
+	 * Renew the cache of the given request URI
+	 * 
+	 */
 	public function renewTransients( $arrRequestURI ) {
 
 // Debug
 // FetchTweets_Debug::getArray( $arrRequestURI, dirname( __FILE__ ) . '/request_uris.txt' );
-
+		
+		$strLockTransient = "Lock_" . md5( trim( $arrRequestURI['URI'] ) );
+		
+		// Check if the transient is locked
+		if ( get_transient( $strLockTransient ) !== false ) {
+// FetchTweets_Debug::logArray( 'The transient is locked: ' . $strLockTransient );		
+			return;	// it means the cache is being modified.
+		}
+		
+		// Set a lock flag transient that indicates the transient is being renewed.
+		set_transient(
+			$strLockTransient, 
+			$arrRequestURI['URI'], // the value can be anything that yields true
+			function_exists( 'ini_get' ) ? ini_get('max_execution_time') : 30
+		);
+		
+		// Perform the cache renewal.
 		$oFetch = new FetchTweets_Fetch;
 		$oFetch->setAPIGETRequestCache( $arrRequestURI['URI'], $arrRequestURI['key'] );
 
+		// Delete the lock transient
+		delete_transient( $strLockTransient );
+// FetchTweets_Debug::logArray( 'The cache renewed: ' . $strLockTransient );			
 	}
 	
 	/**
@@ -99,6 +122,22 @@ abstract class FetchTweets_Event_ {
 	 */
 	public function addOEmbedElements( $strTransientKey ) {
 
+		// Check if the transient is locked
+		$strLockTransient = "LockOEm_" . md5( $strTransientKey );	// up to 40 characters, the prefix can be up to 8 characters
+		if ( get_transient( $strLockTransient ) !== false ) {
+// FetchTweets_Debug::logArray( 'The oEmbed transient is locked: ' . $strTransientKey );		
+			return;	// it means the cache is being modified.
+			
+		}	
+		
+		// Set a lock flag transient that indicates the transient is being renewed.
+		set_transient(
+			$strLockTransient, 
+			$strTransientKey, // the value can be anything that yields true
+			function_exists( 'ini_get' ) ? ini_get('max_execution_time') : 30
+		);	
+	
+		// Perform oEmbed caching
 		$oFetch = new FetchTweets_Fetch;
 		
 		// structure: array( 'mod' => time(), 'data' => $this->oBase64->encode( $vData ) ), 
@@ -115,6 +154,10 @@ abstract class FetchTweets_Event_ {
 		
 		// Re-save the cache.
 		$oFetch->setTransient( $strTransientKey, $arrTweets, $arrTransient['mod'] );	// the method handles the encoding.
-		
+	
+		// Delete the lock transient
+		delete_transient( $strLockTransient );
+
+// FetchTweets_Debug::logArray( 'The oEmbed transient is renewed: ' . $strTransientKey );			
 	}
 }

@@ -715,6 +715,7 @@ abstract class FetchTweets_Fetch_ {
 			'fetch_tweets_action_transient_add_oembed_elements', 	// the FetchTweets_Event class will check this action hook and executes it with WP Cron.
 			array( $strTransientKey )	// must be enclosed in an array.
 		);	
+		wp_remote_get( site_url(), array( 'timeout' => 0.01, 'sslverify'   => false, ) );	// this forces the task to be performed right away in the background.
 
 	}
 	

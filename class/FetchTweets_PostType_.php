@@ -97,14 +97,21 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 	 * */
 	public function previewTweets( $strContent ) {
 
-		// Used for the post type single page that functions as preview the result.
-	
 		global $post;
-		if ( ! isset( $post->post_type ) || $post->post_type != $this->oProps->strPostType ) return $strContent;
+		// Used for the post type single page that functions as preview the result.
+// FetchTweets_Debug::logArray( 
+	// array( 
+		// 'Preview Called: ' . $GLOBALS['pagenow'],
+		// 'Post ID: ' . isset( $post, $post->ID ) ? $post->ID : '',
+	// )
+// );	
 
+		if ( ! isset( $post->post_type ) || $post->post_type != $this->oProps->strPostType ) return $strContent;
+// FetchTweets_Debug::logArray( 'Start previewing' );
 		$intPostID = $post->ID;
 		$intCount = get_post_meta( $intPostID, 'item_count', true );
 		fetchTweets( array( 'id' => $intPostID, 'count' => $intCount ) );	// this draws the result.
+// FetchTweets_Debug::logArray( 'Returning the preview output' );		
 		return $strContent;	// should be an empty string.
 	
 	}
