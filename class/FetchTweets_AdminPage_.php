@@ -6,6 +6,18 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		// Set the option property.
 		$this->oOption = & $GLOBALS['oFetchTweets_Option'];
 		
+		// Disable object caching in the plugin pages and the options.php (the page that stores the settings)
+		if ( 
+			is_admin() 
+			&& (
+				$GLOBALS['pagenow'] == 'options.php'
+				|| isset( $_GET['post_type'] ) && ( $_GET['post_type'] == FetchTweets_Commons::PostTypeSlug || $_GET['post_type'] == AmazonAutoLinks_Commons::PostTypeSlugAccounts ) )
+			)
+		{
+			wp_suspend_cache_addition( true );	
+			$GLOBALS['_wp_using_ext_object_cache'] = false;
+		}		
+		
 		// For the list table bulk actions. The WP_List_Table class does not set the post type query string in the redirected page.
 		// http://.../wp-admin/edit.php?page=fetch_tweets_templates&tab=&_wpnonce=ebed1d5343&_wp_http_referer=%2Fwp360%2Fwp-admin%2Fedit.php%3Fpost_type%3Dfetch_tweets%26page%3Dfetch_tweets_templates&action=activate&paged=1&action2=-1
 		if ( 

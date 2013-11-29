@@ -207,6 +207,7 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 == Changelog ==
 
 = 1.3.3.3 =
+* Disabled object caching in the plugin setting pages.
 * Added the List Request Limit status item in the authentication setting page.
 * Improved the method of renewing caches.
 * Added the `fetchTweets()` function to support `screen_name` and `q` parameters.

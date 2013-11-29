@@ -2095,11 +2095,11 @@ abstract class FetchTweets_AdminPageFramework_SettingsAPI extends FetchTweets_Ad
 	* 	<li><strong>vLabel</strong> - ( optional|mandatory, string|array ) the text label(s) associated with and displayed along with the input field. Some input types can ignore this key while some require it.</li>
 	* 	<li><strong>vDefault</strong> - ( optional, string|array ) the default value(s) assigned to the input tag's value attribute.</li>
 	* 	<li><strong>vValue</strong> - ( optional, string|array ) the value(s) assigned to the input tag's <em>value</em> attribute to override the default or stored value.</li>
-	* 	<li><strong>vDelimiter</strong> - ( optional, string|array ) the HTML string that delimits multiple elements. This is available if the <var>vLabel</var> key is passed as array.</li>
-	* 	<li><strong>vBeforeInputTag</strong> - ( optional, string|array ) the HTML string inserted right before the input tag.</li>
-	* 	<li><strong>vAfterInputTag</strong> - ( optional, string|array ) the HTML string inserted right after the input tag.</li>
+	* 	<li><strong>vDelimiter</strong> - ( optional, string|array ) the HTML string that delimits multiple elements. This is available if the <var>vLabel</var> key is passed as array. It will be enclosed in inline-block elements so the passed HTML string should not contain block elements.</li>
+	* 	<li><strong>vBeforeInputTag</strong> - ( optional, string|array ) the HTML string inserted right before the input tag. It will be enclosed in the <code>label</code> tag so the passed HTML string should not contain block elements.</li>
+	* 	<li><strong>vAfterInputTag</strong> - ( optional, string|array ) the HTML string inserted right after the input tag. It will be enclosed in the <code>label</code> tag so the passed HTML string should not contain block elements.</li>
 	* 	<li><strong>vClassAttribute</strong> - ( optional, string|array ) the value(s) assigned to the input tag's <em>class</em>.</li>
-	* 	<li><strong>vLabelMinWidth</strong> - ( optional, string|array ) the inline style property of the <em>min-width</em> of the label tag for the field.</li>
+	* 	<li><strong>vLabelMinWidth</strong> - ( optional, string|array ) the inline style property of the <em>min-width</em> of the label tag for the field in pixel without the unit. Default: <code>120</code>.</li>
 	* 	<li><strong>vDisable</strong> - ( optional, boolean|array ) if this is set to true, the <em>disabled</em> attribute will be inserted into the field input tag.</li>
 	*	<li><strong>strHelp</strong> - ( optional, string ) the help description added to the contextual help tab.</li>
 	*	<li><strong>strHelpAside</strong> - ( optional, string ) the additional help description for the side bar of the contextual help tab.</li>
@@ -2376,7 +2376,7 @@ abstract class FetchTweets_AdminPageFramework_SettingsAPI extends FetchTweets_Ad
 				
 		// Reference: http://www.sitepoint.com/upgrading-to-the-new-wordpress-color-picker/
 		//If the WordPress version is greater than or equal to 3.5, then load the new WordPress color picker.
-		if ( 3.5 <= $GLOBALS['wp_version'] ){
+		if ( version_compare( $GLOBALS['wp_version'], '3.5', '>=' ) ){
 			//Both the necessary css and javascript have been registered already by WordPress, so all we have to do is load them with their handle.
 			wp_enqueue_style( 'wp-color-picker' );
 			wp_enqueue_script( 'wp-color-picker' );
@@ -4375,7 +4375,7 @@ abstract class FetchTweets_AdminPageFramework_Properties_Base {
 		.admin-page-framework-field .admin-page-framework-input-label-container {
 			margin-bottom: 0.25em;
 		}
-		@media only screen and ( max-width: 780px ) {
+		@media only screen and ( max-width: 780px ) {	/* For WordPress v3.8 or greater */
 			.admin-page-framework-field .admin-page-framework-input-label-container {
 				margin-bottom: 0.5em;
 			}
@@ -4386,38 +4386,22 @@ abstract class FetchTweets_AdminPageFramework_Properties_Base {
 			margin-right: 0.5em;
 		}		
 		
-/* .admin-page-framework-field input[type='checkbox'], 
-.admin-page-framework-field input[type='radio'] { 
-	vertical-align: middle;
-}		 */
-/* .admin-page-framework-field input[type='text'] {
-	margin-bottom: 0.5em;
-} */
-/* .admin-page-framework-field .admin-page-framework-radio-label, 
-.admin-page-framework-field .admin-page-framework-checkbox-label {
-	margin-right: 1em;			
-} */
-		
-
-.admin-page-framework-field .admin-page-framework-input-label-string {
-	margin-right: 1em;	/* for checkbox label strings, a right margin is needed */
-}
-.admin-page-framework-field-radio .admin-page-framework-input-label-container,
-.admin-page-framework-field-select .admin-page-framework-input-label-container,
-.admin-page-framework-field-checkbox .admin-page-framework-input-label-container 
-{
-	margin-right: 1em;
-}
-.admin-page-framework-field-radio .admin-page-framework-input-label-string,
-.admin-page-framework-field-checkbox .admin-page-framework-input-label-string 
-{
-	margin-right: 0;
-}
+		.admin-page-framework-field .admin-page-framework-input-label-string {
+			padding-right: 1em;	/* for checkbox label strings, a right padding is needed */
+		}
+		.admin-page-framework-field .admin-page-framework-input-button-container {
+			padding-right: 1em; 
+		}
+		.admin-page-framework-field-radio .admin-page-framework-input-label-container,
+		.admin-page-framework-field-select .admin-page-framework-input-label-container,
+		.admin-page-framework-field-checkbox .admin-page-framework-input-label-container 
+		{
+			padding-right: 1em;
+		}
 
 		.admin-page-framework-field .admin-page-framework-input-container {
 			display: inline-block;
 			vertical-align: middle; 
-			
 		}
 		.admin-page-framework-field-text .admin-page-framework-field .admin-page-framework-input-label-container,
 		.admin-page-framework-field-textarea .admin-page-framework-field .admin-page-framework-input-label-container,
@@ -4426,25 +4410,20 @@ abstract class FetchTweets_AdminPageFramework_Properties_Base {
 		{
 			vertical-align: top; 
 		}
-.admin-page-framework-field-image .admin-page-framework-field .admin-page-framework-input-label-container {
-	
-	vertical-align: middle;
-}
-.admin-page-framework-field .admin-page-framework-input-label-container,
-.admin-page-framework-field .admin-page-framework-input-label-string
-{
-	display: inline-block;		
-	vertical-align: middle;
-}
-.admin-page-framework-field-textarea .admin-page-framework-input-label-string {
-	vertical-align: top;
-	margin-top: 2px;
-}
-/* .admin-page-framework-field .admin-page-framework-input-label-container {
-	margin-top: 2px; 
-	vertical-align: middle; 
-	display: inline-block;
-} */
+		.admin-page-framework-field-image .admin-page-framework-field .admin-page-framework-input-label-container {			
+			vertical-align: middle;
+		}
+		.admin-page-framework-field .admin-page-framework-input-label-container,
+		.admin-page-framework-field .admin-page-framework-input-label-string
+		{
+			display: inline-block;		
+			vertical-align: middle;
+		}
+		.admin-page-framework-field-textarea .admin-page-framework-input-label-string {
+			vertical-align: top;
+			margin-top: 2px;
+		}
+
  		.admin-page-framework-field-size input {
 			text-align: right;
 		}
@@ -6627,7 +6606,7 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 		'vDefault' => null,					// ( array or string )
 		'vClassAttribute' => null,			// ( array or string ) the class attribute of the input field. Do not set an empty value here, but null because the submit field type uses own default value.
 		'vLabel' => '',						// ( array or string ) labels for some input fields. Do not set null here because it is casted as string in the field output methods, which creates an element of empty string so that it can be iterated with foreach().
-		'vLabelMinWidth' => 120,			// ( array or integer ) This sets the min-width of the label tag for the textarea, text, and numbers input types.
+		'vLabelMinWidth' => 140,			// ( array or integer ) This sets the min-width of the label tag for the textarea, text, and numbers input types.
 		'vDelimiter' => null,				// do not set an empty value here because the radio input field uses own default value.
 		'vDisable' => null,					// ( array or boolean ) This value indicates whether the set field is disabled or not. 
 		'vReadOnly' => '',					// ( array or boolean ) sets the readonly attribute to text and textarea input fields.
@@ -6917,11 +6896,14 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 			? $this->getRepeaterScript( $this->strTagID, count( ( array ) $this->vValue ) )
 			: '';
 			
-		return "<div class='admin-page-framework-fields'>"
-				. $this->arrField['strBeforeField'] 
-				. $strOutput
-				. $this->arrField['strAfterField']
-			. "</div>";
+		return 
+			"<fieldset>"
+				. "<div class='admin-page-framework-fields'>"
+					. $this->arrField['strBeforeField'] 
+					. $strOutput
+					. $this->arrField['strAfterField']
+				. "</div>"
+			. "</fieldset>";
 		
 	}
 	private function getTextField( $arrOutput=array() ) {
@@ -6999,7 +6981,7 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 						. "</label>"
 					. "</div>"
 				. "</div>"
-				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '<br />' ) )
+				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '', true ) )
 					? "<div class='delimiter' id='delimiter-{$this->strTagID}_{$strKey}'>" . $strDelimiter . "</div>"
 					: ""
 				);				
@@ -7070,7 +7052,7 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 						. "</label>"
 					. "</div>"
 				. "</div>"
-				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '<br />' ) )
+				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '', true ) )
 					? "<div class='delimiter' id='delimiter-{$this->strTagID}_{$strKey}'>" . $strDelimiter . "</div>"
 					: ""
 				);
@@ -7135,7 +7117,7 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 						. "</label>"
 					. "</div>"
 				. "</div>"
-				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '' ) )
+				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '', true ) )
 					? "<div class='delimiter' id='delimiter-{$this->strTagID}_{$strKey}'>" . $strDelimiter . "</div>"
 					: ""
 				);
@@ -7241,7 +7223,7 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 						. $this->getCorrespondingArrayValue( $this->arrField['vAfterInputTag'], $strKey, '' )
 					. "</label>"
 				. "</div>"	// end of admin-page-framework-field
-				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '<br />' ) )
+				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '', true ) )
 					? "<div class='delimiter' id='delimiter-{$this->strTagID}_{$strKey}'>" . $strDelimiter . "</div>"
 					: ""
 				);			
@@ -7264,7 +7246,7 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 				"<div class='{$this->strFieldClassSelector}' id='field-{$this->strTagID}_{$strKey}'>"
 					. $this->getRadioTags( $vLabel, $strKey, $fSingle )				
 				. "</div>"
-				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '' ) )
+				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '', true ) )
 					? "<div class='delimiter' id='delimiter-{$this->strTagID}_{$strKey}'>" . $strDelimiter . "</div>"
 					: ""
 				);
@@ -7334,7 +7316,7 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 						. "</label>"
 					. "</div>"
 				. "</div>" // end of admin-page-framework-field
-				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '' ) )
+				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '', true ) )
 					? "<div class='delimiter' id='delimiter-{$this->strTagID}_{$strKey}'>" . $strDelimiter . "</div>"
 					: ""
 				);
@@ -7376,7 +7358,7 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 						. "</label>"
 					. "</div>"
 				. "</div>"
-				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '' ) )
+				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '', true ) )
 					? "<div class='delimiter' id='delimiter-{$this->strTagID}_{$strKey}'>" . $strDelimiter . "</div>"
 					: ""
 				);
@@ -7416,7 +7398,7 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 						. "</label>"
 					. "</div>"
 				. "</div>"
-				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '' ) )
+				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '', true ) )
 					? "<div class='delimiter' id='delimiter-{$this->strTagID}_{$strKey}'>" . $strDelimiter . "</div>"
 					: ""
 				);
@@ -7482,7 +7464,7 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 						: ""
 					)
 					. $this->getCorrespondingArrayValue( $this->arrField['vBeforeInputTag'], $strKey, '' ) 
-					. "<span class='admin-page-framework-input-label-string admin-page-framework-input-container' style='min-width:" . $this->getCorrespondingArrayValue( $this->arrField['vLabelMinWidth'], $strKey, self::$arrDefaultFieldValues['vLabelMinWidth'] ) . "px;'>"
+					. "<span class='admin-page-framework-input-button-container admin-page-framework-input-container' style='min-width:" . $this->getCorrespondingArrayValue( $this->arrField['vLabelMinWidth'], $strKey, self::$arrDefaultFieldValues['vLabelMinWidth'] ) . "px;'>"
 						. "<input "
 							. "id='{$this->strTagID}_{$strKey}' "
 							. "class='" . $this->getCorrespondingArrayValue( $this->arrField['vClassAttribute'], $strKey, 'button button-primary' ) . "' "
@@ -7494,7 +7476,7 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 					. "</span>"
 					. $this->getCorrespondingArrayValue( $this->arrField['vAfterInputTag'], $strKey, '' )
 				. "</div>" // end of admin-page-framework-field
-				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '' ) )
+				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '', true ) )
 					? "<div class='delimiter' id='delimiter-{$this->strTagID}_{$strKey}'>" . $strDelimiter . "</div>"
 					: ""
 				);
@@ -7539,7 +7521,7 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 						. "value='" . $this->getCorrespondingArrayValue( $this->arrField['vImportFormat'], $strKey, 'array' )	// array, text, or json.
 					. "' />"			
 					. $this->getCorrespondingArrayValue( $this->arrField['vBeforeInputTag'], $strKey, '' ) 
-					. "<span class='admin-page-framework-input-label-string admin-page-framework-input-container' style='min-width:" . $this->getCorrespondingArrayValue( $this->arrField['vLabelMinWidth'], $strKey, self::$arrDefaultFieldValues['vLabelMinWidth'] ) . "px;'>"
+					. "<span class='admin-page-framework-input-button-container admin-page-framework-input-container' style='min-width:" . $this->getCorrespondingArrayValue( $this->arrField['vLabelMinWidth'], $strKey, self::$arrDefaultFieldValues['vLabelMinWidth'] ) . "px;'>"
 						. "<input "		// upload button
 							. "id='{$this->strTagID}_{$strKey}_file' "
 							. "class='" . $this->getCorrespondingArrayValue( $this->arrField['vClassAttribute'], $strKey, 'import' ) . "' "
@@ -7559,7 +7541,7 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 					. "</span>"
 					. $this->getCorrespondingArrayValue( $this->arrField['vAfterInputTag'], $strKey, '' )
 				. "</div>"	// end of admin-page-framework-field
-				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '' ) )
+				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '', true ) )
 					? "<div class='delimiter' id='delimiter-{$this->strTagID}_{$strKey}'>" . $strDelimiter . "</div>"
 					: ""
 				);		
@@ -7603,7 +7585,7 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 						. "value='" . ( $fIsDataSet ? 1 : 0 )
 					. "' />"				
 					. $this->getCorrespondingArrayValue( $this->arrField['vBeforeInputTag'], $strKey, '' ) 
-					. "<span class='admin-page-framework-input-label-string admin-page-framework-input-container' style='min-width:" . $this->getCorrespondingArrayValue( $this->arrField['vLabelMinWidth'], $strKey, self::$arrDefaultFieldValues['vLabelMinWidth'] ) . "px;'>"
+					. "<span class='admin-page-framework-input-button-container admin-page-framework-input-container' style='min-width:" . $this->getCorrespondingArrayValue( $this->arrField['vLabelMinWidth'], $strKey, self::$arrDefaultFieldValues['vLabelMinWidth'] ) . "px;'>"
 						. "<input "
 							. "id='{$this->strTagID}_{$strKey}' "
 							. "class='" . $this->getCorrespondingArrayValue( $this->arrField['vClassAttribute'], $strKey, 'button button-primary' ) . "' "
@@ -7616,7 +7598,7 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 					. "</span>"
 					. $this->getCorrespondingArrayValue( $this->arrField['vAfterInputTag'], $strKey, '' )
 				. "</div>" // end of admin-page-framework-field
-				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '' ) )
+				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '', true ) )
 					? "<div class='delimiter' id='delimiter-{$this->strTagID}_{$strKey}'>" . $strDelimiter . "</div>"
 					: ""
 				);
@@ -7685,7 +7667,7 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 					. "</div>"	// end of label container
 					. $this->getDatePickerEnablerScript( "{$this->strTagID}_{$strKey}", $this->getCorrespondingArrayValue( $this->arrField['vDateFormat'], $strKey, 'yy/mm/dd' ) )
 				. "</div>"	// end of admin-page-framework-field
-				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '' ) )
+				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '', true ) )
 					? "<div class='delimiter' id='delimiter-{$this->strTagID}_{$strKey}'>" . $strDelimiter . "</div>"
 					: ""
 				);
@@ -7743,7 +7725,7 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 						. $this->getColorPickerEnablerScript( "{$this->strTagID}_{$strKey}" )
 					. "</div>"
 				. "</div>"	// admin-page-framework-field
-				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '' ) )
+				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '', true ) )
 					? "<div class='delimiter' id='delimiter-{$this->strTagID}_{$strKey}'>" . $strDelimiter . "</div>"
 					: ""
 				);
@@ -7778,7 +7760,7 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 				"<div class='{$this->strFieldClassSelector}' id='field-{$this->strTagID}_{$strKey}'>"					
 					. $this->getImageInputTags( $this->strTagID, $strKey, $strLabel, $this->arrField['arrCaptureAttributes'], $fMultipleFields )
 				. "</div>"	// end of admin-page-framework-field
-				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, $this->arrField['fRepeatable'] ? '' : "<br />" ) )
+				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '', true ) )
 					? "<div class='delimiter' id='delimiter-{$this->strTagID}_{$strKey}'>" . $strDelimiter . "</div>"
 					: ""
 				);
@@ -7916,7 +7898,7 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 				"<div class='{$this->strFieldClassSelector}' id='field-{$this->strTagID}_{$strKey}'>"					
 					. $this->getMediaInputTags( $this->strTagID, $strKey, $strLabel, $this->arrField['arrCaptureAttributes'], $fMultipleFields )
 				. "</div>"	// end of admin-page-framework-field
-				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, $this->arrField['fRepeatable'] ? '' : "<br />" ) )
+				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '', true ) )
 					? "<div class='delimiter' id='delimiter-{$this->strTagID}_{$strKey}'>" . $strDelimiter . "</div>"
 					: ""
 				);
@@ -8060,7 +8042,7 @@ class FetchTweets_AdminPageFramework_InputField extends FetchTweets_AdminPageFra
 						. "</label>"
 					. "</div>"
 				. "</div>"
-				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '' ) )
+				. ( ( $strDelimiter = $this->getCorrespondingArrayValue( $this->arrField['vDelimiter'], $strKey, '', true ) )
 					? "<div class='delimiter' id='delimiter-{$this->strTagID}_{$strKey}'>" . $strDelimiter . "</div>"
 					: ""
 				);
@@ -9301,7 +9283,7 @@ abstract class FetchTweets_AdminPageFramework_MetaBox extends FetchTweets_AdminP
 	public function enqueueColorFieldScript() {
 		
 		// If the WordPress version is greater than or equal to 3.5, then load the new WordPress color picker.
-		if ( 3.5 <= $GLOBALS['wp_version'] ){
+		if ( version_compare( $GLOBALS['wp_version'], '3.5', '>=' ) ) {
 			//Both the necessary css and javascript have been registered already by WordPress, so all we have to do is load them with their handle.
 			wp_enqueue_style( 'wp-color-picker' );
 			wp_enqueue_script( 'wp-color-picker' );
