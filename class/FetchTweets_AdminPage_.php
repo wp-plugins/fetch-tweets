@@ -11,7 +11,7 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 			is_admin() 
 			&& (
 				$GLOBALS['pagenow'] == 'options.php'
-				|| isset( $_GET['post_type'] ) && ( $_GET['post_type'] == FetchTweets_Commons::PostTypeSlug || $_GET['post_type'] == AmazonAutoLinks_Commons::PostTypeSlugAccounts ) )
+				|| isset( $_GET['post_type'] ) && ( $_GET['post_type'] == FetchTweets_Commons::PostTypeSlug || $_GET['post_type'] == FetchTweets_Commons::PostTypeSlugAccounts ) )
 			)
 		{
 			wp_suspend_cache_addition( true );	
