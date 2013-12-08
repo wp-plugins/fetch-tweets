@@ -207,10 +207,11 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 == Changelog ==
 
 = 1.3.3.3 =
+* Updated the [Admin Page Framework](http://wordpress.org/plugins/admin-page-framework/) library to v2.1.5.
 * Disabled object caching in the plugin setting pages.
 * Added the List Request Limit status item in the authentication setting page.
 * Improved the method of renewing caches.
-* Added the `fetchTweets()` function to support `screen_name` and `q` parameters.
+* Added the `fetchTweets()` function to support the `screen_name` and `q` parameters.
 
 = 1.3.3.2 - 11/20/2013 =
 * Fixed an issue with Instagram's images. 

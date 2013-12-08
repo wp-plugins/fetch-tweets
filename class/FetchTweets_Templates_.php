@@ -300,7 +300,8 @@ header( 'Etag: "' . $strHash . '"' );
 			if ( ! file_exists( $arrTemplate['strTemplatePath'] ) ) continue;
 			if ( ! $arrTemplate['fIsActive'] ) continue;
 			
-			wp_register_style( "fetch-tweets-{$arrTemplate['strSlug']}", '/' . FetchTweets_Utilities::getRelativePath( ABSPATH, $arrTemplate['strCSSPath'] ) );		// relative path the WordPress installed path.
+			wp_register_style( "fetch-tweets-{$arrTemplate['strSlug']}", FetchTweets_WPUtilities::getSRCFromPath( $arrTemplate['strCSSPath'] ) );		// relative path the WordPress installed path.
+			// wp_register_style( "fetch-tweets-{$arrTemplate['strSlug']}", '/' . FetchTweets_Utilities::getRelativePath( ABSPATH, $arrTemplate['strCSSPath'] ) );		// relative path the WordPress installed path.
 			// wp_register_style( "fetch-tweets-{$arrTemplate['strSlug']}", site_url() . "?fetch_tweets_style={$arrTemplate['strSlug']}" );
 			wp_enqueue_style( "fetch-tweets-{$arrTemplate['strSlug']}" );		
 			

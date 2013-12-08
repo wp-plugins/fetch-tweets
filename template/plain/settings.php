@@ -79,6 +79,7 @@ class FetchTweets_Template_Settings_Plain extends FetchTweets_Template_Settings_
 				'size'	=> 100,
 				'unit'	=> '%',
 			),
+			'vDelimiter' => '<br />',
 		);
 		$arrFields[] = array(	// height 
 			'strFieldID' => 'fetch_tweets_template_plain_height',
@@ -95,6 +96,7 @@ class FetchTweets_Template_Settings_Plain extends FetchTweets_Template_Settings_
 				'size'	=> 400,
 				'unit'	=> 'px',
 			),
+			'vDelimiter' => '<br />',
 		);		
 		$arrFields[] = array(	// margins
 			'strFieldID' => 'fetch_tweets_template_plain_margins',
@@ -109,6 +111,7 @@ class FetchTweets_Template_Settings_Plain extends FetchTweets_Template_Settings_
 				'left' => __( 'Left', 'fetch-tweets' ),
 			),
 			'vSizeUnits' => array( '%' => '%', 'px' => 'px', 'em' => 'em', ),
+			'vDelimiter' => '<br />',
 		);		
 		$arrFields[] = array(	// paddings
 			'strFieldID' => 'fetch_tweets_template_plain_paddings',
@@ -123,6 +126,7 @@ class FetchTweets_Template_Settings_Plain extends FetchTweets_Template_Settings_
 				'left' => __( 'Left', 'fetch-tweets' ),
 			),
 			'vSizeUnits' => array( '%' => '%', 'px' => 'px', 'em' => 'em', ),
+			'vDelimiter' => '<br />',
 		);		
 						
 		$arrFields[] = array(	// background color
