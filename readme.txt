@@ -206,7 +206,7 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 == Changelog ==
 
-= 1.3.3.3 =
+= 1.3.3.3 - 12/12/2013 =
 * Updated the [Admin Page Framework](http://wordpress.org/plugins/admin-page-framework/) library to v2.1.5.
 * Disabled object caching in the plugin setting pages.
 * Added the List Request Limit status item in the authentication setting page.
