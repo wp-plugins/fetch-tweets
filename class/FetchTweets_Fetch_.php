@@ -205,8 +205,16 @@ abstract class FetchTweets_Fetch_ {
 			array_splice( $arrTweets, $arrArgs['count'] );
 	
 // For debug
-// echo "<pre>" . htmlspecialchars( print_r( $arrTweets, true ) ) . "</pre>";		
+// echo "<pre>" . htmlspecialchars( print_r( $arrTweets, true ) ) . "</pre>";
 // echo FetchTweets_Debug::getMemoryUsage();	
+// $arrRetweeted = array();
+// foreach( $arrTweets as $arrTweet ) 
+	// if ( isset( $arrTweet['retweet_count'] ) || isset( $arrTweet['favorite_count'] ) ) {
+		// unset( $arrTweet['user'] );
+		// unset( $arrTweet['entities'] );
+		// $arrRetweeted[] = $arrTweet;
+	// }
+// echo "<pre>" . htmlspecialchars( print_r( $arrRetweeted, true ) ) . "</pre>";
 // return;
 		
 		/*

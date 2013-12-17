@@ -14,8 +14,8 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 				|| isset( $_GET['post_type'] ) && ( $_GET['post_type'] == FetchTweets_Commons::PostTypeSlug || $_GET['post_type'] == FetchTweets_Commons::PostTypeSlugAccounts ) )
 			)
 		{
-			wp_suspend_cache_addition( true );	
-			$GLOBALS['_wp_using_ext_object_cache'] = false;
+			// wp_suspend_cache_addition( true );	//<-- this causes too many database queries so comment it out
+			$GLOBALS['_wp_using_ext_object_cache'] = false;	// this helps some caching plugins not to prevent the settings not to be saved
 		}		
 		
 		// For the list table bulk actions. The WP_List_Table class does not set the post type query string in the redirected page.
