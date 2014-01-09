@@ -5,7 +5,7 @@
 	Description: Fetches and displays tweets from twitter.com with the the Twitter REST API v1.1.
 	Author: miunosoft (Michael Uno)
 	Author URI: http://michaeluno.jp
-	Version: 1.3.3.4
+	Version: 1.3.3.5b
 	Requirements: PHP 5.2.4 or above, WordPress 3.3 or above.
 */
 
@@ -56,13 +56,19 @@ final class FetchTweets_Commons {
 /*
  * User functions - users may use them in their templates.
  * */
-function fetchTweets( $arrArgs ) {
+function fetchTweets( $arrArgs, $bEcho=true ) {
 	
 	$oFetch = new FetchTweets_Fetch();
-	if ( isset( $arrArgs['id'] ) || isset( $arrArgs['ids'] ) || isset( $arrArgs['q'] ) || isset( $arrArgs['screen_name'] ) ) 
-		$oFetch->drawTweets( $arrArgs );
+	if ( isset( $arrArgs['id'] ) || isset( $arrArgs['ids'] ) || isset( $arrArgs['q'] ) || isset( $arrArgs['screen_name'] ) ) {
+		$sOutput = $oFetch->getTweetsOutput( $arrArgs );
+	}
 	else if ( isset( $arrArgs['tag'] ) || isset( $arrArgs['tags'] ) ) 
-		$oFetch->drawTweetsByTag( $arrArgs );
+		$sOutput = $oFetch->getTweetsOutputByTag( $arrArgs );
 
+	if ( $bEcho )
+		echo $sOutput;
+	else 
+		return $sOutput;
+		
 }
 

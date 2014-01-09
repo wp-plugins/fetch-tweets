@@ -206,6 +206,10 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 == Changelog ==
 
+= 1.3.3.5 =
+* Fixed an issue that the plugin post type output ignored the `the_content` filter.
+* Added a parameter to the `fetchTweets()` function to decide whether the output should be returned or printed.
+
 = 1.3.3.4 - 12/17/2013 =
 * Fixed a bug that caused lots of database queries in the plugin setting pages due to disabling object caching since v1.3.3.3.
 
