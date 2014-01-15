@@ -206,6 +206,9 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 == Changelog ==
 
+= 1.3.3.7 =
+* Fixed a possible issue caused by locked transients that prevented caches from updating.
+
 = 1.3.3.6 - 01/15/2014 =
 * Fixed a bug that setting 0 for the height or width did not set no limit but setting 0px.
 

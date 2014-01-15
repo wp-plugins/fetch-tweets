@@ -91,7 +91,7 @@ abstract class FetchTweets_Event_ {
 // Debug
 // FetchTweets_Debug::getArray( $arrRequestURI, dirname( __FILE__ ) . '/request_uris.txt' );
 		
-		$strLockTransient = "Lock_" . md5( trim( $arrRequestURI['URI'] ) );
+		$strLockTransient = FetchTweets_Commons::TransientPrefix . '_' . md5( "Lock_" . trim( $arrRequestURI['URI'] ) );
 		
 		// Check if the transient is locked
 		if ( get_transient( $strLockTransient ) !== false ) {
@@ -103,7 +103,7 @@ abstract class FetchTweets_Event_ {
 		set_transient(
 			$strLockTransient, 
 			$arrRequestURI['URI'], // the value can be anything that yields true
-			function_exists( 'ini_get' ) ? ini_get('max_execution_time') : 30
+			function_exists( 'ini_get' ) && ini_get( 'max_execution_time' ) ? ( ini_get( 'max_execution_time' ) > 120 ? 120 : ini_get( 'max_execution_time' ) ) : 30
 		);
 		
 		// Perform the cache renewal.
@@ -123,7 +123,7 @@ abstract class FetchTweets_Event_ {
 	public function addOEmbedElements( $strTransientKey ) {
 
 		// Check if the transient is locked
-		$strLockTransient = "LockOEm_" . md5( $strTransientKey );	// up to 40 characters, the prefix can be up to 8 characters
+		$strLockTransient = FetchTweets_Commons::TransientPrefix . '_' . md5( "LockOEm_" . trim( $strTransientKey ) );	// up to 40 characters, the prefix can be up to 8 characters
 		if ( get_transient( $strLockTransient ) !== false ) {
 // FetchTweets_Debug::logArray( 'The oEmbed transient is locked: ' . $strTransientKey );		
 			return;	// it means the cache is being modified.
@@ -134,7 +134,7 @@ abstract class FetchTweets_Event_ {
 		set_transient(
 			$strLockTransient, 
 			$strTransientKey, // the value can be anything that yields true
-			function_exists( 'ini_get' ) ? ini_get('max_execution_time') : 30
+			function_exists( 'ini_get' ) && ini_get( 'max_execution_time' ) ? ( ini_get( 'max_execution_time' ) > 120 ? 120 : ini_get( 'max_execution_time' ) ) : 30
 		);	
 	
 		// Perform oEmbed caching

@@ -851,7 +851,7 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		
 		// Set the cache.
 		$arrData = is_array( $arrStatus ) ? $arrUser + $arrStatus : $arrUser;
-		set_transient( $strCachID, $arrData, 60 * 2 );	// stores the cache only for 120 seconds. It is allowed 15 requests in 15 minutes.
+		set_transient( $strCachID, $arrData, 60 );	// stores the cache only for 60 seconds. It is allowed 15 requests in 15 minutes.
 		return $arrData;
 
 	}
