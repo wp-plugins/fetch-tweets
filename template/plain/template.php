@@ -74,8 +74,8 @@ $arrArgs['padding_left']			= isset( $arrArgs['padding_left'] ) ? $arrArgs['paddi
 $arrArgs['padding_left_unit']		= isset( $arrArgs['padding_left_unit'] ) ? $arrArgs['padding_left_unit'] : $arrTemplateOptions['fetch_tweets_template_plain_paddings']['left']['unit'];
 $arrArgs['intent_buttons']			= isset( $arrArgs['intent_buttons'] ) ? $arrArgs['intent_buttons'] : ( ! $arrArgs['visibilities']['intent_buttons'] ? 0 : $arrTemplateOptions['fetch_tweets_template_plain_intent_buttons'] );	// 0: do not show, 1: icons and text, 2: only icons, 3: only text.
 $arrArgs['intent_button_script']	= isset( $arrArgs['intent_button_script'] ) ? $arrArgs['intent_button_script'] : $arrTemplateOptions['fetch_tweets_template_plain_intent_script'];
-$strWidth = $arrArgs['width'] . $arrArgs['width_unit'];
-$strHeight = $arrArgs['height'] . $arrArgs['height_unit'];
+$strWidth = $arrArgs['width'] ? "max-width: " . $arrArgs['width'] . $arrArgs['width_unit'] . "; " : '';
+$strHeight =  $arrArgs['height'] ? "max-height: " . $arrArgs['height'] . $arrArgs['height_unit'] . "; " : '';
 $strMarginTop = empty( $arrArgs['margin_top'] ) ? 0 : $arrArgs['margin_top'] . $arrArgs['margin_top_unit'];
 $strMarginRight = empty( $arrArgs['margin_right'] ) ? 0 : $arrArgs['margin_right'] . $arrArgs['margin_right_unit'];
 $strMarginBottom = empty( $arrArgs['margin_bottom'] ) ? 0 : $arrArgs['margin_bottom'] . $arrArgs['margin_bottom_unit'];
@@ -99,7 +99,7 @@ $strGMTOffset = ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 // Start the layout. 
 ?>
 
-<div class='fetch-tweets' style="max-width: <?php echo $strWidth; ?>; max-height: <?php echo $strHeight; ?>; background-color: <?php echo $arrArgs['background_color']; ?>; <?php echo $strMargins; ?> <?php echo $strPaddings; ?>">
+<div class='fetch-tweets' style="<?php echo $strWidth; ?><?php echo $strHeight; ?>background-color: <?php echo $arrArgs['background_color']; ?>; <?php echo $strMargins; ?> <?php echo $strPaddings; ?>">
 
 	<?php foreach ( $arrTweets as $arrDetail ) : ?>
 	<?php 

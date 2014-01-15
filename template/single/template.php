@@ -98,8 +98,10 @@ $arrArgs['intent_button_script']	= isset( $arrArgs['intent_button_script'] ) ? $
 $arrArgs['follow_button_elements']	= isset( $arrArgs['follow_button_elements'] ) ? $arrArgs['follow_button_elements'] : $arrTemplateOptions['fetch_tweets_template_single_follow_button_elements'];
 $arrArgs['follow_button_screen_name'] = isset( $arrArgs['follow_button_screen_name'] ) ? $arrArgs['follow_button_screen_name'] : ( $arrArgs['follow_button_elements']['screen_name'] ? $arrArgs['follow_button_elements']['screen_name'] : "false" );
 $arrArgs['follow_button_count'] = isset( $arrArgs['follow_button_count'] ) ? $arrArgs['follow_button_count'] : ( $arrArgs['follow_button_elements']['follower_count'] ? $arrArgs['follow_button_elements']['follower_count'] : "false" );
-$strWidth = $arrArgs['width'] . $arrArgs['width_unit'];
-$strHeight = $arrArgs['height'] . $arrArgs['height_unit'];
+// $strWidth = $arrArgs['width'] . $arrArgs['width_unit'];
+// $strHeight = $arrArgs['height'] . $arrArgs['height_unit'];
+$strWidth = $arrArgs['width'] ? "max-width: " . $arrArgs['width'] . $arrArgs['width_unit'] . "; " : '';
+$strHeight =  $arrArgs['height'] ? "max-height: " . $arrArgs['height'] . $arrArgs['height_unit'] . "; " : '';
 $strMarginTop = empty( $arrArgs['margin_top'] ) ? "" : $arrArgs['margin_top'] . $arrArgs['margin_top_unit'];
 $strMarginRight = empty( $arrArgs['margin_right'] ) ? "" : $arrArgs['margin_right'] . $arrArgs['margin_right_unit'];
 $strMarginBottom = empty( $arrArgs['margin_bottom'] ) ? "" : $arrArgs['margin_bottom'] . $arrArgs['margin_bottom_unit'];
@@ -126,7 +128,7 @@ $strGMTOffset = ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 
 ?>
 
-<div class="fetch-tweets-single-container" style="max-width:<?php echo $strWidth; ?>; max-height:<?php echo $strHeight; ?>; background-color: <?php echo $arrArgs['background_color']; ?>; <?php echo $strMargins; ?> <?php echo $strPaddings; ?>">
+<div class="fetch-tweets-single-container" style="<?php echo $strWidth; ?><?php echo $strHeight; ?>background-color: <?php echo $arrArgs['background_color']; ?>; <?php echo $strMargins; ?> <?php echo $strPaddings; ?>">
 	
 	<div class='fetch-tweets-single-heading'>
 		<?php if ( $arrArgs['avatar_size'] > 0  && $arrArgs['visibilities']['avatar'] ) : ?>

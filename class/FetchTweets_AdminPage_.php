@@ -32,16 +32,16 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 			add_action( 'admin_menu', array( $this, 'processBulkActionForTemplateListTable' ) );			
 		
 	}
-	public function processBulkActionForTemplateListTable() {
+		public function processBulkActionForTemplateListTable() {
 
-// FetchTweets_Debug::getArray( $GLOBALS['oFetchTweets_Templates']->getUploadedTemplates(), dirname( __FILE__ ) .'/uploaded_templates.txt' );
-		$this->oTemplateListTable = new FetchTweets_ListTable(
-			$GLOBALS['oFetchTweets_Templates']->getActiveTemplates() + $GLOBALS['oFetchTweets_Templates']->getUploadedTemplates(),
-			$GLOBALS['oFetchTweets_Templates']->getDefaultTemplateSlug()
-		);
-		$this->oTemplateListTable->process_bulk_action();
-		
-	}
+	// FetchTweets_Debug::getArray( $GLOBALS['oFetchTweets_Templates']->getUploadedTemplates(), dirname( __FILE__ ) .'/uploaded_templates.txt' );
+			$this->oTemplateListTable = new FetchTweets_ListTable(
+				$GLOBALS['oFetchTweets_Templates']->getActiveTemplates() + $GLOBALS['oFetchTweets_Templates']->getUploadedTemplates(),
+				$GLOBALS['oFetchTweets_Templates']->getDefaultTemplateSlug()
+			);
+			$this->oTemplateListTable->process_bulk_action();
+			
+		}
 
     public function setUp() {
     	

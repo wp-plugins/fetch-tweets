@@ -4,7 +4,7 @@ Donate link: http://en.michaeluno.jp/donate
 Tags: twitter, twitter widget, tweets, tweet, widget, widgets, post, posts, page, pages, custom post type, API, Twitter API, REST, oAuth, shortcode, sidebar, plugin, template
 Requires at least: 3.3
 Tested up to: 3.8
-Stable tag: 1.3.3.5
+Stable tag: 1.3.3.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Fetches and displays tweets from twitter.com with the Twitter API.
@@ -206,7 +206,10 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 == Changelog ==
 
-= 1.3.3.5 - 01/10/2013 =
+= 1.3.3.6 - 01/15/2014 =
+* Fixed a bug that setting 0 for the height or width did not set no limit but setting 0px.
+
+= 1.3.3.5 - 01/10/2014 =
 * Fixed an issue that the plugin post type output ignored the `the_content` filter.
 * Added a parameter to the `fetchTweets()` function to decide whether the output should be returned or printed.
 
