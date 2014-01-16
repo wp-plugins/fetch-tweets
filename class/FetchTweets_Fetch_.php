@@ -990,8 +990,9 @@ abstract class FetchTweets_Fetch_ {
 			$intScheduled++;
 			
 		}
-		if ( $intScheduled )
-			wp_remote_get( site_url(), array( 'timeout' => 0.01, 'sslverify'   => false, ) );	// this forces the task to be performed right away in the background.
+		if ( $intScheduled ) 
+			wp_remote_get( site_url( "/wp-cron.php?doing_wp_cron" ) , array( 'timeout' => 0.01, 'sslverify'   => false, ) );	// this forces the task to be performed right away in the background.
+		
 				
 	}
 }
