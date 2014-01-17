@@ -41,7 +41,7 @@ abstract class FetchTweets_Event_ {
 		}
 			
 		// Draw cached image.
-		if ( isset( $_GET['fetch_tweets_image'] ) && $_GET['fetch_tweets_image'] ) {
+		if ( isset( $_GET['fetch_tweets_image'] ) && $_GET['fetch_tweets_image'] && is_user_logged_in() ) {
 			
 			$oImageLoader = new FetchTweets_ImageHandler( 'FTWS' );
 			$oImageLoader->draw( $_GET['fetch_tweets_image'] );
