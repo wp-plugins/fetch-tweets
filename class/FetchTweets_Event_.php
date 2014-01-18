@@ -51,11 +51,7 @@ abstract class FetchTweets_Event_ {
 		
 		// For the activation hook
 		add_action( 'fetch_tweets_action_setup_transients', array( $this, 'setUpTransients' ) );
-		
-		// Load styles of templates - Deprecated as if v1.3.3.2
-		// if ( isset( $_GET['fetch_tweets_style'] ) )
-			// $GLOBALS['oFetchTweets_Templates']->loadStyle( $_GET['fetch_tweets_style'] );
-	
+			
 	}
 
 	public function setUpTransients() {

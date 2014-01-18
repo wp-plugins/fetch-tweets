@@ -207,7 +207,9 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 == Changelog ==
 
 = 1.3.3.7 =
-* Fixed a security issue in the plugin admin pages.
+* Updated the [Admin Page Framework](http://wordpress.org/plugins/admin-page-framework/) library to v2.1.7.2.
+* Fixed the warning: `Strict standards: Declaration of ... should be compatible with ...`.
+* Fixed a possible security issue in the plugin admin pages.
 * Fixed a possible issue caused by locked transients that could prevent caches from updating.
 
 = 1.3.3.6 - 01/15/2014 =
