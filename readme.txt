@@ -208,6 +208,7 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 == Changelog ==
 
 = 1.3.3.7 =
+* Fixed a bug that the link of the setting page in the plugin listing table was pointing not to the Setting page.
 * Improved the caching mechanism not to entirely rely on WP Cron.
 * Updated the [Admin Page Framework](http://wordpress.org/plugins/admin-page-framework/) library to v2.1.7.2.
 * Fixed the warning: `Strict standards: Declaration of ... should be compatible with ...`.

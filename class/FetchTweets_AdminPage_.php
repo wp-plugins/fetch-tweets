@@ -30,7 +30,7 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 		// Prepare the template array for the template listing table
 		if ( isset( $_GET['page'] ) && $_GET['page'] == 'fetch_tweets_templates' ) 
 			add_action( 'admin_menu', array( $this, 'processBulkActionForTemplateListTable' ) );			
-		
+				
 	}
 		public function processBulkActionForTemplateListTable() {
 
@@ -534,6 +534,9 @@ abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 	public function buildMenus() {
 	
 		parent::buildMenus();
+		
+		// Somehow the settings link in the plugin listing page points to the Create Rule by List page. So fix it to the Settings page.
+		$this->oProps->strDefaultPageSlug = 'fetch_tweets_settings';	
 		
 		// Remove the default post type menu item.
 		$strPageSlug = $this->oProps->arrRootMenu['strPageSlug'];
