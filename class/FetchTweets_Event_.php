@@ -84,6 +84,7 @@ abstract class FetchTweets_Event_ {
 		
 		foreach ( $aFetchTweetsCronTasks as $iTimeStamp => $aCronHooks ) {
 			
+			if ( ! is_array( $aCronHooks ) ) continue;		// the locked key flag element should be skipped
 			foreach ( $aCronHooks as $sActionName => $aTasks ) {
 				
 				foreach( $aTasks as $sHash => $aArgs ) {
