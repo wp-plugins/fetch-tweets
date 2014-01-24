@@ -76,9 +76,8 @@ abstract class FetchTweets_Event_ {
 	 * @since 1.3.3.7
 	 */
 	protected function forceWPCronOfFetchTweets( $aFetchTweetsCronTasks ) {
-		
+
 		if ( isset( $aFetchTweetsCronTasks['locked'] ) ) return;
-			return;
 				
 		$aFetchTweetsCronTasks['locked'] = microtime( true );
 		set_transient( 'doing_fetch_tweets_cron', $aFetchTweetsCronTasks, $this->getAllowedMaxExecutionTime() );	// set a locked key so it prevents duplicated function calls due to too many calls caused by simultaneous accesses.
@@ -129,8 +128,8 @@ abstract class FetchTweets_Event_ {
 				if ( in_array( $sScheduledActionHookName, $aActionHooks ) ) 
 					$aFetchTweetsCronTasks[ $iTimeStamp ][ $sScheduledActionHookName ] = $aArgs;
 		}
-FetchTweets_Debug::logArray( 'Triggered CRON' ); 		
-FetchTweets_Debug::logArray( 'max allwoed execution time: ' . $this->getAllowedMaxExecutionTime() ); 		
+		
+// FetchTweets_Debug::logArray( 'Triggered CRON' ); 		
 // FetchTweets_Debug::logArray( $aFetchTweetsCronTasks ); 		
 
 		set_transient( 'doing_fetch_tweets_cron', $aFetchTweetsCronTasks, $this->getAllowedMaxExecutionTime() );
