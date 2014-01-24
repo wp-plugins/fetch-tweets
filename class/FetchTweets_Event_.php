@@ -20,6 +20,15 @@ abstract class FetchTweets_Event_ {
 		// Objects
 		$this->oBase64 = new FetchTweets_Base64;
 		
+		// For transient (cache) renewal events
+		add_action( 'fetch_tweets_action_transient_renewal', array( $this, 'renewTransients' ) );	
+		
+		// For transient (cache) formatting events - adds oEmbed elements.
+		add_action( 'fetch_tweets_action_transient_add_oembed_elements', array( $this, 'addOEmbedElements' ) );
+		
+		// For SimplePie cache renewal events 
+		add_action( 'fetch_tweets_action_simplepie_renew_cache', array( $this, 'renewSimplePieCaches' ) );		
+		
 		$aFetchTweetsCronTasks = get_transient( 'doing_fetch_tweets_cron' );
 		if ( $aFetchTweetsCronTasks === false ) {			
 			$this->checkWPCronOfFetchTweets( 
@@ -38,16 +47,6 @@ abstract class FetchTweets_Event_ {
 			// If that happens, the plugin will not delete the 'doing_fetch_tweets_cron' transient.
 			
 		}
-					
-		// For transient (cache) renewal events
-		add_action( 'fetch_tweets_action_transient_renewal', array( $this, 'renewTransients' ) );	
-		
-		// For transient (cache) formatting events - adds oEmbed elements.
-		add_action( 'fetch_tweets_action_transient_add_oembed_elements', array( $this, 'addOEmbedElements' ) );
-		
-		// For SimplePie cache renewal events 
-		add_action( 'fetch_tweets_action_simplepie_renew_cache', array( $this, 'renewSimplePieCaches' ) );
-			
 
 		// Redirects
 		if ( isset( $_GET['fetch_tweets_link'] ) && $_GET['fetch_tweets_link'] ) {			
