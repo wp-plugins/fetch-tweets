@@ -711,8 +711,7 @@ abstract class FetchTweets_Fetch_ {
 
 		set_transient(
 			$strTransientKey, 
-			array( 'mod' => $intTime ? $intTime : time(), 'data' => $this->oBase64->encode( $vData ) ), 
-			9999999999 // this barely expires by itself. $intCacheDuration 
+			array( 'mod' => $intTime ? $intTime : time(), 'data' => $this->oBase64->encode( $vData ) )
 		);
 			
 		// Schedules the action to run in the background with WP Cron. If already scheduled, skip.

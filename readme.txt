@@ -41,9 +41,10 @@ If you are a theme developer, you can easily customize the template for the twee
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 
 = How to Use = 
-1. Set a rule via **Dashboard** -> **Fetch Tweets** -> **Add Rule by USer Name** / **Add Rule by Keyword Search**.
-2. To use it as a widget, go to **Appearance** -> **Widgets** and add **Fetch Tweets by Rule Set** to the desired sidebar. And select the rule in the widget form.
-3. To use the shortcode to display tweets in posts and pages, simply enter the shortcode like below in the post,
+1. Authenticate the plugin via **Dashboard** -> **Fetch Tweets** -> **Settings** ( -> **Authentication** ( the default tab ) ) -> the **Connect** button.
+2. Set a rule via **Dashboard** -> **Fetch Tweets** -> **Add Rule by USer Name** / **Add Rule by Keyword Search**.
+3. To use it as a widget, go to **Appearance** -> **Widgets** and add **Fetch Tweets by Rule Set** to the desired sidebar. And select the rule in the widget form.
+4. To use the shortcode to display tweets in posts and pages, simply enter the shortcode like below in the post,
 
 `[fetch_tweets id="123"]` 
 
@@ -180,7 +181,7 @@ function FetchTweets_AddSampleTemplateDirPath( $arrDirPaths ) {
 
 == Frequently Asked Questions ==
 
-= Do I need to API keys to use the plugin ? =
+= Do I need API keys to use the plugin ? =
 They are not necessary as of v1.3.0. Just click on the *Connect* button in the Authentication page of the plugin and it will redirect you to the Twitter's authentication page. Then you log in to Twitter there and authorize the plugin.
 
 Though you can use your own keys with the existing method. In that case, click on the *Set Keys Manually* button that redirects you to the page to set the keys manually.
@@ -207,6 +208,7 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 == Changelog ==
 
 = 1.3.3.7 =
+* Improved the caching mechanism not to entirely rely on WP Cron.
 * Updated the [Admin Page Framework](http://wordpress.org/plugins/admin-page-framework/) library to v2.1.7.2.
 * Fixed the warning: `Strict standards: Declaration of ... should be compatible with ...`.
 * Fixed a possible security issue in the plugin admin pages.
