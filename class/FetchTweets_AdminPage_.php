@@ -2,7 +2,7 @@
 abstract class FetchTweets_AdminPage_ extends FetchTweets_AdminPageFramework {
 
 	public function start_FetchTweets_AdminPage() {
-		
+				
 		// Set the option property.
 		$this->oOption = & $GLOBALS['oFetchTweets_Option'];
 		

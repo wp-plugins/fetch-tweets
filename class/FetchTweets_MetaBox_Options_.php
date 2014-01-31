@@ -1,6 +1,13 @@
 <?php
 class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBox {
 	
+	public function start_FetchTweets_MetaBox_Options() {
+		
+		// Register the date custom field type
+		new FetchTweets_DateCustomFieldType( get_class( $this ), 'date' );		
+		
+	}
+	
 	public function setUp() {
 		
 		switch ( $this->getTweetType() ) {
@@ -233,7 +240,7 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 			array(	// since 1.3.3
 				'strFieldID'		=> 'geocentric_coordinate',
 				'strTitle'			=> __( 'Geometric Coordinate', 'fetch-tweets' ) . " <span class='description'>(" . __( 'optional', 'fetch-tweets' ) . ")</span>",
-				'strDescription'	=> __( 'Restricts tweets to users located within a given radius of the given latitude/longitude. Set them empty not to set any.', 'fetch-tweets' ),
+				'strDescription'	=> __( 'Restricts tweets to users located within a given radius of the given latitude/longitude. Leave this empty not to set any.', 'fetch-tweets' ),
 				'strType'			=> 'text',
 				'vLabel'			=> array(
 					'latitude' => __( 'Latitude', 'fetch-tweets' ),
@@ -248,7 +255,7 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 				'vSizeUnits'		=> array(
 					'mi' => __( 'miles', 'fetch-tweets' ), 'km' => __( 'kilometers', 'fetch-tweets' ) 
 				),
-				'strDescription'	=> __( 'Set this empty not to set any. In order to perform the geometric search, this option and the above coordinate must be specified.', 'fetch-tweets' ),
+				'strDescription'	=> __( 'Leave this empty not to set any. In order to perform the geometric search, this option and the above coordinate must be specified.', 'fetch-tweets' ),
 			),			
 			array(
 				'strFieldID'		=> 'exclude_replies',

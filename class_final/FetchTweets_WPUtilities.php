@@ -16,20 +16,20 @@ final class FetchTweets_WPUtilities {
 	/**
 	 * Calculates the URL from the given path.
 	 * 
-	 * 
-	 * 
 	 * @since			1.3.3.2
+	 * @since			1.3.3.8			FIxed an issue that /./ gets inserted.
 	 * @static
 	 * @access			public
 	 * @return			string			The source url
 	 */
-	static public function getSRCFromPath( $strFilePath ) {
+	static public function getSRCFromPath( $sFilePath ) {
 				
-		// It doesn't matter whether the file is a style or not. Just use the built-in WordPress class to calculate the SRC URL.
-		$oWPStyles = new WP_Styles();	
-		$strRelativePath = '/' . FetchTweets_Utilities::getRelativePath( ABSPATH, $strFilePath );
-		$strHref = $oWPStyles->_css_href( $strRelativePath, '', '' );
-		return $strHref;
+		$oWPStyles = new WP_Styles();	// It doesn't matter whether the file is a style or not. Just use the built-in WordPress class to calculate the SRC URL.
+		$sRelativePath = AdminPageFramework_Utility::getRelativePath( ABSPATH, $sFilePath );		
+		$sRelativePath = preg_replace( "/^\.[\/\\\]/", '', $sRelativePath, 1 );	// removes the heading ./ or .\ 
+		$sHref = trailingslashit( $oWPStyles->base_url ) . $sRelativePath;
+		unset( $oWPStyles );	// for PHP 5.2.x or below
+		return esc_url( $sHref );
 		
 	}
 
