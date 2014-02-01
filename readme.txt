@@ -207,6 +207,9 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 == Changelog ==
 
+= 1.3.3.9 - 02/02/2014 =
+* Fixed a fatal error caused since v1.3.3.8.
+
 = 1.3.3.8 - 02/01/2014 =
 * Fixed a bug that the date picker ui did not appear in the date option input field.
 

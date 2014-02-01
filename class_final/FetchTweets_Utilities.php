@@ -99,7 +99,7 @@ final class FetchTweets_Utilities {
 			unset( $arrParams[ 1 ] );	// remove the used delimiter.
 			// now $strElem becomes an array.
 			if ( count( $arrParams ) > 1 ) // if the delimiters are gone, 
-				$strElem = call_user_func_array( 'AmazonAutoLinks_Utilities::convertStringToArray', $arrParams );
+				$strElem = call_user_func_array( 'FetchTweets_Utilities::convertStringToArray', $arrParams );
 			
 			// Added this because the function was not trimming the elements sometimes... not fully tested with multi-dimensional arrays. 
 			if ( is_string( $strElem ) )
