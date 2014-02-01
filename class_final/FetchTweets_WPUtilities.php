@@ -25,7 +25,7 @@ final class FetchTweets_WPUtilities {
 	static public function getSRCFromPath( $sFilePath ) {
 				
 		$oWPStyles = new WP_Styles();	// It doesn't matter whether the file is a style or not. Just use the built-in WordPress class to calculate the SRC URL.
-		$sRelativePath = FetchTweets_Utility::getRelativePath( ABSPATH, $sFilePath );		
+		$sRelativePath = FetchTweets_Utilities::getRelativePath( ABSPATH, $sFilePath );		
 		$sRelativePath = preg_replace( "/^\.[\/\\\]/", '', $sRelativePath, 1 );	// removes the heading ./ or .\ 
 		$sHref = trailingslashit( $oWPStyles->base_url ) . $sRelativePath;
 		unset( $oWPStyles );	// for PHP 5.2.x or below
