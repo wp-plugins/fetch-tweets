@@ -109,7 +109,7 @@ abstract class FetchTweets_Event_ {
 	}
 	
 	/**
-	 * Forces WP Cron tasks to be perfomed as some servers disable it.
+	 * Forces WP Cron tasks to be performed as some servers disable it.
 	 * 
 	 * @since 1.3.3.7
 	 */
@@ -130,9 +130,8 @@ abstract class FetchTweets_Event_ {
 					$aFetchTweetsCronTasks[ $iTimeStamp ][ $sScheduledActionHookName ] = $aArgs;
 		}
 		
-// FetchTweets_Debug::logArray( 'Triggered CRON' ); 		
-// FetchTweets_Debug::logArray( $aFetchTweetsCronTasks ); 		
-
+		if ( empty( $aFetchTweetsCronTasks ) ) return;
+		
 		set_transient( 'doing_fetch_tweets_cron', $aFetchTweetsCronTasks, $this->getAllowedMaxExecutionTime() );
 		wp_remote_get( site_url(), array( 'timeout' => 0.01, 'sslverify'   => false, ) );	// this forces the task to be performed right away in the background.
 		

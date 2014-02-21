@@ -207,6 +207,9 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 == Changelog ==
 
+= 1.3.3.10 - 02/21/2014 =
+* Fixed a possible issue that caused extra database queries.
+
 = 1.3.3.9 - 02/02/2014 =
 * Fixed a fatal error caused since v1.3.3.8.
 
