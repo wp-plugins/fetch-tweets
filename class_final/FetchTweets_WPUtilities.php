@@ -12,7 +12,6 @@
 
 final class FetchTweets_WPUtilities {
 
-
 	/**
 	 * Calculates the URL from the given path.
 	 * 
