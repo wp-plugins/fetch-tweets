@@ -192,7 +192,7 @@ class FetchTweets_Cron  {
 			}
 
 			wp_remote_get( // this forces the task to be performed right away in the background.		
-				site_url( '?testing=true' ), 
+				site_url(), 
 				array( 'timeout' => 0.01, 'sslverify'   => false, ) 
 			);	
 			
