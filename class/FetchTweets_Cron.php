@@ -1,6 +1,6 @@
 <?php
 /**
-	A cron task hander class.
+	A cron task handler class.
 	
  * @package     Fetch Tweets
  * @copyright   Copyright (c) 2013, Michael Uno
