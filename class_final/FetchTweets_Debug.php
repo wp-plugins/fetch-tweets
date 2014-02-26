@@ -1,15 +1,14 @@
 <?php
 /**
-	Methods used for debugging
-	
+ *	Methods used for debugging
+ *
  * @package     Fetch Tweets
  * @copyright   Copyright (c) 2013, Michael Uno
  * @authorurl	http://michaeluno.jp
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  * @since		1.0.0
- * 
-	
-*/
+ *
+ */
 
 final class FetchTweets_Debug {
 
@@ -33,7 +32,7 @@ final class FetchTweets_Debug {
 		
 	}
 					
-	static public function logArray( $arr, $sFilePath=null ) {
+	static public function logArray( $asArray, $sFilePath=null ) {
 		
 		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) return;
 		
@@ -42,9 +41,8 @@ final class FetchTweets_Debug {
 		$sCallerClasss = $oCallerInfo[ 1 ]['class'];
 		file_put_contents( 
 			$sFilePath ? $sFilePath : dirname( __FILE__ ) . '/array_log.txt', 
-			date( "Y/m/d H:i:s", current_time( 'timestamp' ) ) . ' ' . "{$sCallerClasss}::{$sCallerFunction} "  . self::getCurrentURL() . PHP_EOL
-			
-			. print_r( $arr, true ) . PHP_EOL . PHP_EOL
+			date( "Y/m/d H:i:s", current_time( 'timestamp' ) ) . ' ' . "{$sCallerClasss}::{$sCallerFunction} "  . self::getCurrentURL() . PHP_EOL	
+			. print_r( $asArray, true ) . PHP_EOL . PHP_EOL
 			, FILE_APPEND 
 		);					
 							
@@ -83,6 +81,11 @@ final class FetchTweets_Debug {
 		
 	}
 	
+	/**
+	 * Retrieves the currently loaded page url.
+	 * 
+	 * @since			1.3.3.11
+	 */
 	static public function getCurrentURL() {
 		$sSSL = ( !empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on' ) ? true:false;
 		$sServerProtocol = strtolower( $_SERVER['SERVER_PROTOCOL'] );
