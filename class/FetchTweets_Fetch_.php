@@ -9,40 +9,7 @@
  * @actions			fetch_tweets_action_transient_renewal - for WP Cron single event.
  * @actions			fetch_tweets_action_transient_add_oembed_elements - for WP Cron single event.
  */
-abstract class FetchTweets_Fetch_ {
-
-	protected $arrExpiredTransientsRequestURIs = array(); // stores the expired transients' request URIs
-	
-	public function __construct() {
-	
-		// Set up the connection.
-		$this->oOption = & $GLOBALS['oFetchTweets_Option'];		
-		
-		$this->oTwitterOAuth =  $this->oOption->isAuthKeysManuallySet()
-			? new FetchTweets_TwitterOAuth( 
-				$this->oOption->getConsumerKey(), 
-				$this->oOption->getConsumerSecret(), 
-				$this->oOption->getAccessToken(), 
-				$this->oOption->getAccessTokenSecret()
-			)
-			: new FetchTweets_TwitterOAuth( 
-				FetchTweets_Commons::ConsumerKey, 
-				FetchTweets_Commons::ConsumerSecret, 
-				$this->oOption->getAccessTokenAuto(), 
-				$this->oOption->getAccessTokenSecretAuto()
-			);
-			
-		// Objects
-		$this->oEmbed = new FetchTweets_oEmbed;
-		$this->oBase64 = new FetchTweets_Base64;	
-			
-		// Properties
-		$this->fIsSSL = is_ssl();
-			
-		// Schedule the transient update task.
-		add_action( 'shutdown', array( $this, 'updateCacheItems' ) );
-		
-	}
+abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_Format {
 	
 	public function getTweetsOutputByTag( $arrArgs ) {
 		
@@ -111,26 +78,26 @@ abstract class FetchTweets_Fetch_ {
 		return array_unique( $arrIDs );
 		
 	}
-	protected function sanitizeFieldKey( $strField ) {
-		switch( strtolower( trim( $strField ) ) ) {
-			case 'id':
-				return 'id';
-			default:
-			case 'slug':
-				return 'slug';
-		}		
-	}
-	protected function sanitizeOperator( $strOperator ) {
-		switch( strtoupper( trim( $strOperator ) ) ) {
-			case 'NOT IN':
-				return 'NOT IN';
-			case 'IN':
-				return 'IN';
-			default:
-			case 'AND':
-				return 'AND';
+		protected function sanitizeFieldKey( $strField ) {
+			switch( strtolower( trim( $strField ) ) ) {
+				case 'id':
+					return 'id';
+				default:
+				case 'slug':
+					return 'slug';
+			}		
 		}
-	}
+		protected function sanitizeOperator( $strOperator ) {
+			switch( strtoupper( trim( $strOperator ) ) ) {
+				case 'NOT IN':
+					return 'NOT IN';
+				case 'IN':
+					return 'IN';
+				default:
+				case 'AND':
+					return 'AND';
+			}
+		}
 	
 	public function getTweetsOutput( $arrArgs ) {	// called from the shortcode callback.
 		
@@ -179,11 +146,11 @@ abstract class FetchTweets_Fetch_ {
 		$arrArgs['id'] = isset( $arrArgs['ids'] ) && ! empty( $arrArgs['ids'] ) ? $arrArgs['ids'] : $arrArgs['id'];	// backward compatibility
 		$arrArgs['id'] = is_array( $arrArgs['id'] ) ? $arrArgs['id'] : preg_split( "/[,]\s*/", trim( ( string ) $arrArgs['id'] ), 0, PREG_SPLIT_NO_EMPTY );
 
-// Debug
-// echo var_dump( $arrArgs );
-// echo "<pre>" . htmlspecialchars( print_r( $arrArgs, true ) ) . "</pre>";	
-// echo "<pre>" . htmlspecialchars( print_r( $this->oOption->arrOptions, true ) ) . "</pre>";	
-// return;		
+		// Debug
+		// echo var_dump( $arrArgs );
+		// echo "<pre>" . htmlspecialchars( print_r( $arrArgs, true ) ) . "</pre>";	
+		// echo "<pre>" . htmlspecialchars( print_r( $this->oOption->arrOptions, true ) ) . "</pre>";	
+		// return;		
 
 		$arrTweets = $this->getTweetsAsArray( $arrArgs, $arrRawArgs );
 		if ( empty( $arrTweets ) || ! is_array( $arrTweets ) ) {
@@ -203,20 +170,7 @@ abstract class FetchTweets_Fetch_ {
 		// Truncate the array.
 		if ( $arrArgs['count'] && is_numeric( $arrArgs['count'] ) ) 
 			array_splice( $arrTweets, $arrArgs['count'] );
-	
-// For debug
-// echo "<pre>" . htmlspecialchars( print_r( $arrTweets, true ) ) . "</pre>";
-// echo FetchTweets_Debug::getMemoryUsage();	
-// $arrRetweeted = array();
-// foreach( $arrTweets as $arrTweet ) 
-	// if ( isset( $arrTweet['retweet_count'] ) || isset( $arrTweet['favorite_count'] ) ) {
-		// unset( $arrTweet['user'] );
-		// unset( $arrTweet['entities'] );
-		// $arrRetweeted[] = $arrTweet;
-	// }
-// echo "<pre>" . htmlspecialchars( print_r( $arrRetweeted, true ) ) . "</pre>";
-// return;
-		
+
 		/*
 		 * Include the template to render the output - this method is also called from filter callbacks( which requires a return value ) but go ahead and render the output.		
 		 * */		
@@ -358,149 +312,16 @@ abstract class FetchTweets_Fetch_ {
 		return $arrTweets;
 		
 	}
-	
-	/**
-	 * Formats the tweets.
-	 * 
-	 * @since			1.x
-	 * @since			1.3.3			Added the ability to eliminate duplicated items for mash up results.
-	 */
-	protected function formatTweetArrays( & $arrTweets, $intProfileImageSize, $fTwitterMedia=true, $fExternalMedia=true ) {
-		
-		$arrTweetIDs = array();
-		
-		foreach( $arrTweets as $intIndex => &$arrTweet ) {
-			
-			if ( in_array( $arrTweet[ 'id_str' ], $arrTweetIDs ) ) continue;
-			$arrTweetIDs[] = $arrTweet[ 'id_str' ];
-										
-			// Check if it is a re-tweet.
-			if ( isset( $arrTweet['retweeted_status']['text'] ) ) 				
-				$arrTweet['retweeted_status'] = $this->formatTweetArray( $arrTweet['retweeted_status'], $intProfileImageSize, $fTwitterMedia, $fExternalMedia );
-			
-			$arrTweet = $this->formatTweetArray( $arrTweet, $intProfileImageSize, $fTwitterMedia, $fExternalMedia );
-						
-		}
-		
-	}
-	protected function formatTweetArray( $arrTweet, $intProfileImageSize=48, $fTwitterMedia=true, $fExternalMedia=true ) {
-		
-		// Avoid undefined index warnings.
-		$arrTweet = $arrTweet + array( 
-			'text' => null,
-			'created_at' => null,
-			'entities' => null,
-			'user' => null,
-		);	
-		$arrTweet['entities'] = $arrTweet['entities'] + array(
-			'hashtags' => null,
-			'symbols' => null,
-			'urls' => null,
-			'user_mentions' => null,
-			'media'	=> null,
-		);
-		$arrTweet['user'] = $arrTweet['user'] + array(
-			'profile_image_url' => null, 		
-			'profile_image_url_https' => null,
-		);
 				
-		// Make the urls in the text hyper-links.
-		$arrTweet['text'] = $this->makeClickableLinks( $arrTweet['text'], $arrTweet['entities']['urls'] );
-		$arrTweet['text'] = $this->makeClickableMedia( $arrTweet['text'], $arrTweet['entities']['media'] );	
-		$arrTweet['text'] = $this->makeClickableHashTags( $arrTweet['text'], $arrTweet['entities']['hashtags'] );	
-		$arrTweet['text'] = $this->makeClickableUsers( $arrTweet['text'], $arrTweet['entities']['user_mentions'] );
-		
-		// Insert external media files at the bottom of the tweet.
-		if ( $fExternalMedia )
-			$arrTweet['text'] .= isset( $arrTweet['entities']['embed_external_media'] )
-				? $arrTweet['entities']['embed_external_media']
-				: $this->getExternalMedia( $arrTweet['entities']['urls'] );
-			
-		// Insert twitter media files at the bottom of the tweet. 
-		if ( $fTwitterMedia ) 
-			$arrTweet['text'] .= isset( $arrTweet['entities']['embed_twitter_media'] )
-				? $arrTweet['entities']['embed_twitter_media']
-				: $this->getTwitterMedia( $arrTweet['entities']['media'] );
-					
-		// Adjust the profile image size.
-		$arrTweet['user']['profile_image_url'] = $this->adjustProfileImageSize( $arrTweet['user']['profile_image_url'], $intProfileImageSize );
-		$arrTweet['user']['profile_image_url_https'] = $this->adjustProfileImageSize( $arrTweet['user']['profile_image_url_https'], $intProfileImageSize );
-
-		// Convert the 'created_at' value to be numeric time.
-		$arrTweet['created_at'] = strtotime( $arrTweet['created_at'] );		
-		
-		return $arrTweet;
-		
-	}
-	
-	/**
-	 * Adds the embeddable media elements to the tweets array.
-	 * 
-	 * @remark			This should be called from an action event which runs in the background because this takes some time.
-	 * @since			1.3.0
-	 */
-	public function addEmbeddableMediaElements( &$arrTweets ) {
-
-		foreach( $arrTweets as $intIndex => &$arrTweet ) {
-							
-			if ( isset( $arrTweet['retweeted_status']['text'] ) ) 	// Check if it is a re-tweet.
-				$arrTweet['retweeted_status'] = $this->addEmbeddableMediaElement( $arrTweet['retweeted_status'] );
-			
-			$arrTweet = $this->addEmbeddableMediaElement( $arrTweet );
-						
-		}					
-	
-	}
-	/**
-	 * Adds the embeddable media element to the single tweet element.
-	 * 
-	 * This is a helper method for the above addEmbeddableMediaElements() method.
-	 * 
-	 * @since			1.3.0
-	 * @remark			The element with the keys 'embed_external_media' and 'embed_twitter_media' will be inserted into the 'entities' key element.
-	 * @return			array			The modified tweet element array.
-	 */
-	protected function addEmbeddableMediaElement( $arrTweet ) {
-		
-		if ( isset( $arrTweet['entities']['urls'] ) ) 
-			$arrTweet['entities']['embed_external_media'] = $this->getExternalMedia( $arrTweet['entities']['urls'] );
-						
-		if ( isset( $arrTweet['entities']['media'] ) ) 
-			$arrTweet['entities']['embed_twitter_media'] = $this->getTwitterMedia( $arrTweet['entities']['media'] );
-		
-		return $arrTweet;
-		
-	}
-		
-	protected function sortTweetArrays( & $arrTweets, $strOrderedBy='descending' ) {
-		switch( strtolower( $strOrderedBy ) ) {
-			case 'ascending':
-				uasort( $arrTweets, array( $this, 'sortByTimeAscending' ) );
-				break;
-			case 'random':
-				shuffle( $arrTweets );
-			case 'descending':
-			default:
-				uasort( $arrTweets, array( $this, 'sortByTimeDescending' ) );
-				break;	
-		}
-	}	
-	public function sortByTimeDescending( $a, $b ) {	// callback for the uasort() method.
-		return ( int ) $b['created_at'] - ( int ) $a['created_at'];
-	}			
-	public function sortByTimeAscending( $a, $b ) {	// callback for the uasort() method.
-		return ( int ) $a['created_at'] - ( int ) $b['created_at'];
-	}		
-	
 	/**
 	 * Fetches tweets by search keyword.
 	 * 
 	 * @see			https://dev.twitter.com/docs/api/1.1/get/search/tweets
 	 */ 
-	protected function getTweetsBySearch( $strKeyword, $intCount, $strLang='en', $strResultType='mixed', $strUntil='', $strGeoCode='', $intCacheDuration=600 ) {
+	protected function getTweetsBySearch( $strKeyword, $intCount=100, $strLang='en', $strResultType='mixed', $strUntil='', $strGeoCode='', $intCacheDuration=600 ) {
 
 		// Compose the request URI.
-		$intCount = ( ( int ) $intCount ) > 100 ? 100 : $intCount;
+		$intCount = 100;	// as of v1.3.4, request will be performed with the maximum count so that the caches will be reused for ones with lesser counts.
 		$strRequestURI = "https://api.twitter.com/1.1/search/tweets.json"
 			. "?q=" . urlencode_deep( $strKeyword )	// . "?q=" . urlencode_deep( 'from:personA+OR+from:personB+OR+from:personC+OR+from:personC' )  
 			. "&result_type={$strResultType}"	//  mixed, recent, popular
@@ -556,7 +377,8 @@ abstract class FetchTweets_Fetch_ {
 	protected function getTweetsByListID( $strListID, $intCount=20, $fIncludeRetweets=false, $intCacheDuration=600 ) {
 		
 		// Compose the request URI.
-		$intCount = ( ( int ) $intCount ) > 200 ? 200 : $intCount;
+		// $intCount = ( ( int ) $intCount ) > 200 ? 200 : $intCount;
+		$intCount = 200;	// as of 1.3.4 the maximum number of tweets are fetched so that the data can be reused for different count requests.
 			
 		// https://api.twitter.com/1.1/lists/statuses.json?slug=teams&owner_screen_name=MLS&count=1 
 		$strRequestURI = "https://api.twitter.com/1.1/lists/statuses.json?"
@@ -601,7 +423,8 @@ abstract class FetchTweets_Fetch_ {
 	protected function getTweetsByScreenName( $strUser, $intCount, $fIncludeRetweets=false, $fExcludeReplies=false, $intCacheDuration=1200 ) {
 
 		// Compose the request URI.
-		$intCount = ( ( int ) $intCount ) > 200 ? 200 : $intCount;
+		// $intCount = ( ( int ) $intCount ) > 200 ? 200 : $intCount;
+		$intCount = 200;	// as of 1.3.4 the maximum number of tweets are fetched so that the data can be reused for different count requests.
 		$strRequestURI = "https://api.twitter.com/1.1/statuses/user_timeline.json"
 			. "?screen_name={$strUser}"
 			. "&count={$intCount}"
@@ -612,385 +435,4 @@ abstract class FetchTweets_Fetch_ {
 				
 	}
 	
-	
-	/**
-	 * Performs the Twitter API request by the given URI.
-	 * 
-	 * This checks the existent caches and if it's not expired it uses the cache.
-	 * 
-	 * @since			1.2.0
-	 * @access			protected
-	 * @param			string			$strRequestURI				The GET request URI with the query.
-	 * @param			string			$strArrayKey				The key name of the result tweet array. The search results holds the tweets in the "status" array; in that case "status" needs to be passed.
-	 * @param			integer			$intCacheDuration			The cache duration in seconds.
-	 * @return			array
-	 */ 
-	protected function doAPIRequest_Get( $strRequestURI, $strArrayKey=null, $intCacheDuration=600 ) {
-
-		// Create an ID from the URI.
-		$strRequestID = FetchTweets_Commons::TransientPrefix . "_" . md5( trim( $strRequestURI ) );
-
-		// Retrieve the cache, and if there is, use it.
-		$arrTransient = $this->getTransient( $strRequestID );
-		if ( 
-			$arrTransient !== false 
-			&& is_array( $arrTransient ) 
-			&& isset( $arrTransient['mod'], $arrTransient['data'] )
-		) {
-			
-			// Check the cache expiration.
-			if ( ( $arrTransient['mod'] + ( ( int ) $intCacheDuration ) ) < time() ) 	// expired
-				$this->arrExpiredTransientsRequestURIs[] = array( 
-					// these keys will be checked in the cache renewal events.
-					'URI'	=> $strRequestURI, 	
-					'key'	=> $strArrayKey,
-				);
-
-			return ( array ) $this->oBase64->decode( $arrTransient['data'] );
-			
-		}
-
-		return $this->setAPIGETRequestCache( $strRequestURI, $strArrayKey );
-		
-	}	
-	
-	/**
-	 * Performs the API request and sets the cache.
-	 * 
-	 * @access			public
-	 * @remark			The scope is public since the cache renewal event also uses it.
-	 */
-	public function setAPIGETRequestCache( $strRequestURI, $strArrayKey=null, $strRequestID='' ) {
-
-		// Perform the API request.
-		$arrTweets =  $this->oTwitterOAuth->get( $strRequestURI );		
-			
-		// If the array key is specified, return the contents of the key element. Otherwise, return the retrieved array intact.
-		if ( ! is_null( $strArrayKey ) && isset( $arrTweets[ $strArrayKey ] ) )
-			$arrTweets = $arrTweets[ $strArrayKey ];
-
-// Debug
-// FetchTweets_Debug::getArray( $arrTweets, dirname( __FILE__ ) . '/cache_renewed.txt' );
-// ob_start();
-// var_dump( $arrTweets );
-// $result = ob_get_clean();
-// FetchTweets_Debug::getArray( $result, dirname( __FILE__ ) . '/cache_renewed.txt' );
-					
-		// If empty, return an empty array.
-		if ( empty( $arrTweets ) ) return array();
-		
-		// If the result is not an array, something went wrong.
-		if ( ! is_array( $arrTweets ) )
-			return ( array ) $arrTweets;
-		
-		// If an error occurs, do not set the cache.	
-		if ( ! $this->oOption->arrOptions['fetch_tweets_settings']['cache_settings']['cache_for_errors'] ) {
-			if ( isset( $arrTweets['errors'][ 0 ]['message'], $arrTweets['errors'][ 0 ]['code'] ) ) {
-				$arrTweets['errors'][ 0 ]['message'] .= "<!-- Request URI: {$strRequestURI} -->";	
-				return ( array ) $arrTweets;
-			}
-		}
-		
-		// Save the cache
-		$strRequestID = empty( $strRequestID ) 
-			? FetchTweets_Commons::TransientPrefix . "_" . md5( trim( $strRequestURI ) )
-			: $strRequestID;
-		$this->setTransient( $strRequestID, $arrTweets );
-
-		return ( array ) $arrTweets;
-		
-	}
-	
-	/**
-	 * A wrapper method for the set_transient() function.
-	 * 
-	 * @since			1.2.0
-	 * @since			1.3.0			Made it public as the event method uses it.
-	 */
-	public function setTransient( $strTransientKey, $vData, $intTime=null ) {
-
-		set_transient(
-			$strTransientKey, 
-			array( 'mod' => $intTime ? $intTime : time(), 'data' => $this->oBase64->encode( $vData ) )
-		);
-			
-		// Schedules the action to run in the background with WP Cron. If already scheduled, skip.
-		// This adds the embedding elements which takes some time to process.
-		if ( $intTime || wp_next_scheduled( 'fetch_tweets_action_transient_add_oembed_elements', array( $strTransientKey ) ) ) return;
-		wp_schedule_single_event( 
-			time(), 
-			'fetch_tweets_action_transient_add_oembed_elements', 	// the FetchTweets_Event class will check this action hook and executes it with WP Cron.
-			array( $strTransientKey )	// must be enclosed in an array.
-		);	
-		FetchTweets_Cron::triggerBackgroundProcess();
-
-	}
-	
-	/**
-	 * A wrapper method for the get_transient() function.
-	 * 
-	 * This method does retrieves the transient with the given transient key. In addition, it checks if it is an array; otherwise, it makes it an array.
-	 * 
-	 * @access			public
-	 * @since			1.2.0
-	 * @since			1.3.0				Made it public as the event method uses it.
-	 */ 
-	public function getTransient( $strTransientKey, $fForceArray=true ) {
-		
-		$vData = get_transient( $strTransientKey );
-		
-		// if it's false, no transient is stored. Otherwise, some values are in there.
-		if ( $vData === false ) return false;
-							
-		// If it does not have to be an array. Return the raw result.
-		if ( ! $fForceArray ) return $vData;
-		
-		// If it's array, okay.
-		if ( is_array( $vData ) ) return $vData;
-		
-		
-		// Maybe it's encoded
-		if ( is_string( $vData ) && is_serialized( $vData ) ) 
-			return unserialize( $vData );
-		
-			
-		// Maybe it's an object. In that case, convert it to an associative array.
-		if ( is_object( $vData ) )
-			return get_object_vars( $vData );
-			
-		// It's an unknown type. So cast array and return it.
-		return ( array ) $vData;
-			
-	}
-	
-	protected function makeClickableLinks( $strText, $arrURLs ) {
-				
-		// There are urls in the tweet text. So they need to be converted into hyper links.
-		foreach( ( array ) $arrURLs as $arrURLDetails ) {
-			
-			$arrURLDetails = $arrURLDetails + array(	// avoid undefined index warnings.
-				'url' => null,
-				'expanded_url' => null,
-				'display_url' => null,
-			);
-
-			$strText = str_replace( 
-				$arrURLDetails['url'],	// needle 
-				"<a href='{$arrURLDetails['expanded_url']}' target='_blank' rel='nofollow'>{$arrURLDetails['display_url']}</a>", 	// replace
-				$strText 	// haystack
-			);	
-			
-		}
-		return $strText;
-		
-	}
-	protected function makeClickableMedia( $strText, $arrMedia ) {
-		
-		// This method converts media links in the tweet text.
-		foreach( ( array ) $arrMedia as $arrDetails ) {
-			
-			$arrDetails = $arrDetails + array(	// avoid undefined index warnings.
-				'media_url' => null,
-				'media_url_https' => null,
-				'url' => null,
-				'display_url' => null,
-				'expanded_url' => null,
-				'type' => null,
-				'sizes' => null,	// array()
-				'id' => null,
-				'id_str' => null,
-				'indices' => null,	// array()
-			);
-			
-			$strText = str_replace( 
-				$arrDetails['url'],	// needle 
-				"<a href='{$arrDetails['expanded_url']}' target='_blank' rel='nofollow'>{$arrDetails['display_url']}</a>", 	// replace
-				$strText 	// haystack
-			);	
-		}
-		return $strText;
-		
-	}
-	protected function makeClickableHashTags( $strText, $arrHashTags ) {
-		
-		// There are urls in the tweet text. So we need to convert them into hyper links.
-		foreach( ( array ) $arrHashTags as $arrDetails ) {
-			
-			$arrDetails = $arrDetails + array(	// avoid undefined index warnings.
-				'text' => null,
-				'indices' => null,
-			);
-			
-			$strText = preg_replace( 
-				'/#(\Q' . $arrDetails['text'] . '\E)(\W|$)/', 	// needle
-				'<a href="https://twitter.com/search?q=%23$1&src=hash" target="_blank" rel="nofollow">#$1</a>$2',	// replacement
-				$strText 	// haystack
-			);
-			
-		}
-		return $strText;
-		
-	}
-	protected function makeClickableUsers( $strText, $arrMentions ) {
-		
-		// There are urls in the tweet text. So they need to be converted into hyper links.
-		foreach( ( array ) $arrMentions as $arrDetails ) {
-			
-			$arrDetails = $arrDetails + array(	// avoid undefined index warnings.
-				'screen_name' => null,
-				'name' => null,
-				'id' => null, 
-				'id_str' => null,
-				'indices' => null,
-			);
-			
-			$strText = preg_replace( 
-				'/@(\Q' . $arrDetails['screen_name'] . '\E)(\W|$)/i', 	// needle, case insensitive
-				'<a href="https://twitter.com/$1" target="_blank" rel="nofollow">@$1</a>$2',	// replacement
-				$strText 	// haystack
-			);
-			
-		}
-		return $strText;
-		
-	}
-	protected function makeClickableLinksByRegex( $strText ) {	
-		// since current format contains the entities element, this method is not used. However, at later some point, this may be used for other occasions.
-		return preg_replace( '@(https?://([-\w\.]+[-\w])+(:\d+)?(/([\w/_\.#-]*(\?\S+)?[^\.\s])?)?)@' , '<a href="$1" target="_blank">$1</a>', $strText );
-	}	
-	protected function makeClickableUsersByRegex( $strText ) {
-		return preg_replace( '/@(\w+?)(\W|$)/', '<a href="https://twitter.com/$1" target="_blank">@$1</a>$2', $strText );
-	}
-	protected function makeClickableHashTagByRegex( $strText ) {
-		// e.g. https://twitter.com/search?q=%23PHP&src=hash
-		return preg_replace( '/#(\w+?)(\W|$)/', '<a href="https://twitter.com/search?q=%23$1&src=hash" target="_blank">#$1</a>$2', $strText );
-	}		
-	protected function adjustProfileImageSize( $strURL, $intImageSize ) {
-		
-		// reference: https://dev.twitter.com/docs/user-profile-images-and-banners
-		// url example: 
-		// http://a0.twimg.com/profile_images/.../..._normal.jpeg
-		// https://si0.twimg.com/profile_images/../..._normal.jpeg		
-		
-		if ( empty( $strURL ) ) return $strURL;
-		
-		$intImageSize = ! is_numeric( $intImageSize ) ? 48 : $intImageSize;
-		
-		$strNeedle = '/\/.+\K(_normal)(?=(\..+$)|$)/';
-		if ( $intImageSize <= 24 )
-			return preg_replace( $strNeedle, '_mini', $strURL );
-		if ( $intImageSize <= 48 )
-			return $strURL;
-		if ( $intImageSize <= 73 )
-			return preg_replace( $strNeedle, '_bigger', $strURL );
-		return preg_replace( $strNeedle, '', $strURL );	// the original picture size.
-		
-	}
-	
-	/**
-	 * Returns the external media files to the tweet text.
-	 * 
-	 * @remark			The supported providers depend on the WordPress oEmbed class. It has a filter for the providers so it can be customized.
-	 * @since			1.2.0
-	 */ 
-	protected function getExternalMedia( $arrURLs ) {
-
-		// There are urls in the tweet text. So they need to be converted into hyper links.
-		$arrOutput = array();
-		foreach( ( array ) $arrURLs as $arrURLDetails ) {
-			
-			$arrURLDetails = $arrURLDetails + array(	// avoid undefined index warnings.
-				'url' => null,
-				'expanded_url' => null,
-				'display_url' => null,
-			);
-
-			if ( empty( $arrURLDetails['expanded_url'] ) ) continue;
-			
-			$strEmbed = $this->oEmbed->get_html( $arrURLDetails['expanded_url'], array( 'discover' => false, ) );
-			if ( empty( $strEmbed ) ) continue;
-			
-			$arrOutput[] = "<div class='fetch-tweets-external-media'>"
-				. $strEmbed
-				. "</div>";
-
-		}
-		return implode( PHP_EOL, $arrOutput );
-	
-	}
-	
-	/**
-	 * Returns the Twitter media files to the tweet text.
-	 * 
-	 * @remark			Currently only photos are supported.
-	 * @since			1.2.0
-	 */ 
-	protected function getTwitterMedia( $arrMedia ) {
-		
-		$arrOutput = array();
-		foreach( ( array ) $arrMedia as $arrMedium ) {
-			
-			// avoid undefined index warnings.
-			$arrMedium = $arrMedium + array(
-				'type' => null,
-				'expanded_url' => null,
-				'media_url' => null,		
-				'media_url_https' => null,				
-			);
-			
-			if ( $arrMedium['type'] != 'photo' || ! $arrMedium['media_url'] ) continue;
-			
-			$arrOutput[] = "<div class='fetch-tweets-media-photo'>"
-					. "<a href='{$arrMedium['expanded_url']}'>"
-						. "<img src='" . ( $this->fIsSSL ? $arrMedium['media_url_https'] : $arrMedium['media_url'] ) . "'>"
-					. "</a>"
-				. "</div>";
-		
-		}
-		return ( empty( $arrOutput ) 
-				? ''
-				: "<div class='fetch-tweets-media'>" 
-					. implode( PHP_EOL, $arrOutput ) 
-				. "</div>" 
-			);
-		
-	}
-	
-	/*
-	 * Callbacks
-	 * */
-	public function updateCacheItems() {	// for the shutdown hook
-		
-		if ( empty( $this->arrExpiredTransientsRequestURIs ) ) return;
-		
-		// Perform multi-dimensional array_unique()
-		$this->arrExpiredTransientsRequestURIs = array_map( "unserialize", array_unique( array_map( "serialize", $this->arrExpiredTransientsRequestURIs ) ) );
-		
-		$intScheduled = 0;
-		foreach( $this->arrExpiredTransientsRequestURIs as $arrExpiredCacheRequest ) {
-			
-			/* the structure of $arrExpiredCacheRequest = array(
-				'URI'	=> the API request URI
-				'key'	=> the array key that holds the result. e.g. for search results, the 'statuses' key holds the fetched tweets.
-			*/
-			
-			// Check if the URI key holds a valid url.
-			if ( ! filter_var( $arrExpiredCacheRequest['URI'], FILTER_VALIDATE_URL ) ) continue;
-			
-			// Schedules the action to run in the background with WP Cron.
-			// If already scheduled, skip.
-			if ( wp_next_scheduled( 'fetch_tweets_action_transient_renewal', array( $arrExpiredCacheRequest ) ) ) continue; 
-			
-			wp_schedule_single_event( 
-				time(), 
-				'fetch_tweets_action_transient_renewal', 	// the FetchTweets_Event class will check this action hook and executes it with WP Cron.
-				array( $arrExpiredCacheRequest )	// must be enclosed in an array.
-			);	
-			$intScheduled++;
-			
-		}
-		if ( $intScheduled ) 
-			FetchTweets_Cron::triggerBackgroundProcess();	
-				
-	}
 }

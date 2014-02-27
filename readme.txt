@@ -207,6 +207,9 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 == Changelog ==
 
+= 1.3.4 = 
+* Improved the caching mechanism.
+
 = 1.3.3.11 - 02/26/2014 =
 * Improved the caching mechanism by reducing the number of background processes.
 

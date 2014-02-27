@@ -13,7 +13,7 @@
  *  - fetch_tweets_action_transient_renewal
 	
 */
-abstract class FetchTweets_Event_ extends FetchTweets_Cron  {
+abstract class FetchTweets_Event_ {
 
 	public function __construct() {
 		
@@ -30,13 +30,13 @@ abstract class FetchTweets_Event_ extends FetchTweets_Cron  {
 		add_action( 'fetch_tweets_action_simplepie_renew_cache', array( $this, '_replyToRenewSimplePieCaches' ) );		
 
 		// This must be called after the above action hooks are added.
-		$this->_handleCronTasks(
+		new FetchTweets_Cron(
 			array(
 				'fetch_tweets_action_transient_renewal',
 				'fetch_tweets_action_transient_add_oembed_elements',
 				'fetch_tweets_action_simplepie_renew_cache',
 			) 
-		);	// defined in the parent class. 			
+		);	
 				
 		// Redirects
 		if ( isset( $_GET['fetch_tweets_link'] ) && $_GET['fetch_tweets_link'] ) {			
@@ -89,26 +89,9 @@ abstract class FetchTweets_Event_ extends FetchTweets_Cron  {
 	 */
 	public function _replyToRenewTransients( $arrRequestURI ) {
 		
-		$strLockTransient = FetchTweets_Commons::TransientPrefix . '_' . md5( "Lock_" . trim( $arrRequestURI['URI'] ) );
-		
-		// Check if the transient is locked
-		if ( get_transient( $strLockTransient ) !== false ) {
-			return;	// it means the cache is being modified.
-		}
-		
-		// Set a lock flag transient that indicates the transient is being renewed.
-		set_transient(
-			$strLockTransient, 
-			$arrRequestURI['URI'], // the value can be anything that yields true
-			$this->getAllowedMaxExecutionTime()	// function_exists( 'ini_get' ) && ini_get( 'max_execution_time' ) ? ( ini_get( 'max_execution_time' ) > 120 ? 120 : ini_get( 'max_execution_time' ) ) : 30
-		);
-		
 		// Perform the cache renewal.
 		$oFetch = new FetchTweets_Fetch;
 		$oFetch->setAPIGETRequestCache( $arrRequestURI['URI'], $arrRequestURI['key'] );
-
-		// Delete the lock transient
-		delete_transient( $strLockTransient );
 
 	}
 		
@@ -129,7 +112,7 @@ abstract class FetchTweets_Event_ extends FetchTweets_Cron  {
 		set_transient(
 			$strLockTransient, 
 			$strTransientKey, // the value can be anything that yields true
-			$this->getAllowedMaxExecutionTime()	// function_exists( 'ini_get' ) && ini_get( 'max_execution_time' ) ? ( ini_get( 'max_execution_time' ) > 120 ? 120 : ini_get( 'max_execution_time' ) ) : 30
+			FetchTweets_Utilities::getAllowedMaxExecutionTime()	
 		);	
 	
 		// Perform oEmbed caching
@@ -148,7 +131,7 @@ abstract class FetchTweets_Event_ extends FetchTweets_Cron  {
 		$oFetch->addEmbeddableMediaElements( $arrTweets );		// the array is passed as reference.
 		
 		// Re-save the cache.
-		$oFetch->setTransient( $strTransientKey, $arrTweets, $arrTransient['mod'] );	// the method handles the encoding.
+		$oFetch->setTransient( $strTransientKey, $arrTweets, $arrTransient['mod'], true );	// the method handles the encoding.
 	
 		// Delete the lock transient
 		delete_transient( $strLockTransient );

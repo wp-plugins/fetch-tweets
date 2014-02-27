@@ -153,4 +153,20 @@ final class FetchTweets_Utilities {
 		return implode('/', $relPath);
 	}	
 	
+	/**
+	 * Retrieves the server set allowed maximum PHP script execution time.
+	 * 
+	 * @since			1.3.4
+	 */
+	static public function getAllowedMaxExecutionTime( $iDefault=30, $iMax=120 ) {
+		
+		$iSetTime = function_exists( 'ini_get' ) && ini_get( 'max_execution_time' ) 
+			? ( int ) ini_get( 'max_execution_time' ) 
+			: $iDefault;
+		
+		return $iSetTime > $iMax
+			? $iMax
+			: $iSetTime;
+		
+	}
 }

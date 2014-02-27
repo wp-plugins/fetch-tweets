@@ -36,15 +36,18 @@ final class FetchTweets_Debug {
 		
 		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) return;
 		
+		static $_iPageLoadID;
+		$_iPageLoadID = $_iPageLoadID ? $_iPageLoadID : uniqid();		
+		
 		$oCallerInfo = debug_backtrace();
 		$sCallerFunction = $oCallerInfo[ 1 ]['function'];
 		$sCallerClasss = $oCallerInfo[ 1 ]['class'];
 		file_put_contents( 
 			$sFilePath ? $sFilePath : dirname( __FILE__ ) . '/array_log.txt', 
-			date( "Y/m/d H:i:s", current_time( 'timestamp' ) ) . ' ' . "{$sCallerClasss}::{$sCallerFunction} "  . self::getCurrentURL() . PHP_EOL	
-			. print_r( $asArray, true ) . PHP_EOL . PHP_EOL
-			, FILE_APPEND 
-		);					
+			date( "Y/m/d H:i:s", current_time( 'timestamp' ) ) . ' ' . "{$_iPageLoadID} {$sCallerClasss}::{$sCallerFunction} " . self::getCurrentURL() . PHP_EOL	
+			. print_r( $asArray, true ) . PHP_EOL . PHP_EOL,
+			FILE_APPEND 
+		);			
 							
 	}	
 	

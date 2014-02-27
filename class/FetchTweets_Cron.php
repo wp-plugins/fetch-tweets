@@ -11,58 +11,126 @@
 class FetchTweets_Cron  {
 		
 	/**
-	 * Handles Fetch Tweets cron tasks.
+	 * The interval in seconds that locks the background calls.
+	 * 
+	 * This is for preventing too many background calls to be performed.
+	 * 
+	 * @since			1.3.4
+	 */
+	static protected $_iLockBackgroundCallInterval = 10;
+		
+	/**
+	 * The interval in seconds that locks the cron.
+	 * 
+	 * This is for preventing WordPress pseudo cron jobs from being performed too frequently. 
+	 * 
+	 * @since			1.3.4
+	 */
+	static protected $_iLockCronInterval = 10;	
+		
+	/**
+	 * If this flag is true, the background process will be triggered even when the protection interval is not expired.
+	 * 
+	 * @since			1.3.4
+	 */
+	static protected $_fIgnoreLock = false;
+	
+	/**
+	 * The get method query array holding the key-value pairs.
+	 */
+	static protected $_aGet = array();
+	
+	/**
+ 	 * Checks if the page load is performed in the background and if so, performs the given actions if scheduled.
+	 * 
+	 * @since			1.3.4
+ 	 */ 
+	public function __construct( $aActionHooks ) {
+
+		if ( empty( $aActionHooks ) ) return;
+		
+		// If not called from the background, return.
+		if ( isset( $_GET['doing_wp_cron'] ) ) return;	// WP Cron
+		if ( isset( $GLOBALS['pagenow'] ) && $GLOBALS['pagenow'] == 'admin-ajax.php' ) return;	// WP Heart-beat API
+		
+		if ( ! $this->isBackground() ) return;
+	
+		// Do not process if a delay is not set.
+		if ( ! $this->isBackground( true ) ) {	
+			die( $this->_loadBackgroundPageWithDelay( 2 ) );	// give 2 seconds delay
+		}
+
+		// At this point, the page is loaded in the background with some delays.
+		$this->_handleCronTasks( $aActionHooks );
+		
+	}
+	
+	/**
+	 * Checks whether the page is loaded in the background.
+	 * 
+	 * @since			1.3.4
+	 */	
+	static public function isBackground( $fIsDelayed=false ) {
+		
+		$_sKey = md5( get_class() );
+		if ( ! $fIsDelayed )  
+			return isset( $_COOKIE[ $_sKey ] );
+			
+		return isset( $_COOKIE[ 'delay' ], $_COOKIE[ $_sKey ] );
+		
+	}
+	
+	/**
+	 * Handles plugin cron tasks.
 	 * 
 	 * Called from the constructor. 
 	 * 
-	 * @since			1.3.3.11
+	 * @since			1.3.4
 	 */
 	protected function _handleCronTasks( $aActionHooks ) {
-		
-		$_aTasks = get_transient( 'doing_fetch_tweets_cron' );
-		$_bIsBackground = isset( $_aTasks['called'] );
+
+		$_sTransientName = md5( get_class() );
+		$_aTasks = get_transient( $_sTransientName );
+		$_nNow = microtime( true );
 		$_nCalledTime = isset( $_aTasks['called'] ) ? $_aTasks['called'] : 0;
 		$_nLockedTime = isset( $_aTasks['locked'] ) ? $_aTasks['locked'] : 0;
 		unset( $_aTasks['called'], $_aTasks['locked'] );	// leave only task elements.
 		
-		// If called in a generic page load,
-		if ( ! $_bIsBackground ) {
+		// If it's still locked do nothing. Locked duration: 10 seconds.
+		if ( $_nLockedTime + self::$_iLockCronInterval > $_nNow ) {		
 			return;
-		} 
-
-		// At this point, the process is called in the background.
+		}		
+		
+		// Retrieve the plugin cron scheduled tasks.
 		if ( empty( $_aTasks ) ) {
 			$_aTasks = $this->_getScheduledCronTasksByActionName( $aActionHooks );
 		}
-		
 		// If the task is still empty,
-		if ( empty( $_aTasks ) ) {
-			delete_transient( 'doing_fetch_tweets_cron' );
+		if ( empty( $_aTasks ) ) {					
 			return;
-		}
+		} 
 		
-		// If it's still locked do nothing. Locked duration: 10 seconds.
-		if ( $_nLockedTime + 10 > microtime( true ) ) {
-			return;
-		}
-		
-		$_aTasks['locked'] = microtime( true );
-		set_transient( 'doing_fetch_tweets_cron', $_aTasks, $this->getAllowedMaxExecutionTime() );	// lock the process.
+		$aFlagKeys = array(
+			'locked'	=>	microtime( true ),	// set/renew the locked time
+			'called'	=>	$_nCalledTime,		// inherit the called time
+		);
+		set_transient( $_sTransientName, $aFlagKeys + $_aTasks, $this->getAllowedMaxExecutionTime() ); // lock the process.
 		$this->_doTasks( $_aTasks );	
-		delete_transient( 'doing_fetch_tweets_cron' );	// release it
+
+		// remove tasks but leave the flag element.
+		set_transient( $_sTransientName, $aFlagKeys, $this->getAllowedMaxExecutionTime() ); // lock the process.
+		exit;
 		
 	}
-
+			
 	/**
 	 * Performs the plugin-specific scheduled tasks in the background.
 	 * 
-	 * This should only be called when the 'doing_fetch_tweets_cron' transient is present. 
+	 * This should only be called when the md5( get_class() ) transient is present. 
 	 * 
-	 * @since 1.3.3.7
+	 * @since 1.3.4
 	 */
 	protected function _doTasks( $aTasks ) {
-		
-		$_aWPCronTasks = _get_cron_array();
 		
 		foreach( $aTasks as $iTimeStamp => $aCronHooks ) {
 			
@@ -70,16 +138,12 @@ class FetchTweets_Cron  {
 			foreach( $aCronHooks as $sActionName => $_aActions ) {
 				
 				foreach( $_aActions as $sHash => $aArgs ) {
-									
-					// In case WP Cron has done the task,
-					if ( ! isset( $_aWPCronTasks[ $iTimeStamp ][ $sActionName ][ $sHash ] ) ) continue;
-									
+																		
 					$sSchedule = $aArgs['schedule'];
 					if ( $sSchedule != false ) {
 						$aNewArgs = array( $iTimeStamp, $sSchedule, $sActionName, $aArgs['args'] );
 						call_user_func_array( 'wp_reschedule_event', $aNewArgs );
 					}
-					
 					wp_unschedule_event( $iTimeStamp, $sActionName, $aArgs['args'] );
 					do_action_ref_array( $sActionName, $aArgs['args'] );
 				
@@ -92,7 +156,7 @@ class FetchTweets_Cron  {
 	/**
 	 * Sets plugin specific cron tasks by extracting plugin's cron jobs from the WP cron job array.
 	 *  
-	 * @since 1.3.3.7
+	 * @since 1.3.4
 	 */
 	protected function _getScheduledCronTasksByActionName( $aActionHooks ) {
 		
@@ -117,16 +181,6 @@ class FetchTweets_Cron  {
 				
 	}
 	
-	protected function _setPluginCronTask( $aTasks ) {
-		
-		if ( empty( $aTasks ) ) return;
-
-		set_transient( 'doing_fetch_tweets_cron', $aTasks, $this->getAllowedMaxExecutionTime() );
-		FetchTweets_Cron::triggerBackgroundProcess();	
-		
-		
-	}
-
 	/**
 	 * Retrieves the server set allowed maximum PHP script execution time.
 	 * 
@@ -141,7 +195,6 @@ class FetchTweets_Cron  {
 			? $iMax
 			: $iSetTime;
 		
-		
 	}
 			
 	/**
@@ -149,53 +202,94 @@ class FetchTweets_Cron  {
 	 * 
 	 * This is used to trigger cron events in the background and sets a static flag so that it ensures it is done only once per page load.
 	 * 
-	 * @since			1.3.3.11
+	 * @since			1.3.4
 	 */
-	static public function triggerBackgroundProcess() {
+	static public function triggerBackgroundProcess( $aGet=array(), $fIgnoreLock=false ) {
 		
-		// if this is called during the WP cron job, do not trigger a background process as WP Cron will take care of the scheduled tasks.
-		if ( isset( $_GET['doing_wp_cron'] ) ) return;	
+		if ( isset( $_GET['doing_wp_cron'] ) ) return;	// WP Cron
 		if ( isset( $GLOBALS['pagenow'] ) && $GLOBALS['pagenow'] == 'admin-ajax.php' ) return;	// WP Heart-beat API
-		
+	
+		// Ensures the task is done only once in a page load.
 		static $_bIsCalled;
 		if ( $_bIsCalled ) return;
 		$_bIsCalled = true;		
 		
+		// Store the static properties.
+		self::$_fIgnoreLock = $fIgnoreLock ? $fIgnoreLock : self::$_fIgnoreLock;
+		self::$_aGet = ( array ) $aGet + self::$_aGet;
+		
+		$_sSelfClassName = get_class();
 		if ( did_action( 'shutdown' ) ) {
-			FetchTweets_Cron::_replyToAccessSite();
+			self::_replyToAccessSite();
+			return;	// important as what the action has performed does not mean the action never will be fired again.
 		}
-		add_action( 'shutdown', 'FetchTweets_Cron::_replyToAccessSite', 999 );	// do not pass self::_replyToAccessSite.
+		add_action( 'shutdown', "{$_sSelfClassName}::_replyToAccessSite", 999 );	// do not pass self::_replyToAccessSite.
 
 	}	
 		/**
 		 * A callback for the accessSiteAtShutDown() method.
 		 * 
-		 * @since			1.3.3.11
+		 * @since			1.3.4
 		 */
-		
 		static public function _replyToAccessSite() {
-			
-			// Check if a tweet cache renewal event is stored
-			$_aTasks = get_transient( 'doing_fetch_tweets_cron' );
-			$_bHasTaskSet = ( false !== $_aTasks );
+		
+			// Retrieve the plugin scheduled tasks array.
+			$_sTransientName = md5( get_class() );
+			$_aTasks = get_transient( $_sTransientName );
 			$_aTasks = $_aTasks ? $_aTasks : array();
-			if ( ! empty( $_aTasks ) ) {	// if already set				
+			$_nNow = microtime( true );
+			
+			// Check the excessive background call protection interval 
+			if ( ! self::$_fIgnoreLock ) {				
 				$_nCalled = isset( $_aTasks['called'] ) ? $_aTasks['called'] : 0;
-				if ( $_nCalled + 10 > microtime( true ) ) {					
+				if ( $_nCalled + self::$_iLockBackgroundCallInterval > $_nNow ) {	
 					return;	// if it's called within 10 seconds from the last time of calling this method, do nothing to avoid excessive calls.
-				}
+				} 
 			}
 			
-			$_aTasks['called'] = isset( $_aTasks['called'] ) ? $_aTasks['called'] : microtime( true );
-			if ( ! $_bHasTaskSet ) {
-				set_transient( 'doing_fetch_tweets_cron', $_aTasks, self::getAllowedMaxExecutionTime() );	// set a locked key so it prevents duplicated function calls due to too many calls caused by simultaneous accesses.
+			// Renew the called time.
+			$_aFlagKeys = array(
+				'called'	=>	$_nNow,
+			);
+			set_transient( $_sTransientName, $_aFlagKeys + $_aTasks, self::getAllowedMaxExecutionTime() );	// set a locked key so it prevents duplicated function calls due to too many calls caused by simultaneous accesses.
+			
+			// Compose a GET query array
+			$_aGet = self::$_aGet;
+			if ( defined( 'WP_DEBUG' ) ) {
+				$_aGet['debug'] = WP_DEBUG;
 			}
-
-			wp_remote_get( // this forces the task to be performed right away in the background.		
-				site_url(), 
-				array( 'timeout' => 0.01, 'sslverify'   => false, ) 
+			unset( $_aGet[ 0 ] );
+			
+			// Load the site in the background.
+			wp_remote_get(
+				site_url(  '?' . http_build_query( $_aGet ) ), 
+				array( 
+					'timeout'	=>	0.01, 
+					'sslverify'	=>	false, 
+					'cookies'	=>	$_aFlagKeys + array( $_sTransientName => true ),
+				) 
 			);	
 			
-		}		
+		}	
+		
+		/**
+		 * Performs a delayed background page load.
+		 * 
+		 * This gives the server enough time to store transients to the database in case massive simultaneous accesses occur.
+		 * 
+		 * @since			1.3.4
+		 */
+		private function _loadBackgroundPageWithDelay( $iSecond=1 ) {
+			
+			sleep( $iSecond );
+			wp_remote_get(
+				site_url(  '?' . http_build_query( $_GET ) ), 
+				array( 
+					'timeout'	=>	0.01, 
+					'sslverify'	=>	false, 
+					'cookies'	=>	array( md5( get_class() ) => true, 'delay' => true ),
+				) 
+			);				
+		}
 					
 }
