@@ -207,7 +207,7 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 == Changelog ==
 
-= 1.3.4 = 
+= 1.3.4 - 02/28/2014 = 
 * Improved the caching mechanism.
 
 = 1.3.3.11 - 02/26/2014 =
