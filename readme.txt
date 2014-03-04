@@ -207,6 +207,9 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 == Changelog ==
 
+= 1.3.4.1 =
+* Fixed the warning that occurs when a user with the insufficient access level to the plugin setting pages logged in to the admin page, `Warning: Invalid argument supplied for foreach() in ...\wp-content\plugins\fetch-tweets\class\FetchTweets_AdminPage_.php on line 544`
+
 = 1.3.4 - 02/28/2014 = 
 * Improved the caching mechanism.
 
