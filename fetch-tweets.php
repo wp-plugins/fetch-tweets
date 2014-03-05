@@ -5,7 +5,7 @@
 	Description: Fetches and displays tweets from twitter.com with the the Twitter REST API v1.1.
 	Author: miunosoft (Michael Uno)
 	Author URI: http://michaeluno.jp
-	Version: 1.3.4.2b
+	Version: 1.3.5b
 	Requirements: PHP 5.2.4 or above, WordPress 3.3 or above.
 */
 
