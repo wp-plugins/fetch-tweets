@@ -20,7 +20,6 @@ It allows developers to write additional add-ons and templates. One of the exten
 
 If you are a theme developer, you can easily customize the template for the tweet outputs. Just copy the existing template and modify the copied files and rename the template name. Then place the copied folder into the theme folder. And there you go! Your own template will be listed in the plugin’s setting page. This way, when the plugin updates, you won’t loose your modifications.
 
-
 <h4>Features</h4>
 * **User Timeline** - by specifying the user name, the timeline can be fetched and displayed.
 * **Search Results** - by specifying the search keyword, the results can be fetched and displayed.
@@ -206,6 +205,9 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 5. ***Authentication***
 
 == Changelog ==
+
+= 1.3.4.2 =
+* Refactored the code. 
 
 = 1.3.4.1 - 03/05/2014 =
 * Fixed the warning that occurs when a user with the insufficient access level to the plugin setting pages logged in to the admin page, `Warning: Invalid argument supplied for foreach() in ...\wp-content\plugins\fetch-tweets\class\FetchTweets_AdminPage_.php on line 544`

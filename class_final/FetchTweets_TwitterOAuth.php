@@ -1,7 +1,6 @@
 <?php
-
 if ( ! class_exists('TwitterOAuth') )
-	require_once( dirname( __FILE__ ) . '/TwitterOAuth/twitteroauth.php' );
+	require_once( dirname( FetchTweets_Commons::$sPluginPath ) . '/library/TwitterOAuth/twitteroauth.php' );
 
 class FetchTweets_TwitterOAuth extends TwitterOAuth {
 	

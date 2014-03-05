@@ -5,7 +5,7 @@
 	Description: Fetches and displays tweets from twitter.com with the the Twitter REST API v1.1.
 	Author: miunosoft (Michael Uno)
 	Author URI: http://michaeluno.jp
-	Version: 1.3.4.1
+	Version: 1.3.4.2b
 	Requirements: PHP 5.2.4 or above, WordPress 3.3 or above.
 */
 
@@ -15,60 +15,33 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 include_once( dirname( __FILE__ ) . '/class_final/FetchTweets_Bootstrap.php' );
 new FetchTweets_Bootstrap( __FILE__ );
 
-final class FetchTweets_Commons {
-	
-	public static $strPluginKey = 'fetch_tweets';
-	public static $strAdminKey = 'fetch_tweets_admin';
-	public static $strOptionKey = 'fetch_tweets_option';
-	
-	const TextDomain = 'fetch-tweets';
-	const PluginName = 'Fetch Tweets';
-	const PostTypeSlug = 'fetch_tweets';
-	const PostTypeSlugAccounts = 'fetchtweets_accounts';		// post type slugs cannot exceed 20 characters. 
-	const TagSlug = 'fetch_tweets_tag';
-	const AdminOptionKey = 'fetch_tweets_admin';
-	const PageSettingsSlug = 'fetch_tweets_settings';
-	const TransientPrefix = 'FTWS';
-	const ConsumerKey = '97LqHiMs06VhV2rf5tUQw';
-	const ConsumerSecret = 'FIH9cr0eXtd7q9caYVqBjd5mvfUS6hZqREYsUhh9wA';
-	
-	public static function getPluginKey() {
-		return self::$strPluginKey;
-	}
-	public static function getAdminKey() {
-		return self::$strAdminKey;
-	}
-	public static function getOptionKey() {
-		return self::$strOptionKey;
-	}	
-	public static function getPluginFilePath() {
-		return __FILE__;
-	} 
-	public static function getPluginDirPath() {
-		return dirname( __FILE__ );
-	}
-	public static function getPluginURL( $strRelativePath='' ) {
-		return plugins_url( $strRelativePath, __FILE__ );
-	}
-	
-}
-
 /*
  * User functions - users may use them in their templates.
  * */
-function fetchTweets( $arrArgs, $bEcho=true ) {
+function fetchTweets( $aArgs, $bEcho=true ) {
 	
-	$oFetch = new FetchTweets_Fetch();
-	if ( isset( $arrArgs['id'] ) || isset( $arrArgs['ids'] ) || isset( $arrArgs['q'] ) || isset( $arrArgs['screen_name'] ) ) {
-		$sOutput = $oFetch->getTweetsOutput( $arrArgs );
+	$_sOutput = '';
+	if ( ! class_exists( 'FetchTweets_Fetch' ) ) {
+		$_sOutput = __( 'The class has not been loaded yet. Use this function after the <code>plugins_loaded</code> hook.', 'fetch-tweets' );
+		if ( $bEcho ) {
+			echo $_sOutput;
+		} else {
+			return $_sOutput;
+		}
 	}
-	else if ( isset( $arrArgs['tag'] ) || isset( $arrArgs['tags'] ) ) 
-		$sOutput = $oFetch->getTweetsOutputByTag( $arrArgs );
+	
+	$_oFetch = new FetchTweets_Fetch();
+	if ( isset( $aArgs['id'] ) || isset( $aArgs['ids'] ) || isset( $aArgs['q'] ) || isset( $aArgs['screen_name'] ) ) {
+		$_sOutput = $_oFetch->getTweetsOutput( $aArgs );
+	} else if ( isset( $aArgs['tag'] ) || isset( $aArgs['tags'] ) ) {
+		$_sOutput = $_oFetch->getTweetsOutputByTag( $aArgs );
+	}
 
-	if ( $bEcho )
-		echo $sOutput;
-	else 
-		return $sOutput;
+	if ( $bEcho ) {
+		echo $_sOutput;
+	} else {
+		return $_sOutput;
+	}
 		
 }
 

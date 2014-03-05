@@ -1,8 +1,7 @@
 <?php
 /**
-	
-	Handles the initial set-up for the plugin.
-	
+ *	Handles the initial set-up for the plugin.
+ *	
  * @package     Fetch Tweets
  * @copyright   Copyright (c) 2013, Michael Uno
  * @authorurl	http://michaeluno.jp
@@ -10,7 +9,7 @@
  * @since		1.0.0
  * @since		1.3.4			Renamed to FetchTweets_Bootstrap from FetchTweets_InitialLoader
  * 
- 
+ * 
 */
 
 final class FetchTweets_Bootstrap {
@@ -57,20 +56,22 @@ final class FetchTweets_Bootstrap {
 				
 	}
 	
-	private function loadClasses( $strFilePath ) {
+	private function loadClasses( $sFilePath ) {
 		
-		$strPluginDir =  dirname( $strFilePath );
+		$_sPluginDir =  dirname( $sFilePath );
 		
 		// Auto-loads classes placed in the finals folder.
 		if ( ! class_exists( 'FetchTweets_RegisterClasses' ) ) 
-			include_once( $strPluginDir . '/class_final/FetchTweets_RegisterClasses.php' );		
+			include_once( $_sPluginDir . '/class_final/FetchTweets_RegisterClasses.php' );		
 		
 		// Register finalized classes right away.
-		$oRC = new FetchTweets_RegisterClasses( $strPluginDir . '/class_final', $GLOBALS['arrFetchTweets_FinalClasses'] );
+		$oRC = new FetchTweets_RegisterClasses( $_sPluginDir . '/class_final', $GLOBALS['arrFetchTweets_FinalClasses'] );
 		$oRC->registerClasses();
 		
 		// Schedule to register regular classes when all the plugins are loaded. This allows other scripts to modify the loading class files.
-		add_action( 'plugins_loaded', array( new FetchTweets_RegisterClasses( $strPluginDir . '/class', $GLOBALS['arrFetchTweets_Classes'] ), 'registerClasses' ) );
+		add_action( 'plugins_loaded', array( new FetchTweets_RegisterClasses( $_sPluginDir . '/class', $GLOBALS['arrFetchTweets_Classes'] ), 'registerClasses' ) );
+		
+		FetchTweets_Commons::setUp( $sFilePath );
 		
 	}
 
@@ -108,23 +109,9 @@ final class FetchTweets_Bootstrap {
 	
 	public function doWhenPluginDeactivates() {
 		
-		$this->cleanTransients();
+		FetchTweets_Transient::clearTransients();
 		
 	}	
-	public function cleanTransients( $arrPrefixes=array( 'FTWS' ) ) {	// for the deactivation hook.
-
-		// Delete transients
-		global $wpdb, $table_prefix;
-		
-		// This method also serves for the deactivation callback and in that case, an empty value is passed to the first parameter.
-		$arrPrefixes = empty( $arrPrefixes ) ? array( 'FTWS', 'FTWSFeedMs' ) : $arrPrefixes;		// 'FTWSAds'
-		
-		foreach( $arrPrefixes as $strPrefix ) {
-			$wpdb->query( "DELETE FROM `" . $table_prefix . "options` WHERE `option_name` LIKE ( '_transient_%{$strPrefix}%' )" );
-			$wpdb->query( "DELETE FROM `" . $table_prefix . "options` WHERE `option_name` LIKE ( '_transient_timeout_%{$strPrefix}%' )" );
-		}
-	
-	}
 	
 	private function localize() {
 		
@@ -134,12 +121,13 @@ final class FetchTweets_Bootstrap {
 			dirname( plugin_basename( $this->strFilePath ) ) . '/language/'
 		);
 		
-		if ( is_admin() ) 
+		if ( is_admin() ) {
 			load_plugin_textdomain( 
 				'admin-page-framework', 
 				false, 
 				dirname( plugin_basename( $this->strFilePath ) ) . '/language/'
 			);		
+		}
 		
 	}		
 	
@@ -148,7 +136,6 @@ final class FetchTweets_Bootstrap {
 		// All the necessary classes have been already loaded.
 		
 		// 1. Load Necessary libraries
-		include_once( dirname( FetchTweets_Commons::getPluginFilePath() ) . '/library/FetchTweets_TwitterOAuth.php' );
 		include_once( dirname( FetchTweets_Commons::getPluginFilePath() ) . '/library/admin-page-framework-for-fetch-tweets.php' );
 
 		// 2. Option Object
@@ -206,14 +193,6 @@ final class FetchTweets_Bootstrap {
 		$this->defineConstantesForBackwardCompatibility();
 		
 	}
-
-	public function enqueueStyle() {
-		
-        // Respects SSL, style.css is relative to the current file
-        wp_register_style( 'fetch-tweets', plugins_url( '/css/style.css', FetchTweets_Commons::getPluginFilePath() ) );
-        wp_enqueue_style( 'fetch-tweets' );
-		
-    }		
 
 	/**
 	 * Defines constants that are not defined in WordPress v3.4.x or below.
