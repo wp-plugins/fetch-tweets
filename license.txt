@@ -21,6 +21,9 @@ jQuery
 Copyright 2013 jQuery Foundation and other contributors,
 <http://jqueryui.com/>
 
+TwitterOAuth
+Copyright (c) 2009 Abraham Williams - http://abrah.am - abraham@abrah.am
+
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 		    GNU GENERAL PUBLIC LICENSE

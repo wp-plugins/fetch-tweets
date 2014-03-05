@@ -1,8 +1,8 @@
 <?php
-if ( ! class_exists('TwitterOAuth') )
+if ( ! class_exists('TwitterFetchTweetsOAuth') )
 	require_once( dirname( FetchTweets_Commons::$sPluginPath ) . '/library/TwitterOAuth/twitteroauth.php' );
 
-class FetchTweets_TwitterOAuth extends TwitterOAuth {
+class FetchTweets_TwitterOAuth extends TwitterFetchTweetsOAuth {
 	
 	public $host = "https://api.twitter.com/1.1/";
 	/**
