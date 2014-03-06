@@ -37,7 +37,7 @@ abstract class FetchTweets_AdminPage_Setting extends FetchTweets_AdminPage_Templ
 	public function load_fetch_tweets_settings_twitter_redirect() {	// load_ + page slug + tab
 	
 		/* Build TwitterOAuth object with client credentials. */
-		$oConnect = new TwitterOAuth( FetchTweets_Commons::ConsumerKey, FetchTweets_Commons::ConsumerSecret );
+		$oConnect = new FetchTweets_TwitterOAuth( FetchTweets_Commons::ConsumerKey, FetchTweets_Commons::ConsumerSecret );
 		 
 		/* Get temporary credentials. */
 		// Requesting authentication tokens, the parameter is the URL we will be redirected to		
@@ -79,7 +79,7 @@ abstract class FetchTweets_AdminPage_Setting extends FetchTweets_AdminPage_Templ
 		$oOption = & $GLOBALS['oFetchTweets_Option'];
 
 		/* Create TwitteroAuth object with app key/secret and token key/secret from default phase */
-		$oConnect = new TwitterOAuth( FetchTweets_Commons::ConsumerKey, FetchTweets_Commons::ConsumerSecret, $_SESSION['oauth_token'], $_SESSION['oauth_token_secret'] );
+		$oConnect = new FetchTweets_TwitterOAuth( FetchTweets_Commons::ConsumerKey, FetchTweets_Commons::ConsumerSecret, $_SESSION['oauth_token'], $_SESSION['oauth_token_secret'] );
 
 		/* Request access tokens from twitter */
 		$arrAccessTokens = $oConnect->getAccessToken( $_REQUEST['oauth_verifier'] );

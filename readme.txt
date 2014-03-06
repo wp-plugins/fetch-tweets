@@ -206,6 +206,9 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 == Changelog ==
 
+= 1.3.5.1 - 03/06/2014 =
+* Fixed a bug that caused a fatal error when newly connecting to Twitter introduced since v1.3.5.
+
 = 1.3.5 - 03/06/2014 =
 * Fixed the issue of TwitteroAuth library version conflicts.
 * Refactored the code. 
