@@ -206,7 +206,7 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 == Changelog ==
 
-= 1.3.4.2 =
+= 1.3.5 - 03/06/2014 =
 * Fixed the issue of TwitteroAuth library version conflicts.
 * Refactored the code. 
 
