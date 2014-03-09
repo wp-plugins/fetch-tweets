@@ -9,20 +9,21 @@ abstract class FetchTweets_AdminPage_Authentication extends FetchTweets_AdminPag
 	 * @since			1.3.0
 	 * @return			array			The array which contains the verification status.
 	 */
-	protected function getVerificationStatus() {
+	protected function _getVerificationStatus() {
 
 		// If the access token and access secret keys have been manually set,
-		$arrStatus = $this->oOption->isAuthKeysManuallySet()
-			? $this->_verifyCrediential( $this->oOption->getConsumerKey(), $this->oOption->getConsumerSecret(), $this->oOption->getAccessToken(), $this->oOption->getAccessTokenSecret() )
+		$_aStatus = $this->oOption->isAuthKeysManuallySet()
+			? $this->_getAuthenticationStatus( $this->oOption->getConsumerKey(), $this->oOption->getConsumerSecret(), $this->oOption->getAccessToken(), $this->oOption->getAccessTokenSecret() )
 			: array();
 			
-		if ( ! empty( $arrStatus ) ) return $arrStatus;
+		if ( ! empty( $_aStatus ) ) return $_aStatus;
 			
 		// If the access token and secret keys have been automatically set,
-		if ( $this->oOption->isAuthKeysAutomaticallySet() )
-			$arrStatus = $this->_verifyCrediential( FetchTweets_Commons::ConsumerKey, FetchTweets_Commons::ConsumerSecret, $this->oOption->getAccessTokenAuto(), $this->oOption->getAccessTokenSecretAuto() );
-			
-		if ( $arrStatus ) return $arrStatus;
+		if ( $this->oOption->isAuthKeysAutomaticallySet() ) {
+			$_aStatus = $this->_getAuthenticationStatus( FetchTweets_Commons::ConsumerKey, FetchTweets_Commons::ConsumerSecret, $this->oOption->getAccessTokenAuto(), $this->oOption->getAccessTokenSecretAuto() );
+		}
+	
+		return $_aStatus;
 	
 	}
 	
@@ -33,28 +34,11 @@ abstract class FetchTweets_AdminPage_Authentication extends FetchTweets_AdminPag
 		 * @return			array			the retrieved data.
 		 * @remark			The returned data is a merged result of 'account/verify_credientials' and 'rate_limit_status'.
 		 */
-		protected function _verifyCrediential( $strConsumerKey, $strConsumerSecret, $strAccessToken, $strAccessSecret ) {
+		protected function _getAuthenticationStatus( $sConsumerKey, $sConsumerSecret, $sAccessToken, $sAccessSecret ) {
 			
-			// Return the cached response if available.
-			$strCachID = FetchTweets_Commons::TransientPrefix . '_' . md5( serialize( array( $strConsumerKey, $strConsumerSecret, $strAccessToken, $strAccessSecret ) ) );
-			$vData = get_transient( $strCachID );
-			if ( $vData !== false ) return $vData;
+			$oTwitterOAuth_Verification = new FetchTweets_TwitterAPI_Verification( $sConsumerKey, $sConsumerSecret, $sAccessToken, $sAccessSecret );
+			return $oTwitterOAuth_Verification->getStatus();
 			
-			// Perform the requests.
-			$oTwitterOAuth =  new FetchTweets_TwitterOAuth( $strConsumerKey, $strConsumerSecret, $strAccessToken, $strAccessSecret );
-			$arrUser = $oTwitterOAuth->get( 'account/verify_credentials' );
-			
-			// If the user id could not be retrieved, it means it failed.
-			if ( ! isset( $arrUser['id'] ) || ! $arrUser['id'] ) return array();
-				
-			// Otherwise, it is okay. Retrieve the current status.
-			$arrStatus = $oTwitterOAuth->get( 'https://api.twitter.com/1.1/application/rate_limit_status.json?resources=search,statuses,lists' );
-			
-			// Set the cache.
-			$arrData = is_array( $arrStatus ) ? $arrUser + $arrStatus : $arrUser;
-			set_transient( $strCachID, $arrData, 60 );	// stores the cache only for 60 seconds. It is allowed 15 requests in 15 minutes.
-			return $arrData;
-
 		}
 
 		
@@ -62,26 +46,34 @@ abstract class FetchTweets_AdminPage_Authentication extends FetchTweets_AdminPag
 	 * Renders the authentication status table.
 	 * 
 	 * @since			1.3.0
-	 * @param			array			$arrStatus			This arrays should be the merged array of the results of 'account/verify_credientials' and 'rate_limit_status' requests.
+	 * @remark			$aStatus can be null when a cache for the API request is not stored.
+	 * @param			array			$aStatus			This arrays should be the merged array of the results of 'account/verify_credientials' and 'rate_limit_status' requests.
 	 * 
 	 */
-	protected function _renderAuthenticationStatus( $arrStatus ) {
+	protected function _renderAuthenticationStatus( $aStatus ) {
 		
-		$fIsValid = isset( $arrStatus['id'] ) && $arrStatus['id'] ? true : false;
-		$strScreenName = isset( $arrStatus['screen_name'] ) ? $arrStatus['screen_name'] : "";
+		$_fIsValid = isset( $aStatus['id'] ) && $aStatus['id'] ? true : false;
+		$_sScreenName = isset( $aStatus['screen_name'] ) ? $aStatus['screen_name'] : "";
 		
-		$strUserTimelineLimit = isset( $arrStatus['resources']['statuses']['/statuses/user_timeline'] )
-		? $arrStatus['resources']['statuses']['/statuses/user_timeline']['remaining'] . ' / ' . $arrStatus['resources']['statuses']['/statuses/user_timeline']['limit'] 
-			. "&nbsp;&nbsp;&nbsp;( " . __( 'Will be reset at', 'fetch-tweets' ) . ' ' . date( "F j, Y, g:i a" , $arrStatus['resources']['statuses']['/statuses/user_timeline']['reset'] + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) . " )"
-		: "";		
-		$strSearchLimit = isset( $arrStatus['resources']['search']['/search/tweets'] ) 
-			? $arrStatus['resources']['search']['/search/tweets']['remaining'] . ' / ' . $arrStatus['resources']['search']['/search/tweets']['limit'] 
-				. "&nbsp;&nbsp;&nbsp;( " . __( 'Will be reset at', 'fetch-tweets' ) . ' ' . date( "F j, Y, g:i a" , $arrStatus['resources']['search']['/search/tweets']['reset'] + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) . " )"
+		$_iOffsetSeconds = get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+		$_sHomeimelineLimit = isset( $aStatus['resources']['statuses']['/statuses/home_timeline'] )
+			? $aStatus['resources']['statuses']['/statuses/home_timeline']['remaining'] . ' / ' . $aStatus['resources']['statuses']['/statuses/home_timeline']['limit'] 
+				. "&nbsp;&nbsp;&nbsp;( " . __( 'Will be reset at', 'fetch-tweets' ) . ' ' . date( "F j, Y, g:i a" , $aStatus['resources']['statuses']['/statuses/home_timeline']['reset'] + $_iOffsetSeconds ) . " )"
+			: "";		
+		
+		$_sUserTimelineLimit = isset( $aStatus['resources']['statuses']['/statuses/user_timeline'] )
+			? $aStatus['resources']['statuses']['/statuses/user_timeline']['remaining'] . ' / ' . $aStatus['resources']['statuses']['/statuses/user_timeline']['limit'] 
+				. "&nbsp;&nbsp;&nbsp;( " . __( 'Will be reset at', 'fetch-tweets' ) . ' ' . date( "F j, Y, g:i a" , $aStatus['resources']['statuses']['/statuses/user_timeline']['reset'] + $_iOffsetSeconds ) . " )"
+			: "";		
+			
+		$_sSearchLimit = isset( $aStatus['resources']['search']['/search/tweets'] ) 
+			? $aStatus['resources']['search']['/search/tweets']['remaining'] . ' / ' . $aStatus['resources']['search']['/search/tweets']['limit'] 
+				. "&nbsp;&nbsp;&nbsp;( " . __( 'Will be reset at', 'fetch-tweets' ) . ' ' . date( "F j, Y, g:i a" , $aStatus['resources']['search']['/search/tweets']['reset'] + $_iOffsetSeconds ) . " )"
 			: "";
 
-		$strListLimit = isset( $arrStatus['resources']['lists']['/lists/statuses'] )
-			? $arrStatus['resources']['lists']['/lists/statuses']['remaining'] . ' / ' . $arrStatus['resources']['lists']['/lists/statuses']['limit'] 
-				. "&nbsp;&nbsp;&nbsp;( " . __( 'Will be reset at', 'fetch-tweets' ) . ' ' . date( "F j, Y, g:i a" , $arrStatus['resources']['lists']['/lists/statuses']['reset'] + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) . " )"
+		$_sListLimit = isset( $aStatus['resources']['lists']['/lists/statuses'] )
+			? $aStatus['resources']['lists']['/lists/statuses']['remaining'] . ' / ' . $aStatus['resources']['lists']['/lists/statuses']['limit'] 
+				. "&nbsp;&nbsp;&nbsp;( " . __( 'Will be reset at', 'fetch-tweets' ) . ' ' . date( "F j, Y, g:i a" , $aStatus['resources']['lists']['/lists/statuses']['reset'] + $_iOffsetSeconds ) . " )"
 			: "";
 		
 	?>		
@@ -93,7 +85,7 @@ abstract class FetchTweets_AdminPage_Authentication extends FetchTweets_AdminPag
 						<?php _e( 'Status', 'fetch-tweets' ); ?>
 					</th>
 					<td>
-						<?php echo $fIsValid ? '<span class="authenticated">' . __( 'Authenticated', 'fetch-tweets' ) . '</span>': '<span class="unauthenticated">' . __( 'Not authenticated', 'fetch-tweets' ) . '</span>'; ?>
+						<?php echo $_fIsValid ? '<span class="authenticated">' . __( 'Authenticated', 'fetch-tweets' ) . '</span>': '<span class="unauthenticated">' . __( 'Not authenticated', 'fetch-tweets' ) . '</span>'; ?>
 					</td>
 				</tr>
 				<tr valign="top">
@@ -101,38 +93,51 @@ abstract class FetchTweets_AdminPage_Authentication extends FetchTweets_AdminPag
 						<?php _e( 'Screen Name', 'fetch-tweets' ); ?>
 					</th>
 					<td>
-						<?php echo $strScreenName; ?>
+						<?php echo $_sScreenName; ?>
 					</td>
 				</tr>
+			</tbody>
+		</table>				
+		<h3><?php _e( 'Request Limits', 'fetch-tweets' ); ?></h3>			
+		<table class="form-table auth-status">
+			<tbody>		
 				<tr valign="top">
 					<th scope="row">
-						<?php _e( 'Timeline Request Limit', 'fetch-tweets' ); ?>
+						<?php _e( 'Home Timeline', 'fetch-tweets' ); ?>
 					</th>
 					<td>
-						<?php echo $strUserTimelineLimit; ?>
+						<?php echo $_sHomeimelineLimit; ?>
+					</td>
+				</tr>					
+				<tr valign="top">
+					<th scope="row">
+						<?php _e( 'User Timeline', 'fetch-tweets' ); ?>
+					</th>
+					<td>
+						<?php echo $_sUserTimelineLimit; ?>
 					</td>
 				</tr>	
 				<tr valign="top">
 					<th scope="row">
-						<?php _e( 'Search Request Limit', 'fetch-tweets' ); ?>
+						<?php _e( 'Search', 'fetch-tweets' ); ?>
 					</th>
 					<td>
-						<?php echo $strSearchLimit; ?>
+						<?php echo $_sSearchLimit; ?>
 					</td>
 				</tr>	
 				<tr valign="top">
 					<th scope="row">
-						<?php _e( 'List Request Limit', 'fetch-tweets' ); ?>
+						<?php _e( 'List', 'fetch-tweets' ); ?>
 					</th>
 					<td>
-						<?php echo $strListLimit; ?>
+						<?php echo $_sListLimit; ?>
 					</td>
 				</tr>				
 			</tbody>
 		</table>
 					
 		<?php
-// $this->oDebug->dumpArray( $arrStatus );		
+// $this->oDebug->dumpArray( $aStatus );		
 	}
 		
 }

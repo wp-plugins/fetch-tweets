@@ -11,6 +11,7 @@ abstract class FetchTweets_Option_ {
 		'twitter_connect' => array(
 			'access_token' => '',
 			'access_secret' => '',
+			'screen_name'	=>	'',
 		),
 		'default_values' => array(),
 		'capabilities' => array(),
@@ -186,6 +187,30 @@ abstract class FetchTweets_Option_ {
 		$this->saveOptions();
 		
 	}
+	
+	/**
+	 * Saves the given screen name in the option table.
+	 * 
+	 * As of v2, the home timeline rule type is supported and it needs to list accounts. So the screen name is stored along with the authentication keys. 
+	 * 
+	 * @since			2
+	 * @return			void
+	 */
+	public function saveScreenName( $sScreenName ) {
+		
+		// If it's already set, do nothing.
+		$_sOldScreenName = isset( $this->aOptions['twitter_connect']['screen_name'] )
+			? $this->aOptions['twitter_connect']['screen_name']
+			: null;
+		if ( $_sOldScreenName === $sScreenName ) {
+			return;
+		}
+		
+		$this->aOptions['twitter_connect']['screen_name'] = $sScreenName;
+		$this->saveOptions();		
+		
+	}
+	
 	/**
 	 * Returns whether the plugin has set the API authentication keys automatically.
 	 * 

@@ -16,24 +16,22 @@ abstract class FetchTweets_Fetch_Cache {
 		// Set up the connection.
 		$this->oOption = & $GLOBALS['oFetchTweets_Option'];		
 		
-		$this->oTwitterOAuth =  $this->oOption->isAuthKeysManuallySet()
-			? new FetchTweets_TwitterOAuth( 
-				$this->oOption->getConsumerKey(), 
-				$this->oOption->getConsumerSecret(), 
-				$this->oOption->getAccessToken(), 
-				$this->oOption->getAccessTokenSecret()
-			)
-			: new FetchTweets_TwitterOAuth( 
-				FetchTweets_Commons::ConsumerKey, 
-				FetchTweets_Commons::ConsumerSecret, 
-				$this->oOption->getAccessTokenAuto(), 
-				$this->oOption->getAccessTokenSecretAuto()
-			);
+		$_fIsAuthKeysManuallySet = $this->oOption->isAuthKeysManuallySet();
+		$this->sConsumerKey = $_fIsAuthKeysManuallySet ? $this->oOption->getConsumerKey() : FetchTweets_Commons::ConsumerKey;
+		$this->sConsumerSecret = $_fIsAuthKeysManuallySet ? $this->oOption->getConsumerSecret() : FetchTweets_Commons::ConsumerSecret;
+		$this->sAccessToken = $_fIsAuthKeysManuallySet ? $this->oOption->getAccessToken() : $this->oOption->getAccessTokenAuto();
+		$this->sAccessSecret = $_fIsAuthKeysManuallySet ? $this->oOption->getAccessTokenSecret() : $this->oOption->getAccessTokenSecretAuto();
+		$this->oTwitterOAuth =  new FetchTweets_TwitterOAuth( 
+			$this->sConsumerKey,
+			$this->sConsumerSecret,
+			$this->sAccessToken,
+			$this->sAccessSecret
+		);
 						
 		$this->oBase64 = new FetchTweets_Base64;	
 		
 		// Schedule the transient update task.
-		add_action( 'shutdown', array( $this, 'updateCacheItems' ) );
+		add_action( 'shutdown', array( $this, '_replyToUpdateCacheItems' ) );
 		
 	}
 			
@@ -45,9 +43,25 @@ abstract class FetchTweets_Fetch_Cache {
 	 */
 	public function setAPIGETRequestCache( $strRequestURI, $strArrayKey=null, $strRequestID='' ) {
 
+		// Check if a custom access keys are set.
+		$_aAccessKeys = $this->_getAccessKeysFromQueryURI( $strRequestURI );
+		$_sSanitizedRequestURI = $this->_sanitizeRequstURI( $strRequestURI );
+		$_oOriginalTwitterOAuth = $this->oTwitterOAuth;
+		if ( ! empty( $_aAccessKeys ) ) {
+			$this->oTwitterOAuth = new FetchTweets_TwitterOAuth( 
+				$_aAccessKeys['consumer_key'],
+				$_aAccessKeys['consumer_secret'], 
+				$_aAccessKeys['access_token'], 
+				$_aAccessKeys['access_secret']
+			);
+		}
+		
 		// Perform the API request.
-		$arrTweets =  $this->oTwitterOAuth->get( $strRequestURI );		
+		$arrTweets =  $this->oTwitterOAuth->get( $_sSanitizedRequestURI );		
 			
+		// Restore the original Twitter oAuth object.
+		$this->oTwitterOAuth = $_oOriginalTwitterOAuth;
+		
 		// If the array key is specified, return the contents of the key element. Otherwise, return the retrieved array intact.
 		if ( ! is_null( $strArrayKey ) && isset( $arrTweets[ $strArrayKey ] ) )
 			$arrTweets = $arrTweets[ $strArrayKey ];
@@ -62,7 +76,7 @@ abstract class FetchTweets_Fetch_Cache {
 		// If an error occurs, do not set the cache.	
 		if ( ! $this->oOption->aOptions['cache_settings']['cache_for_errors'] ) {
 			if ( isset( $arrTweets['errors'][ 0 ]['message'], $arrTweets['errors'][ 0 ]['code'] ) ) {
-				$arrTweets['errors'][ 0 ]['message'] .= "<!-- Request URI: {$strRequestURI} -->";	
+				$arrTweets['errors'][ 0 ]['message'] .= "<!-- Request URI: {$_sSanitizedRequestURI} -->";	
 				return ( array ) $arrTweets;
 			}
 		}
@@ -76,6 +90,39 @@ abstract class FetchTweets_Fetch_Cache {
 		return ( array ) $arrTweets;
 		
 	}
+		
+		/**
+		 * Returns an array of access keys from the given request URI.
+		 * 
+		 * @since			2
+		 */
+		protected function _getAccessKeysFromQueryURI( $sRequestURI ){
+					
+			parse_str( parse_url( $sRequestURI, PHP_URL_QUERY ), $aQuery );
+			$_aAccessKeys = array(
+				'consumer_key' => isset( $aQuery['consumer_key'] ) ? $aQuery['consumer_key'] : null,
+				'consumer_secret' => isset( $aQuery['consumer_secret'] ) ? $aQuery['consumer_secret'] : null,
+				'access_token' => isset( $aQuery['access_token'] ) ? $aQuery['access_token'] : null,
+				'access_secret' => isset( $aQuery['access_secret'] ) ? $aQuery['access_secret'] : null,
+			);	
+			
+			return isset( $_aAccessKeys['consumer_key'], $_aAccessKeys['consumer_secret'], $_aAccessKeys['access_token'], $_aAccessKeys['access_secret'] )
+				? $_aAccessKeys
+				: array();
+			
+		}
+		
+		/**
+		 * Sanitizes the given Twitter request URI
+		 * 
+		 * The plugin request URI may contain unnecessary query keys to make transient name unique as the plugin generates transient ID from the request URI.
+		 * So this method will remove unsupported query keys from the given URI. If unsupported ones are present, Twitter API will return an error.
+		 * 
+		 * @since			2
+		 */
+		protected function _sanitizeRequstURI( $sRequestURI ) {
+			return remove_query_arg( array( 'consumer_key', 'consumer_secret', 'access_token', 'access_secret' ), $sRequestURI );
+		}
 	
 	/**
 	 * A wrapper method for the set_transient() function.
@@ -167,7 +214,7 @@ abstract class FetchTweets_Fetch_Cache {
 	/*
 	 * Callbacks
 	 * */
-	public function updateCacheItems() {	// for the shutdown hook
+	public function _replyToUpdateCacheItems() {	// for the shutdown hook
 		
 		if ( empty( $this->arrExpiredTransientsRequestURIs ) ) return;
 		

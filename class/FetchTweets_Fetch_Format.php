@@ -25,7 +25,7 @@ abstract class FetchTweets_Fetch_Format extends FetchTweets_Fetch_APIRequest {
 	 * Sorts tweet array elements.
 	 * 
 	 */
-	protected function sortTweetArrays( & $arrTweets, $strOrderedBy='descending' ) {
+	protected function _sortTweetArrays( & $arrTweets, $strOrderedBy='descending' ) {
 		switch( strtolower( $strOrderedBy ) ) {
 			case 'ascending':
 				uasort( $arrTweets, array( $this, '_sortByTimeAscending' ) );
@@ -51,7 +51,7 @@ abstract class FetchTweets_Fetch_Format extends FetchTweets_Fetch_APIRequest {
 	 * @since			1.x
 	 * @since			1.3.3			Added the ability to eliminate duplicated items for mash up results.
 	 */
-	protected function formatTweetArrays( & $arrTweets, $intProfileImageSize, $fTwitterMedia=true, $fExternalMedia=true ) {
+	protected function _formatTweetArrays( & $arrTweets, $intProfileImageSize, $fTwitterMedia=true, $fExternalMedia=true ) {
 		
 		$arrTweetIDs = array();
 		

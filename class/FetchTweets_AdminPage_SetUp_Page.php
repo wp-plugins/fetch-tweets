@@ -12,12 +12,10 @@ abstract class FetchTweets_AdminPage_SetUp_Page extends FetchTweets_AdminPage_St
 				// 'show_page_heading_tab'	=>	false,
 				'order'	=>	1,
 			),
-			// array(
-				// 'strMenuTitle' => __( 'Add Rule by Timeline', 'fetch-tweets' ),
-				// 'type' => 'link',
-				// 'strURL' => 'post-new.php?post_type=fetch_tweets&tweet_type=timeline',
-				// 'fShowPageHeadingTab' => false,
-			// ),			
+			array(
+				'title' => __( 'Add Rule by Timeline', 'fetch-tweets' ),
+				'href' => admin_url( "post-new.php?post_type={$_sPostTypeSlug}&tweet_type=timeline" ),
+			),			
 			array(
 				'title' => __( 'Add Rule by Search', 'fetch-tweets' ),
 				'href'	=>	admin_url( "post-new.php?post_type={$_sPostTypeSlug}&tweet_type=search" ),

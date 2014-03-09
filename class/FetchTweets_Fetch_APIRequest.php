@@ -8,7 +8,6 @@
  * @since			1.3.4
  */
 abstract class FetchTweets_Fetch_APIRequest extends FetchTweets_Fetch_Cache {
-
 	
 	/**
 	 * Performs the Twitter API request by the given URI.

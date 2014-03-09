@@ -87,12 +87,12 @@ abstract class FetchTweets_Event_ {
 	 * Renew the cache of the given request URI
 	 * 
 	 */
-	public function _replyToRenewTransients( $arrRequestURI ) {
+	public function _replyToRenewTransients( $aRequest ) {
 		
 		// Perform the cache renewal.
 		$oFetch = new FetchTweets_Fetch;
-		$oFetch->setAPIGETRequestCache( $arrRequestURI['URI'], $arrRequestURI['key'] );
-
+		$oFetch->setAPIGETRequestCache( $aRequest['URI'], $aRequest['key'] );
+		
 	}
 		
 	/**
@@ -115,7 +115,7 @@ abstract class FetchTweets_Event_ {
 			FetchTweets_Utilities::getAllowedMaxExecutionTime()	
 		);	
 	
-		// Perform oEmbed caching
+		// Perform oEmbed caching - no API request will be performed
 		$oFetch = new FetchTweets_Fetch;
 		
 		// structure: array( 'mod' => time(), 'data' => $this->oBase64->encode( $vData ) ), 

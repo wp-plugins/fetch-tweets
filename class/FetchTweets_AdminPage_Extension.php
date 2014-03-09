@@ -5,7 +5,7 @@ abstract class FetchTweets_AdminPage_Extension extends FetchTweets_AdminPage_Aut
 	 * Extension page
 	 */ 
 	public function do_before_fetch_tweets_extensions() {	// do_before_ + page slug
-		$this->showPageTitle( false );
+		$this->setPageTitleVisibility( false );
 	}
 	public function do_fetch_tweets_extensions_get_extensions() {
 				

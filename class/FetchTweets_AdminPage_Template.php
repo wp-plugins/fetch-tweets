@@ -18,7 +18,7 @@ abstract class FetchTweets_AdminPage_Template extends FetchTweets_AdminPage_Exte
 	 * Template Page
 	 */ 
 	public function do_before_fetch_tweets_templates() {
-		$this->showPageTitle( false );
+		$this->setPageTitleVisibility( false );
 	}
 	public function do_fetch_tweets_templates_list_template_table() {	// do_ + page slug + tab slug
 			

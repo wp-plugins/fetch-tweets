@@ -2,7 +2,7 @@
 /*
  * Available variables passed from the caller script
  * - $arrTweets : the fetched tweet arrays.
- * - $arrArgs	: the passed arguments such as item count etc.'
+ * - $arrArgs	: the passed arguments such as item count etc.
  * - $aOptions : the plugin options saved in the database.
  * */
  

@@ -11,7 +11,9 @@ abstract class FetchTweets_UserAds_ {
 	// Properties		
 	// URLs by locale
 	protected $arrURLFeedText = array(
-		'en' => array( 'http://feeds.feedburner.com/GANLinkTextRandom40' ),
+		'en' => array( 
+			'http://feeds.feedburner.com/GANLinkTextRandom40',
+		),
 		'ja' => array( 'http://feeds.feedburner.com/MiunosoftTextLinks-Jp' ),
 	);	
 	protected $arrURLFeed160xNTopRight = array(
@@ -235,10 +237,10 @@ abstract class FetchTweets_UserAds_ {
 		// $this->getSkyscraper();
 		// $this->getBottomBanner();
 		$this->getTextAd();
-		$this->get160xNTopRight();
-		$this->get250xNTopRight();
-		$this->get160xN();
-		$this->get250xN();
+		// $this->get160xNTopRight();
+		// $this->get250xNTopRight();
+		// $this->get160xN();
+		// $this->get250xN();
 		
 	}
 }

@@ -160,6 +160,8 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 				return __( 'User Name', 'fetch-tweets' );
 			case 'list':
 				return __( 'List', 'fetch-tweets' );
+			case 'home_timeline':
+				return __( 'Home Timeline', 'fetch-tweets' );
 		}
 		
 	}

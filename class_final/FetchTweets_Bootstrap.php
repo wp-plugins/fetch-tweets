@@ -200,6 +200,15 @@ final class FetchTweets_Bootstrap {
 				'default'	// priority
 			);
 		}
+		if ( $_sTweetType == 'home_timeline' || $_bIsUpdatePost ) {
+			new FetchTweets_MetaBox_Timeline(
+				'fetch_tweets_meta_box_timeline',	// meta box ID
+				__( 'Tweets by Timeline', 'fetch-tweets' ),	// meta box title
+				array( FetchTweets_Commons::PostTypeSlug ),	// post, page, etc.
+				'normal',	// context
+				'default'	// priority
+			);
+		}		
 		if ( $_sTweetType == 'screen_name' || $_bIsUpdatePost ) {
 			new FetchTweets_MetaBox_ScreenName(
 				'fetch_tweets_meta_box_screen_name',	// meta box ID

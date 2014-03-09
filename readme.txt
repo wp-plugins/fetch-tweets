@@ -207,6 +207,7 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 == Changelog ==
 
 = 2 =
+* Added the ability to create a rule by home timeline.
 * Added the geometry coordinate picker field for the search tweet type.
 * Renewed the positions of meta boxes in the rule definition page. 
 * Updated the [Admin Page Framework](http://wordpress.org/plugins/admin-page-framework/) library to v3.0.1.4b.

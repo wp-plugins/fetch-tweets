@@ -110,23 +110,6 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 				'href' => add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'twitter_redirect' ), admin_url( $GLOBALS['pagenow'] ) ),
 				'type' => 'submit',
 			),	
-			// array(	
-				// 'field_id' => 'disconnect_from_twitter',
-				// 'section_id' => 'twitter_connect',
-				// 'title' => '',
-				// 'if' => $this->oOption->isAuthKeysAutomaticallySet(),
-				// 'label' => array( 
-					// 'disconnect' => __( 'Disconnect from Twitter', 'fetch-tweets' ),
-				// ),
-				// 'vClassAttribute' => array(
-					// 'disconnect' => 'button button-secondary',
-				// ),
-				// 'href' => array(
-					// 'disconnect' => add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'twitter_connect' ), admin_url( $GLOBALS['pagenow'] ) ),
-				// ),
-				// 'type' => 'submit',
-			// ),	
-			
 			array(	
 				'field_id' => 'manual_authentication',
 				'section_id' => 'twitter_connect',
