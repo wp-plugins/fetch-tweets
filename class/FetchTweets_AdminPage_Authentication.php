@@ -134,42 +134,5 @@ abstract class FetchTweets_AdminPage_Authentication extends FetchTweets_AdminPag
 		<?php
 // $this->oDebug->dumpArray( $arrStatus );		
 	}
-	/**
-	 * Renders the authentication link buttons.
-	 * @since			1.3.0
-	 */
-	protected function renderAuthenticationButtons( $arrStatus ) {
-		
-		$fIsValid = isset( $arrStatus['id'] ) && $arrStatus['id'] ? true : false;
-	?>		
-		<h3><?php _e( 'Authenticate', 'fetch-tweets' ); ?></h3>
-		<table class="form-table auth-status">
-			<tbody>
-				<tr valign="top">
-					<th scope="row">
-						<?php _e( 'Connect to Twitter', 'fetch-tweets' ); ?>
-					</th>
-					<td>
-						<a href="http://www.google.com">
-							<input type="submit" class="button button-primary" value="<?php echo $fIsValid ? __( 'Disconnect', 'fetch-tweets' ) : __( 'Connect', 'fetch-tweets' ) ; ?>" />
-						</a>
-					</td>
-				</tr>
-				<tr valign="top">
-					<th scope="row">
-						<?php _e( 'Manual', 'fetch-tweets' ); ?>
-					</th>
-					<td>
-						<a href="<?php echo add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'authentication' ), admin_url( $GLOBALS['pagenow'] ) ); ?>">
-							<input type="submit" class="button button-secondary" value="<?php _e( 'Set Keys Manually', 'fetch-tweets' ); ?>"/>
-						</a>
-					</td>
-				</tr>		
-			</tbody>
-		</table>
-					
-		<?php		
-	}
-			
 		
 }

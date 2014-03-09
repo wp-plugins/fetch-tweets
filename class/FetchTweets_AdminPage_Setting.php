@@ -126,21 +126,18 @@ abstract class FetchTweets_AdminPage_Setting extends FetchTweets_AdminPage_Templ
 		$this->_renderAuthenticationStatus( $this->arrStatus );
 		
 	}
-	
-
-	
+		
 	/**
 	 * Filters the output of the Connect To Twitter button.
 	 * 
 	 * If it's not authenticated yet, the label becomes "Connect"; otherwise, "Disconnect"
 	 */
-// TODO: with APF v3 the hook name will be section_{instantiated clss name}_{...}
-	public function FetchTweets_AdminPage_field_connect_to_twitter( $strField ) {	// extended class name + _ + section_ + section ID
+	public function field_FetchTweets_AdminPage_twitter_connect_connect_to_twitter( $strField ) {		// field_{instantiated class name}_{section id}_{field id}
 		
 		return ! ( isset( $this->arrStatus['id'] ) && $this->arrStatus['id'] )
 			? $strField		// the connect button
 			: '<span style="display: inline-block; min-width:120px;">'
-					. '<input id="twitter_connect_connect_to_twitter_0" class="button button-primary" type="submit" name="disconnect_from_twitter" value="' . __( 'Disconnect', 'fetch-tweets' ) . '">&nbsp;&nbsp;'
+					. '<input id="twitter_connect_connect_to_twitter__0" class="button button-primary" type="submit" name="disconnect_from_twitter" value="' . __( 'Disconnect', 'fetch-tweets' ) . '">&nbsp;&nbsp;'
 				.'</span>'; // the disconnect button
 				
 	}
