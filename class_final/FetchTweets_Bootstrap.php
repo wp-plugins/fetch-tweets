@@ -17,6 +17,7 @@ final class FetchTweets_Bootstrap {
 	function __construct( $strPluginFilePath ) {
 	
 		$this->strFilePath = $strPluginFilePath;	//FetchTweets_Commons::getPluginPath();
+		$this->_bIsAdmin = is_admin();
 		
 		// 1. Define constants.
 		// $this->defineConstants();
@@ -121,7 +122,7 @@ final class FetchTweets_Bootstrap {
 			dirname( plugin_basename( $this->strFilePath ) ) . '/language/'
 		);
 		
-		if ( is_admin() ) {
+		if ( $this->_bIsAdmin ) {
 			load_plugin_textdomain( 
 				'admin-page-framework', 
 				false, 
@@ -136,7 +137,7 @@ final class FetchTweets_Bootstrap {
 		// All the necessary classes have been already loaded.
 		
 		// 1. Load Necessary libraries
-		include_once( dirname( FetchTweets_Commons::getPluginFilePath() ) . '/library/admin-page-framework-for-fetch-tweets.php' );
+		include_once( dirname( FetchTweets_Commons::getPluginFilePath() ) . '/library/admin-page-framework/fetch-tweets-admin-page-framework.min.php' );
 
 		// 2. Option Object
 		$GLOBALS['oFetchTweets_Option'] = new FetchTweets_Option( FetchTweets_Commons::$strAdminKey );
@@ -145,69 +146,131 @@ final class FetchTweets_Bootstrap {
 		$GLOBALS['oFetchTweets_Templates'] = new FetchTweets_Templates;		
 		$GLOBALS['oFetchTweets_Templates']->loadFunctionsOfActiveTemplates();
 		add_action( 'wp_enqueue_scripts', array( $GLOBALS['oFetchTweets_Templates'], 'enqueueActiveTemplateStyles' ) );
-		if ( is_admin() )
+		if ( $this->_bIsAdmin )
 			$GLOBALS['oFetchTweets_Templates']->loadSettingsOfActiveTemplates();
 		
 		// 4. Admin pages
-		if ( is_admin() ) 
+		if ( $this->_bIsAdmin ) {
 			new FetchTweets_AdminPage( FetchTweets_Commons::$strAdminKey, $this->strFilePath );		
+		}
 		
-		// 5. Post Type
-		// Should not use "if ( is_admin() )" for the this class because posts of custom post type can be accessed from the regular pages.
+		// 5. Post Type - no need to check is_admin() because posts of custom post type can be accessed from the front-end.
 		new FetchTweets_PostType( FetchTweets_Commons::PostTypeSlug, null, $this->strFilePath ); 	// post type slug
-		// new FetchTweets_PostType_Accounts( FetchTweets_Commons::PostTypeSlugAccounts, null, $this->strFilePath ); 	// post type slug
-		if ( is_admin() ) {
-			new FetchTweets_MetaBox_Options(
-				'fetch_tweets_options_meta_box',	// meta box ID
-				__( 'Options', 'fetch-tweets' ),		// meta box title
-				array( FetchTweets_Commons::PostTypeSlug ),	// post, page, etc.
-				'normal',
-				'default'
-			);			
-			new FetchTweets_MetaBox_Template(
-				'fetch_tweets_template_meta_box',	// meta box ID
-				__( 'Template', 'fetch-tweets' ),		// meta box title
-				array( FetchTweets_Commons::PostTypeSlug ),	// post, page, etc.
-				'normal',
-				'default'
-			);
-			new FetchTweets_MetaBox_Tag;
-			new FetchTweets_MetaBox_Misc;
+		// new FetchTweets_PostType_Accounts( FetchTweets_Commons::PostTypeSlugAccounts, null, $this->strFilePath ); 	// post type slug		
+		
+		// 6. Meta-boxes
+		if ( $this->_bIsAdmin ) {
+			$this->_registerMetaBoxes();
 		}
 						
-		// 6. Shortcode
+		// 7. Shortcode
 		new FetchTweets_Shortcode( 'fetch_tweets' );	// e.g. [fetch_tweets id="143"]
 			
-		// 7. Widgets
+		// 8. Widgets
 		add_action( 'widgets_init', 'FetchTweets_WidgetByID::registerWidget' );
 		add_action( 'widgets_init', 'FetchTweets_WidgetByTag::registerWidget' );
 				
-		// 8. Events
+		// 9. Events
 		new FetchTweets_Event;	
 		
-		// 9. MISC
-		if ( is_admin() )
+		// 10. MISC
+		if ( $this->_bIsAdmin )
 			$GLOBALS['oFetchTweetsUserAds'] = isset( $GLOBALS['oFetchTweetsUserAds'] ) ? $GLOBALS['oFetchTweetsUserAds'] : new FetchTweets_UserAds;
 		
 		// 10. WordPress version backward compatibility.
-		$this->defineConstantesForBackwardCompatibility();
+		$this->_defineConstantesForBackwardCompatibility();
 		
 	}
 
 	/**
-	 * Defines constants that are not defined in WordPress v3.4.x or below.
+	 * Registers plugin specific meta boxes.
 	 * 
-	 * @since			1.3.0
+	 * @since			2.0.0
 	 */
-	protected function defineConstantesForBackwardCompatibility() {
+	protected function _registerMetaBoxes() {
 		
-		if ( ! defined( 'MINUTE_IN_SECONDS' ) ) define( 'MINUTE_IN_SECONDS', 60 );
-		if ( ! defined( 'HOUR_IN_SECONDS' ) ) define( 'HOUR_IN_SECONDS',   60 * MINUTE_IN_SECONDS );
-		if ( ! defined( 'DAY_IN_SECONDS' ) ) define( 'DAY_IN_SECONDS',    24 * HOUR_IN_SECONDS   );
-		if ( ! defined( 'WEEK_IN_SECONDS' ) ) define( 'WEEK_IN_SECONDS',    7 * DAY_IN_SECONDS    );
-		if ( ! defined( 'YEAR_IN_SECONDS' ) ) define( 'YEAR_IN_SECONDS',  365 * DAY_IN_SECONDS    );	
+		$_bIsUpdatePost = ( empty( $_GET ) && $GLOBALS['pagenow'] == 'post.php' );	// when saving the meta data, the GET array is empty
+		$_sTweetType = $this->_getTweetType();
+		if ( $_sTweetType == 'search' || $_bIsUpdatePost ) {
+			new FetchTweets_MetaBox_Search(
+				'fetch_tweets_meta_box_search',	// meta box ID
+				__( 'Tweets by Search', 'fetch-tweets' ),	// meta box title
+				array( FetchTweets_Commons::PostTypeSlug ),	// post, page, etc.
+				'normal',	// context
+				'default'	// priority
+			);
+		}
+		if ( $_sTweetType == 'screen_name' || $_bIsUpdatePost ) {
+			new FetchTweets_MetaBox_ScreenName(
+				'fetch_tweets_meta_box_screen_name',	// meta box ID
+				__( 'Tweets by Screen Name', 'fetch-tweets' ),	// meta box title
+				array( FetchTweets_Commons::PostTypeSlug ),	// post, page, etc.
+				'normal',	// context
+				'default'	// priority
+			);
+		}
+		if ( $_sTweetType == 'list' || $_bIsUpdatePost ) {			
+			new FetchTweets_MetaBox_List(
+				'fetch_tweets_meta_box_list',	// meta box ID
+				__( 'Tweets by List', 'fetch-tweets' ),	// meta box title
+				array( FetchTweets_Commons::PostTypeSlug ),	// post, page, etc.
+				'normal',	// context
+				'default'	// priority
+			);
+		}	
 
+		new FetchTweets_MetaBox_Cache(
+			'fetch_tweets_meta_box_cache',	// meta box ID
+			__( 'Cache', 'fetch-tweets' ),		// meta box title
+			array( FetchTweets_Commons::PostTypeSlug ),	// post, page, etc.
+			'advanced',	// context
+			'low'	// priority			
+		);
+		new FetchTweets_MetaBox_Template(
+			'fetch_tweets_template_meta_box_v2',	// meta box ID
+			__( 'Template', 'fetch-tweets' ),		// meta box title
+			array( FetchTweets_Commons::PostTypeSlug ),	// post, page, etc.
+			'side',		// context
+			'low'	// priority
+		);
+		new FetchTweets_MetaBox_Tag;
+		// new FetchTweets_MetaBox_Misc;		
+		
 	}
+		/**
+		 * Retrieves the tweet type.
+		 * 
+		 * @since			2.0.0
+		 */
+		private function _getTweetType() {
+
+			// If the GET 'tweet_type' query value is set, use it.
+			if ( isset( $_GET['tweet_type'] ) && $_GET['tweet_type'] ) return $_GET['tweet_type'];
+		
+			// If the 'action' query value is edit, search for the meta field value which previously set when it is saved.
+			if ( isset( $_GET['action'], $_GET['post'] ) && $_GET['action'] == 'edit' ) {
+				return get_post_meta( $_GET['post'], 'tweet_type', true );
+			}
+			
+			// return the default type
+			return 'screen_name';
+			
+		}	
+		
+		/**
+		 * Defines constants that are not defined in WordPress v3.4.x or below.
+		 * 
+		 * @since			1.3.0
+		 */
+		protected function _defineConstantesForBackwardCompatibility() {
+			
+			if ( ! defined( 'MINUTE_IN_SECONDS' ) ) define( 'MINUTE_IN_SECONDS', 60 );
+			if ( ! defined( 'HOUR_IN_SECONDS' ) ) define( 'HOUR_IN_SECONDS',   60 * MINUTE_IN_SECONDS );
+			if ( ! defined( 'DAY_IN_SECONDS' ) ) define( 'DAY_IN_SECONDS',    24 * HOUR_IN_SECONDS   );
+			if ( ! defined( 'WEEK_IN_SECONDS' ) ) define( 'WEEK_IN_SECONDS',    7 * DAY_IN_SECONDS    );
+			if ( ! defined( 'YEAR_IN_SECONDS' ) ) define( 'YEAR_IN_SECONDS',  365 * DAY_IN_SECONDS    );	
+
+		}
 		
 	
 }

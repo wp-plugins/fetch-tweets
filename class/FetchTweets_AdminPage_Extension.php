@@ -32,8 +32,8 @@ abstract class FetchTweets_AdminPage_Extension extends FetchTweets_AdminPage_Aut
 				. '"'
 				. '>' 
 				. '<div class="ftws_extension_item">' 
-					. "<h4>{$arrItem['strTitle']}</h4>"
-					. $arrItem['strDescription'] 
+					. "<h4>{$arrItem['title']}</h4>"
+					. $arrItem['description'] 
 					. "<div class='get-now'><a href='{$arrItem['strLink']}' target='_blank' rel='nofollow'>" 
 						. "<input class='button button-secondary' type='submit' value='" . __( 'Get it Now', 'fetch-tweets' ) . "' />"
 					. "</a></div>"

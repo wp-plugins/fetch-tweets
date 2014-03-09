@@ -78,9 +78,9 @@ final class FetchTweets_Debug {
 		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) return;
 		
 		$oOption = & $GLOBALS['oFetchTweets_Option'];		
-		if ( ! isset( $oOption->arrOptions[ $strKey ] ) ) return;
+		if ( ! isset( $oOption->aOptions[ $strKey ] ) ) return;
 		
-		self::dumpArray( $oOption->arrOptions[ $strKey ] );
+		self::dumpArray( $oOption->aOptions[ $strKey ] );
 		
 	}
 	

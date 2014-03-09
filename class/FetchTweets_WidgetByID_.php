@@ -87,11 +87,11 @@ abstract class FetchTweets_WidgetByID_ extends FetchTweets_Widget_ {
 			<br />
 			<select name="<?php echo $arrNames['template']; ?>" id="<?php echo $arrIDs['template']; ?>" >
 				<?php 
-				foreach( $GLOBALS['oFetchTweets_Templates']->getTemplateArrayForSelectLabel() as $strTemplateSlug => $strTemplateName ) 
+				foreach( $GLOBALS['oFetchTweets_Templates']->getTemplateArrayForSelectLabel() as $strTemplateSlug => $sTemplateName ) 
 					echo "<option value='{$strTemplateSlug}' "				
 						. ( $arrInstance['template'] == $strTemplateSlug ? 'selected="Selected"' : '' )
 						. ">"
-						. $strTemplateName
+						. $sTemplateName
 						. "</option>";
 				?>
 			</select>

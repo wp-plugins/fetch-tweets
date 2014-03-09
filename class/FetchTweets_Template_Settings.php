@@ -5,64 +5,66 @@
 abstract class FetchTweets_Template_Settings {
 	
 	// Do not modify these properties.
-	protected $strParentAdminPaggeClassName = 'FetchTweets_AdminPage';
-	protected $strTemplateID = '';	// assigned in the constructor.
+	protected $sParentAdminPaggeClassName = 'FetchTweets_AdminPage';
+	protected $sTemplateID = '';	// assigned in the constructor.
 	
 	/*
 	 * These must be overridden in the extended class.
 	 * */
-	protected $strParentPageSlug = '';	// in the url, the ... part in ?page=... 
-	protected $strParentTabSlug = '';	// in the url, the ... part in &tab=...
-	protected $strTemplateName = '';	// the template name
+	protected $sParentPageSlug = '';	// in the url, the ... part in ?page=... 
+	protected $sParentTabSlug = '';	// in the url, the ... part in &tab=...
+	protected $sTemplateName = '';	// the template name
 	
 	/*
 	 * No need to modify the constructor.
 	 * */
 	public function __construct() {
 		
-		$this->strTemplateID = md5( dirname( __FILE__ ) );
+		$this->sTemplateID = md5( dirname( __FILE__ ) );
 		
-		// "{$this->oProps->strClassName}_{$strPageSlug}_tabs",
-		add_filter( $this->strParentAdminPaggeClassName . "_" . $this->strParentPageSlug . "_tabs", array( $this, 'addInPageTab' ) );
+		// tabs_{instantiated class name}_{page slug}
+		add_filter( 'tabs_' . $this->sParentAdminPaggeClassName . "_" . $this->sParentPageSlug, array( $this, '_replyToAddInPageTab' ) );
 		
-		// "{$this->oProps->strClassName}_setting_sections",
-		add_filter( $this->strParentAdminPaggeClassName . "_setting_sections", array( $this, 'addSettingSections' ) );
+		// sections_{instantiated class name}
+		add_filter( "sections_" . $this->sParentAdminPaggeClassName, array( $this, 'addSettingSections' ) );
 		
-		// "{$this->oProps->strClassName}_setting_fields",
-		add_filter( $this->strParentAdminPaggeClassName . "_setting_fields", array( $this, 'addSettingFields' ) );
+		// fields_{instantiated class name}
+		add_filter( "fields_" . $this->sParentAdminPaggeClassName, array( $this, 'addSettingFields' ) );
 		
 		// validation_{page slug}_{tab slug}
-		add_filter( "validation_{$this->strParentPageSlug}_{$this->strParentTabSlug}", array( $this, 'validateSettings' ), 10, 2 );
+		add_filter( "validation_{$this->sParentPageSlug}_{$this->sParentTabSlug}", array( $this, 'validateSettings' ), 10, 2 );
 			
 		// Adds the Settings link in the template listing table.
-		add_filter( 'fetch_tweets_filter_template_listing_table_action_links', array( $this, 'addSettingsLink' ), 10, 2 );
+		add_filter( 'fetch_tweets_filter_template_listing_table_action_links', array( $this, '_replyToAddSettingsLink' ), 10, 2 );
 		
 	}
 	
 	/*
 	 * 	No need to modify these method.
 	 * */
-	public function addInPageTab( $arrTabs ) {
+	public function _replyToAddInPageTab( $aTabs ) {
 	
 		return array(
-			$this->strParentTabSlug => array(
-				'strPageSlug'	=> $this->strParentPageSlug,
-				'strTitle'		=> $this->strTemplateName,
-				'strTabSlug'	=> $this->strParentTabSlug,
-				'numOrder'		=> 20
+			$this->sParentTabSlug => array(
+				'page_slug'	=> $this->sParentPageSlug,
+				'title'		=> $this->sTemplateName,
+				'tab_slug'	=> $this->sParentTabSlug,
+				'order'		=> 20
 			)
-		) + $arrTabs;
+		) + $aTabs;
 		
 	}
-	public function addSettingsLink( $arrLinks, $strTemplateID ) {
+	public function _replyToAddSettingsLink( $aLinks, $sTemplateID ) {
 				
-		if ( $strTemplateID != $this->strTemplateID ) return $arrLinks;
+		if ( $sTemplateID != $this->sTemplateID ) return $aLinks;
 
 		array_unshift(	
-			$arrLinks,
-			"<a href='?post_type=" . FetchTweets_Commons::PostTypeSlug . "&page={$this->strParentPageSlug}&tab={$this->strParentTabSlug}'>" . __( 'Settings', 'fetch-tweets' ) . "</a>" 
+			$aLinks,
+			"<a href='?post_type=" . FetchTweets_Commons::PostTypeSlug . "&page={$this->sParentPageSlug}&tab={$this->sParentTabSlug}'>" 
+				. __( 'Settings', 'fetch-tweets' ) 
+			. "</a>" 
 		); 
-		return $arrLinks;			
+		return $aLinks;			
 		
 	}
 	

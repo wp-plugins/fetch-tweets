@@ -92,7 +92,6 @@ class FetchTweets_SimplePie extends FetchTweets_SimplePie__ {
 		$GLOBALS['arrSimplePieCacheModTimestamps'][ $this->strPluginKey ] = isset( $GLOBALS['arrSimplePieCacheModTimestamps'][ $this->strPluginKey ] ) && is_array( $GLOBALS['arrSimplePieCacheModTimestamps'][ $this->strPluginKey ] ) 
 			? $GLOBALS['arrSimplePieCacheModTimestamps'][ $this->strPluginKey ]
 			: ( array ) get_transient( $this->strPluginKey ) ;
-// FetchTweets_Debug::DumpArray( $GLOBALS['arrSimplePieCacheModTimestamps'], dirname( __FILE__ ) . '/mods.txt'  );
 			
 		// - this stores expired cache items.
 		$GLOBALS['arrSimplePieCacheExpiredItems'] = isset( $GLOBALS['arrSimplePieCacheExpiredItems'] ) && is_array( $GLOBALS['arrSimplePieCacheExpiredItems'] ) ? $GLOBALS['arrSimplePieCacheExpiredItems'] : array();
@@ -182,15 +181,6 @@ class FetchTweets_SimplePie extends FetchTweets_SimplePie__ {
 											
 		}	
 		
-// if ( ! $this->fIsBackgroundProcess ) {
-	
-	// if ( ! empty( $GLOBALS['arrSimplePieCacheExpiredItems'] ) ) 
-		// FetchTweets_Debug::DumpArray( $GLOBALS['arrSimplePieCacheExpiredItems'], dirname( __FILE__ ) . '/expired_urls.txt'  );
-	// FetchTweets_Debug::DumpArray( $GLOBALS['arrSimplePieCacheModTimestamps'], dirname( __FILE__ ) . '/cache_mods.txt'  );
-	
-// } else {
-	// FetchTweets_Debug::DumpArray( $this->vSetURL, dirname( __FILE__ ) . '/background_process.txt'  );
-// }
 		return parent::init();
 		
 	}
@@ -251,7 +241,7 @@ class FetchTweets_Cache extends SimplePie_Cache {
 class FetchTweets_Feed_Cache_Transient {
 	
 	var $strTransientName;
-	var $lifetime = 43200; // Default cache lifetime of 12 hours. This should be overridden by the filter callback function. 
+	var $iLifetime = 43200; // Default cache lifetime of 12 hours. This should be overridden by the filter callback function. 
 	var $numExpand = 100;
 	var $strPluginKey = 'FTWSFeedMs';
 	
@@ -270,9 +260,9 @@ class FetchTweets_Feed_Cache_Transient {
 		$this->strFileID = empty( $strFileID ) ? $this->strPluginKey . '_a_file' : $strFileID;	
 		
 		$this->strTransientName = $this->strPluginKey . '_' . $this->strFileID;
-		$this->lifetime = apply_filters( 
+		$this->iLifetime = apply_filters( 
 			'SimplePie_filter_cache_transient_lifetime_' . $this->strFileID, 
-			$this->lifetime, 	// it barely expires by itself
+			$this->iLifetime, 	// it barely expires by itself
 			$this->strFileID
 		);
 		
@@ -286,16 +276,14 @@ class FetchTweets_Feed_Cache_Transient {
 		// $GLOBALS['arrSimplePieCacheModTimestamps'] should be already created by the caller (parent) custom SimplePie class.
 		$GLOBALS['arrSimplePieCacheModTimestamps'][ $this->strPluginKey ][ $this->strFileID ] = time();	
 
-// FetchTweets_Debug::DumpArray( $GLOBALS['arrSimplePieCacheModTimestamps'][ $this->strFileID ] , dirname( __FILE__ ) . '/saved_cache.txt'  );		
-
 		// make it 100 times longer so that it barely gets expires by itself
-		set_transient( $this->strTransientName, $data, $this->lifetime * $this->numExpand );
+		set_transient( $this->strTransientName, $data, $this->iLifetime * $this->numExpand );
 		return true;
 	}
 	public function load() {		
-// FetchTweets_Debug::DumpArray( $this->lifetime , dirname( __FILE__ ) . '/lifetime.txt'  );
+
 		// If this returns an empty value, SimplePie will fetch the feed.
-		if ( $this->lifetime == 0 ) return null;  
+		if ( $this->iLifetime == 0 ) return null;  
 		
 		return get_transient( $this->strTransientName );	// the stored cache data
 		

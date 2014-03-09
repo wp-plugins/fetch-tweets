@@ -153,8 +153,8 @@ abstract class FetchTweets_AdminPage_Setting extends FetchTweets_AdminPage_Templ
 			$arrInput = is_array( $arrInput ) ? $arrInput : array();	// in WP v3.4.2, when the Disconnect button is pressed an $arrInput was passed as an empty string. Something went wrong.
 			delete_transient( FetchTweets_Commons::TransientPrefix . '_' . md5( serialize( array( $this->oOption->getConsumerKey(), $this->oOption->getConsumerSecret(), $this->oOption->getAccessToken(), $this->oOption->getAccessTokenSecret() ) ) ) );
 			delete_transient( FetchTweets_Commons::TransientPrefix . '_' . md5( serialize( array( FetchTweets_Commons::ConsumerKey, FetchTweets_Commons::ConsumerSecret, $this->oOption->getAccessTokenAuto(), $this->oOption->getAccessTokenSecretAuto() ) ) ) );
-			unset( $arrInput['fetch_tweets_settings']['authentication_keys'] );
-			unset( $arrInput['fetch_tweets_settings']['twitter_connect'] );
+			unset( $arrInput['authentication_keys'] );
+			unset( $arrInput['twitter_connect'] );
 			
 		}
 
@@ -176,26 +176,26 @@ abstract class FetchTweets_AdminPage_Setting extends FetchTweets_AdminPage_Templ
 // echo $this->oDebug->getArray( $GLOBALS['option_page'] );
 
 // echo "<h3>Properties</h3>";
-// echo $this->oDebug->getArray( $this->oProps ); 
-// echo $this->oDebug->getArray( $this->oProps->arrOptions ); 
+// echo $this->oDebug->getArray( $this->oProp ); 
+// echo $this->oDebug->getArray( $this->oProp->aOptions ); 
 
 // echo "<h3>Options</h3>";
-// $arrOptions = get_option( FetchTweets_Commons::AdminOptionKey );
-// echo $this->oDebug->getArray( $arrOptions );
+// $aOptions = get_option( FetchTweets_Commons::AdminOptionKey );
+// echo $this->oDebug->getArray( $aOptions );
 
 
 // echo "<h3>Registered Pages</h3>";
-// echo $this->oDebug->getArray( $this->oProps->arrPages );
+// echo $this->oDebug->getArray( $this->oProp->arrPages );
 // echo "<h3>Registered Tabs</h3>";
-// echo $this->oDebug->getArray( $this->oProps->arrInPageTabs[ 'fetch_tweets_settings' ] );
+// echo $this->oDebug->getArray( $this->oProp->arrInPageTabs[ 'fetch_tweets_settings' ] );
 
 	}
 	
 	public function validation_fetch_tweets_settings_general( $arrInput, $arrOriginal ) {
 		
-		$arrInput['fetch_tweets_settings']['default_values']['count'] = $this->oUtil->fixNumber(
-			$arrInput['fetch_tweets_settings']['default_values']['count'],
-			$GLOBALS['oFetchTweets_Option']->arrStructure_DefaultParams['count'],
+		$arrInput['default_values']['count'] = $this->oUtil->fixNumber(
+			$arrInput['default_values']['count'],
+			$GLOBALS['oFetchTweets_Option']->aStructure_DefaultParams['count'],
 			1
 		);
 		
@@ -209,7 +209,7 @@ abstract class FetchTweets_AdminPage_Setting extends FetchTweets_AdminPage_Templ
 				
 		// Make it one dimensional.
 		$arrSubmit = array();
-		foreach ( $arrInput['fetch_tweets_settings'] as $strSection => $arrFields ) 
+		foreach ( $arrInput as $strSection => $arrFields ) 
 			$arrSubmit = $arrSubmit + $arrFields;				
 			
 		// If the Perform button is not set, return.
@@ -225,7 +225,7 @@ abstract class FetchTweets_AdminPage_Setting extends FetchTweets_AdminPage_Templ
 		}
 		
 		// $this->oDebug->getArray( $arrSubmit, dirname( __FILE__ ) . '/submit.txt' );
-		// $this->oDebug->getArray( $GLOBALS['oFetchTweets_Option']->arrOptions, dirname( __FILE__ ) . '/options.txt' );
+		// $this->oDebug->getArray( $GLOBALS['oFetchTweets_Option']->aOptions, dirname( __FILE__ ) . '/options.txt' );
 		
 		if ( isset( $arrSubmit['option_sections'] ) ) {
 			if ( isset( $arrSubmit['option_sections']['all'] ) && $arrSubmit['option_sections']['all'] ) {
@@ -253,17 +253,16 @@ abstract class FetchTweets_AdminPage_Setting extends FetchTweets_AdminPage_Templ
 	}
 	public function deleteOptions_General() {
 		// Currently not working: Somehow the options get recovered.
-		unset( $GLOBALS['oFetchTweets_Option']->arrOptions['fetch_tweets_settings'] );
+		unset( $GLOBALS['oFetchTweets_Option']->aOptions );
 		$GLOBALS['oFetchTweets_Option']->saveOptions();		
 	}
 	public function deleteOptions_Template() {		
 		// Currently not working: Somehow the options get recovered.
-// $this->oDebug->getArray( $GLOBALS['oFetchTweets_Option']->arrOptions, dirname( __FILE__ ) . '/options.txt' );	
-		unset( $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'] );
-		unset( $GLOBALS['oFetchTweets_Option']->arrOptions['arrDefaultTemplate'] );
-		unset( $GLOBALS['oFetchTweets_Option']->arrOptions['fetch_tweets_templates'] );
+
+		unset( $GLOBALS['oFetchTweets_Option']->aOptions['arrTemplates'] );
+		unset( $GLOBALS['oFetchTweets_Option']->aOptions['arrDefaultTemplate'] );		
 		$GLOBALS['oFetchTweets_Option']->saveOptions();
-// $this->oDebug->getArray( $GLOBALS['oFetchTweets_Option']->arrOptions, dirname( __FILE__ ) . '/options.txt' );	
+
 	}
 					
 }

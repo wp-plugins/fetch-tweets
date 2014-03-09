@@ -60,7 +60,7 @@ abstract class FetchTweets_Fetch_Cache {
 			return ( array ) $arrTweets;
 		
 		// If an error occurs, do not set the cache.	
-		if ( ! $this->oOption->arrOptions['fetch_tweets_settings']['cache_settings']['cache_for_errors'] ) {
+		if ( ! $this->oOption->aOptions['cache_settings']['cache_for_errors'] ) {
 			if ( isset( $arrTweets['errors'][ 0 ]['message'], $arrTweets['errors'][ 0 ]['code'] ) ) {
 				$arrTweets['errors'][ 0 ]['message'] .= "<!-- Request URI: {$strRequestURI} -->";	
 				return ( array ) $arrTweets;

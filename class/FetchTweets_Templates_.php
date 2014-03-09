@@ -18,24 +18,25 @@ abstract class FetchTweets_Templates_ {
 	// public $arrTemplateDirs = array();	// stores the template directory paths where the plugin loads templates.
 	// public $arrTemplates = array(); // stores each template information.
 	
-	public static $arrStructure_Template = array(
-		'strCSSPath'		=> null,
-		'strDirPath'		=> null,
-		'strFunctionPath'	=> null,
-		'strTemplatePath'	=> null,
-		'strSettingsPath'	=> null,
-		'strThumbnailPath'	=> null,
-		'strName'			=> null,
-		'strSlug'			=> null,
-		'strDescription'	=> null,
-		'strTextDomain'		=> null,
-		'strDomainPath'		=> null,
-		'strVersion'		=> null,
-		'strAuthor'			=> null,
-		'strAuthorURI'		=> null,
-		'fIsActive'			=> null,
-		'fIsDefault'		=> null,
-		'intIndex'			=> null,
+	public static $aStructure_Template = array(
+		// v1 							v2
+		'strCSSPath'		=> null,	// 'css_path'	=> null,
+		'strDirPath'		=> null,	// 'dir_path'	=> null,
+		'strFunctionPath'	=> null,	// 'function_path'	=> null,
+		'strTemplatePath'	=> null,	// 'template_path'	=> null,
+		'strSettingsPath'	=> null,	// 'settings_path'	=> null,
+		'strThumbnailPath'	=> null,	// 'thumbnail_path'	=> null,
+		'strName'			=> null,	// 'name'	=> null,
+		'strSlug'			=> null,	// 'slug'	=> null,
+		'strDescription'	=> null,	// 'description'	=> null,
+		'strTextDomain'		=> null,	// 'text_domain'	=> null,
+		'strDomainPath'		=> null,	// 'domain_path'	=> null,
+		'strVersion'		=> null,	// 'version'	=> null,
+		'strAuthor'			=> null,	// 'author'	=> null,
+		'strAuthorURI'		=> null,	// 'author_uri'	=> null,
+		'fIsActive'			=> null,	// 'is_active'	=> null,
+		'fIsDefault'		=> null,	// 'is_default'	=> null,
+		'intIndex'			=> null,	// 'index'	=> null,
 	);
 	
 	public function getActiveTemplates() {
@@ -43,13 +44,13 @@ abstract class FetchTweets_Templates_ {
 		// Returns an array that holds arrays of activated template information.
 		
 		// The default template
-		$arrDefaultTemplate = empty( $GLOBALS['oFetchTweets_Option']->arrOptions['arrDefaultTemplate'] ) || ! file_exists( $GLOBALS['oFetchTweets_Option']->arrOptions['arrDefaultTemplate']['strCSSPath'] )
+		$arrDefaultTemplate = empty( $GLOBALS['oFetchTweets_Option']->aOptions['arrDefaultTemplate'] ) || ! file_exists( $GLOBALS['oFetchTweets_Option']->aOptions['arrDefaultTemplate']['strCSSPath'] )
 			? $this->findDefaultTemplateDetails()
-			: $GLOBALS['oFetchTweets_Option']->arrOptions['arrDefaultTemplate'] + self::$arrStructure_Template;
+			: $GLOBALS['oFetchTweets_Option']->aOptions['arrDefaultTemplate'] + self::$aStructure_Template;
 		
 		// The saved active templates.
-		$arrActiveTemplates = isset( $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'] )
-			? $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates']
+		$arrActiveTemplates = isset( $GLOBALS['oFetchTweets_Option']->aOptions['arrTemplates'] )
+			? $GLOBALS['oFetchTweets_Option']->aOptions['arrTemplates']
 			: array();
 				
 		// Add the default template.
@@ -65,7 +66,7 @@ abstract class FetchTweets_Templates_ {
 				continue;
 			}
 			
-			$arrActiveTemplate = $arrActiveTemplate + self::$arrStructure_Template;
+			$arrActiveTemplate = $arrActiveTemplate + self::$aStructure_Template;
 			$arrActiveTemplate['strDirPath'] = $arrActiveTemplate['strDirPath']	// check if it's not missing
 				? $arrActiveTemplate['strDirPath']
 				: dirname( $arrActiveTemplate['strCSSPath'] );
@@ -143,7 +144,7 @@ abstract class FetchTweets_Templates_ {
 					'intIndex' => $intIndex++,
 				) 
 				+ $this->getTemplateData( $strDirPath . DIRECTORY_SEPARATOR . 'style.css' ) 
-				+ self::$arrStructure_Template;
+				+ self::$aStructure_Template;
 					
 		}
 		
@@ -161,80 +162,6 @@ abstract class FetchTweets_Templates_ {
 	/*
 	 * Event methods 
 	 * */
-	/**
-	 * Outputs the stylesheet of the given template slug and then exits.
-	 * 
-	 * @remark			This is called from the event class. 
-	 */
-	public function loadStyle( $strTemplateSlug ) {
-
-		$strTemplateSlug = trim( $strTemplateSlug );
-		$arrTemplate = isset( $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'][ $strTemplateSlug ] )
-			? $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'][ $strTemplateSlug ]
-			: $this->findDefaultTemplateDetails();
-			
-		if ( ! file_exists( $arrTemplate['strCSSPath'] ) )
-			die( __( '/* The CSS file does not exist. */', 'fetch-tweets' ) );	// the file must exist.
-
-// $strCSS = "/*testign*/";			
-$strCSS = $this->getFileContents( $arrTemplate['strCSSPath'] );
-
-		ob_start( "ob_gzhandler" ); 
-		header( "Content-Type: text/css" ); 
-		header( "X-Content-Type-Options: nosniff" );	// for IE 8 or greater.
-		
-        // header( 'Cache-control: max-age=' . (60*60*24*30) );
-		// header( "Cache-Control: public", false ); 
-		// header( "Cache-Control: private", false ); // required for certain browsers 
-		// header( "Content-Transfer-Encoding: binary" ); 
-        // header( 'Expires: ' . gmdate ( DATE_RFC1123, time()+60*60*24*30 ) );
-
-		
-$intCacheDuration = 60000000; // Far far away in time
-
-// Expires
-header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $intCacheDuration ) . ' GMT' );
-
-// Cache-Control
-header( 'Cache-Control: must-revalidate, max-age=' . ( time() + $intCacheDuration ) );
-
-header( 'Last-Modified: ' . $this->get_http_mdate() );
-
-// generate unique ID, using the modification date and the absolute path to the file
-$strHash = md5 ( filemtime( $_SERVER['DOCUMENT_ROOT'] . $_SERVER['PHP_SELF'] ) . $_SERVER['DOCUMENT_ROOT'] . $_SERVER['PHP_SELF'] );
-header( 'Etag: "' . $strHash . '"' );
-		
-		
-		
-		// $ctx = stream_context_create( array(
-			// 'http' => array(
-				// 'timeout' => 0.1
-				// )
-			// )
-		// );
-		
-		// die( file_get_contents( $arrTemplate['strCSSPath'], 0, $ctx) );
-		
-		die( $strCSS );		// echo the contents and exit.		
-		// die( file_get_contents( $arrTemplate['strCSSPath'] ) );		// echo the contents and exit.		
-		
-	}
-	
-		private function getFileContents( $arrFiles ) {
-			
-			$strCSSData = '';
-			foreach ( ( array ) $arrFiles as $strFilePath ) {
-				$hFile = fopen( $strFilePath, 'r' );
-				$strCSSData .= "\n" . fread( $hFile, filesize( $strFilePath ));
-				fclose( $hFile );
-			}
-			return trim( $strCSSData );
-			
-		}
-		private function get_http_mdate() {
-			return gmdate( 'D, d M Y H:i:s', filemtime( $_SERVER['DOCUMENT_ROOT'] . $_SERVER['PHP_SELF'] ) ) . ' GMT';
-		}	
-	
 	/**
 	 * Includes activated templates' functions.php files.
 	 * 
@@ -330,7 +257,7 @@ header( 'Etag: "' . $strHash . '"' );
 				'strSlug' => md5( $strDirPath ),			
 			) 
 			+ $this->getTemplateData( $strDirPath . '/style.css' )
-			+ self::$arrStructure_Template;		
+			+ self::$aStructure_Template;		
 
 // FetchTweets_Debug::getArray( $arrDefaultTemplate, dirname( __FILE__ ) . '/default_template.txt' );		
 		return $arrDefaultTemplate;
@@ -339,9 +266,9 @@ header( 'Etag: "' . $strHash . '"' );
 	
 	public function getDefaultTemplateSlug() {
 		
-		$arrDefaultTemplate = empty( $GLOBALS['oFetchTweets_Option']->arrOptions['arrDefaultTemplate'] ) || ! file_exists( $GLOBALS['oFetchTweets_Option']->arrOptions['arrDefaultTemplate']['strCSSPath'] )
+		$arrDefaultTemplate = empty( $GLOBALS['oFetchTweets_Option']->aOptions['arrDefaultTemplate'] ) || ! file_exists( $GLOBALS['oFetchTweets_Option']->aOptions['arrDefaultTemplate']['strCSSPath'] )
 			? $this->findDefaultTemplateDetails()
-			: $GLOBALS['oFetchTweets_Option']->arrOptions['arrDefaultTemplate'] + self::$arrStructure_Template;
+			: $GLOBALS['oFetchTweets_Option']->aOptions['arrDefaultTemplate'] + self::$aStructure_Template;
 		
 		return $arrDefaultTemplate['strSlug'];		
 		
@@ -349,9 +276,9 @@ header( 'Etag: "' . $strHash . '"' );
 	
 	public function getDefaultTemplatePath() {
 			
-		$arrDefaultTemplate = empty( $GLOBALS['oFetchTweets_Option']->arrOptions['arrDefaultTemplate'] ) || ! file_exists( $GLOBALS['oFetchTweets_Option']->arrOptions['arrDefaultTemplate']['strCSSPath'] )
+		$arrDefaultTemplate = empty( $GLOBALS['oFetchTweets_Option']->aOptions['arrDefaultTemplate'] ) || ! file_exists( $GLOBALS['oFetchTweets_Option']->aOptions['arrDefaultTemplate']['strCSSPath'] )
 			? $this->findDefaultTemplateDetails()
-			: $GLOBALS['oFetchTweets_Option']->arrOptions['arrDefaultTemplate'] + self::$arrStructure_Template;
+			: $GLOBALS['oFetchTweets_Option']->aOptions['arrDefaultTemplate'] + self::$aStructure_Template;
 		
 		return $arrDefaultTemplate['strTemplatePath'];		
 			

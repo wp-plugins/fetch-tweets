@@ -7,218 +7,256 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 		 * Form Elements
 		 */
 		$this->addSettingSections(
+			'fetch_tweets_settings',
 			array(
-				'strSectionID'		=> 'twitter_connect',
-				'strPageSlug'		=> 'fetch_tweets_settings',
-				'strTabSlug'		=> 'twitter_connect',
-				'strTitle'			=> __( 'Authenticate', 'fetch-tweets' ),
+				'section_id'		=> 'twitter_connect',
+				// 'page_slug'		=> 'fetch_tweets_settings',
+				'tab_slug'		=> 'twitter_connect',
+				'title'			=> __( 'Authenticate', 'fetch-tweets' ),
 			),		
 			array(
-				'strSectionID'		=> 'authentication_keys',
-				'strPageSlug'		=> 'fetch_tweets_settings',
-				'strTabSlug'		=> 'authentication',
-				'strTitle'			=> __( 'Authentication Keys', 'fetch-tweets' ),
-				'strDescription'	=> __( 'These keys are required to process oAuth requests of the twitter API.', 'fetch-tweets' ),
+				'section_id'		=> 'authentication_keys',
+				// 'page_slug'		=> 'fetch_tweets_settings',
+				'tab_slug'		=> 'authentication',
+				'title'			=> __( 'Authentication Keys', 'fetch-tweets' ),
+				'description'	=> __( 'These keys are required to process oAuth requests of the twitter API.', 'fetch-tweets' ),
 			),
 			array(
-				'strSectionID'		=> 'default_values',
-				'strPageSlug'		=> 'fetch_tweets_settings',
-				'strTabSlug'		=> 'general',
-				'strTitle'			=> __( 'Default Values', 'fetch-tweets' ),
-				'strHelp'			=> __( 'Set the default option values which will be applied when the argument values are not set.', 'fetch-tweets' )
+				'section_id'		=> 'default_values',
+				// 'page_slug'		=> 'fetch_tweets_settings',
+				'tab_slug'		=> 'general',
+				'title'			=> __( 'Default Values', 'fetch-tweets' ),
+				'help'			=> __( 'Set the default option values which will be applied when the argument values are not set.', 'fetch-tweets' )
 										. __( 'These values will be overridden by the argument set directly to the widget options or shortcode.', 'fetch-tweets' ),
 			),			
 			array(
-				'strSectionID'		=> 'cache_settings',
-				'strPageSlug'		=> 'fetch_tweets_settings',
-				'strTabSlug'		=> 'general',
-				'strTitle'			=> __( 'Cache Settings', 'fetch-tweets' ),
+				'section_id'		=> 'cache_settings',
+				// 'page_slug'		=> 'fetch_tweets_settings',
+				'tab_slug'		=> 'general',
+				'title'			=> __( 'Cache Settings', 'fetch-tweets' ),
 			),			
 			array(
-				'strSectionID'		=> 'capabilities',
-				'strCapability'		=> 'manage_options',
-				'strPageSlug'		=> 'fetch_tweets_settings',
-				'strTabSlug'		=> 'misc',
-				'strTitle'			=> __( 'Access Rights', 'fetch-tweets' ),
-				'strDescription'	=> __( 'Set the access levels to the plugin setting pages.', 'fetch-tweets' ),
+				'section_id'		=> 'capabilities',
+				'capability'		=> 'manage_options',
+				// 'page_slug'		=> 'fetch_tweets_settings',
+				'tab_slug'		=> 'misc',
+				'title'			=> __( 'Access Rights', 'fetch-tweets' ),
+				'description'	=> __( 'Set the access levels to the plugin setting pages.', 'fetch-tweets' ),
 			),			
 			array(
-				'strSectionID'		=> 'reset_settings',
-				'strPageSlug'		=> 'fetch_tweets_settings',
-				'strCapability'		=> 'manage_options',
-				'strTabSlug'		=> 'reset',
-				'strTitle'			=> __( 'Reset Settings', 'fetch-tweets' ),
-				'strDescription'	=> __( 'If you get broken options, initialize them by performing reset.', 'fetch-tweets' ),
+				'section_id'		=> 'reset_settings',
+				// 'page_slug'		=> 'fetch_tweets_settings',
+				'capability'		=> 'manage_options',
+				'tab_slug'		=> 'reset',
+				'title'			=> __( 'Reset Settings', 'fetch-tweets' ),
+				'description'	=> __( 'If you get broken options, initialize them by performing reset.', 'fetch-tweets' ),
 			),
 			array(
-				'strSectionID'		=> 'caches',
-				'strPageSlug'		=> 'fetch_tweets_settings',
-				'strTabSlug'		=> 'reset',
-				'strTitle'			=> __( 'Caches', 'fetch-tweets' ),
-				'strDescription'	=> __( 'If you need to refresh the fetched tweets, clear the cashes.', 'fetch-tweets' ),
+				'section_id'		=> 'caches',
+				// 'page_slug'		=> 'fetch_tweets_settings',
+				'tab_slug'		=> 'reset',
+				'title'			=> __( 'Caches', 'fetch-tweets' ),
+				'description'	=> __( 'If you need to refresh the fetched tweets, clear the cashes.', 'fetch-tweets' ),
 			)			
 		);	
 		$this->addSettingSections(
+			'fetch_tweets_add_rule_by_list',
 			array(
-				'strSectionID'		=> 'add_rule_by_list',
-				'strPageSlug'		=> 'fetch_tweets_add_rule_by_list',
-				'strTitle'			=> __( 'Specify the Screen Name', 'fetch-tweets' ),
-				'strDescription'	=> __( 'In order to select list, the user name(screen name) of the account that owns the list must be specified.', 'fetch-tweets' ),
+				'section_id'	=> 'add_rule_by_list',
+				'title'			=> __( 'Specify the Screen Name', 'fetch-tweets' ),
+				'description'	=> __( 'In order to select list, the user name(screen name) of the account that owns the list must be specified.', 'fetch-tweets' ),
 			)		
 		);
+		
+		$this->addSettingFields(
+			'add_rule_by_list',
+			array(	
+				'field_id' => 'list_owner_screen_name',
+				'section_id' => 'add_rule_by_list',
+				'title' => __( 'Owner Screen Name', 'fetch-tweets' ),
+				'description' => __( 'The screen name(user name) that owns the list.', 'fetch-tweets' ) . '<br />'
+					. 'e.g. miunosoft',
+				'type' => 'text',
+				'value' => '',
+				'attributes'	=>	array(
+					'size'	=>	40,
+				),				
+			),		
+			array(  // single button
+				'field_id' => 'list_proceed',
+				'section_id' => 'add_rule_by_list',
+				'type' => 'submit',
+				'before_field' => "<div class='right-button'>",
+				'after_field' => "</div>",
+// 'vLabelMinWidth' => 0,
+				'label' => __( 'Proceed', 'fetch-tweets' ),
+				// 'href'	=> admin_url(),
+				// 'href'	=> admin_url( 'post-new.php?post_type=fetch_tweets&tweet_type=list' ),
+				// 'vRedirect'	=> admin_url(),
+				// 'vRedirect'	=> admin_url( 'post-new.php?post_type=fetch_tweets&tweet_type=list' ),
+				'attributes'	=>	array(
+					'class'	=>	'button button-primary',
+				),					
+			)		
+		);		
 		
 		// Add setting fields
  		$this->addSettingFields(
 			array(	
-				'strFieldID' => 'connect_to_twitter',
-				'strSectionID' => 'twitter_connect',
-				'strTitle' => __( 'Connect to Twitter', 'fetch-tweets' ),
-				'vLabel' => __( 'Connect', 'fetch-tweets' ),
-				'vLink' => add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'twitter_redirect' ), admin_url( $GLOBALS['pagenow'] ) ),
-				'strType' => 'submit',
+				'field_id' => 'connect_to_twitter',
+				'section_id' => 'twitter_connect',
+				'title' => __( 'Connect to Twitter', 'fetch-tweets' ),
+				'label' => __( 'Connect', 'fetch-tweets' ),
+				'href' => add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'twitter_redirect' ), admin_url( $GLOBALS['pagenow'] ) ),
+				'type' => 'submit',
 			),	
 			// array(	
-				// 'strFieldID' => 'disconnect_from_twitter',
-				// 'strSectionID' => 'twitter_connect',
-				// 'strTitle' => '',
-				// 'fIf' => $this->oOption->isAuthKeysAutomaticallySet(),
-				// 'vLabel' => array( 
+				// 'field_id' => 'disconnect_from_twitter',
+				// 'section_id' => 'twitter_connect',
+				// 'title' => '',
+				// 'if' => $this->oOption->isAuthKeysAutomaticallySet(),
+				// 'label' => array( 
 					// 'disconnect' => __( 'Disconnect from Twitter', 'fetch-tweets' ),
 				// ),
 				// 'vClassAttribute' => array(
 					// 'disconnect' => 'button button-secondary',
 				// ),
-				// 'vLink' => array(
+				// 'href' => array(
 					// 'disconnect' => add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'twitter_connect' ), admin_url( $GLOBALS['pagenow'] ) ),
 				// ),
-				// 'strType' => 'submit',
+				// 'type' => 'submit',
 			// ),	
 			
 			array(	
-				'strFieldID' => 'manual_authentication',
-				'strSectionID' => 'twitter_connect',
-				'strTitle' => __( 'Manual', 'fetch-tweets' ),
-				'vClassAttribute' => 'button button-secondary',
-				'vLabel' => __( 'Set Keys Manually', 'fetch-tweets' ),
-				'vLink' => add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'authentication', 'settings-updated' => false ) ),
-				'strType' => 'submit',
+				'field_id' => 'manual_authentication',
+				'section_id' => 'twitter_connect',
+				'title' => __( 'Manual', 'fetch-tweets' ),
+				'label' => __( 'Set Keys Manually', 'fetch-tweets' ),
+				'href' => add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'authentication', 'settings-updated' => false ) ),
+				'type' => 'submit',
+				'attributes'	=>	array(
+					'class'	=>	'button button-secondary',
+				),
 			)			
 		); 
 		$this->addSettingFields(
 			array(	
-				'strFieldID' => 'consumer_key',
-				'strSectionID' => 'authentication_keys',
-				'strTitle' => __( 'Consumer Key', 'fetch-tweets' ),
-				'strType' => 'text',
-				'vSize' => 80,
+				'field_id' => 'consumer_key',
+				'section_id' => 'authentication_keys',
+				'title' => __( 'Consumer Key', 'fetch-tweets' ),
+				'type' => 'text',
+				'attributes'	=>	array(
+					'size'	=>	60,
+				),				
 			),
 			array(	
-				'strFieldID' => 'consumer_secret',
-				'strSectionID' => 'authentication_keys',
-				'strTitle' => __( 'Consumer Secret', 'fetch-tweets' ),
-				'strType' => 'text',
-				'vSize' => 80,
+				'field_id' => 'consumer_secret',
+				'section_id' => 'authentication_keys',
+				'title' => __( 'Consumer Secret', 'fetch-tweets' ),
+				'type' => 'text',
+				'attributes'	=>	array(
+					'size'	=>	60,
+				),				
 			),
 			array(	
-				'strFieldID' => 'access_token',
-				'strSectionID' => 'authentication_keys',
-				'strTitle' => __( 'Access Token', 'fetch-tweets' ),
-				'strType' => 'text',
-				'vSize' => 80,
+				'field_id' => 'access_token',
+				'section_id' => 'authentication_keys',
+				'title' => __( 'Access Token', 'fetch-tweets' ),
+				'type' => 'text',
+				'attributes'	=>	array(
+					'size'	=>	60,
+				),
 			),
 			array(	
-				'strFieldID' => 'access_secret',
-				'strSectionID' => 'authentication_keys',
-				'strTitle' => __( 'Access Secret', 'fetch-tweets' ),
-				'strType' => 'text',
-				'vSize' => 80,
-				'strAfterField' => '<p class="description">' 
+				'field_id' => 'access_secret',
+				'section_id' => 'authentication_keys',
+				'title' => __( 'Access Secret', 'fetch-tweets' ),
+				'type' => 'text',
+				'attributes'	=>	array(
+					'size'	=>	60,
+				),
+				'description' => '<p class="description">' 
 					. sprintf( __( 'You can obtain those keys by logging in to <a href="%1$s" target="_blank">Twitter Developers</a>', 'fetch-tweets' ), 'https://dev.twitter.com/apps' )
 					. '</p>',
 			),
 			array(  // single button
-				'strFieldID' => 'submit_authentication_keys',
-				'strSectionID' => 'authentication_keys',
-				'strType' => 'submit',
-				'strBeforeField' => "<div class='right-button'>",
-				'strAfterField' => "</div>",
-				'vLabelMinWidth' => 0,
-				'vLabel' => __( 'Authenticate', 'fetch-tweets' ),
-				'vClassAttribute' => 'button button-primary',
+				'field_id' => 'submit_authentication_keys',
+				'section_id' => 'authentication_keys',
+				'type' => 'submit',
+				'before_field' => "<div class='right-button'>",
+				'after_field' => "</div>",
+				'label' => __( 'Authenticate', 'fetch-tweets' ),
+				'attributes'	=>	array(
+					'class'	=>	'button button-primary',
+				),
 			)		
 		);
 		// default_values
 		$this->addSettingFields(
 			array(
-				'strFieldID' => 'count',
-				'strSectionID' => 'default_values',
-				'strTitle' => __( 'Number of Items', 'fetch-tweets' ),
-				'strHelp' => __( 'The number of tweets to display.', 'fetch-tweets' )
-					. __( 'Default', 'fetch-tweets' ) . ': ' . $GLOBALS['oFetchTweets_Option']->arrStructure_DefaultParams['count']
+				'field_id' => 'count',
+				'section_id' => 'default_values',
+				'title' => __( 'Number of Items', 'fetch-tweets' ),
+				'help' => __( 'The number of tweets to display.', 'fetch-tweets' )
+					. __( 'Default', 'fetch-tweets' ) . ': ' . $GLOBALS['oFetchTweets_Option']->aStructure_DefaultParams['count']
 					. __( 'This option corresponds to the <code>count</code> argument value. For instance, with this shortcode, <code>[fetch_tweets id="10" count="30"]</code>, the count value, 30, will override this option. If the <code>count</code> parameter is not set, this option value will be used.', 'fetch-tweets' ),
-				'vDefault'	=> $GLOBALS['oFetchTweets_Option']->arrStructure_DefaultParams['count'],
-				'strType' => 'number',
+				'default'	=> $GLOBALS['oFetchTweets_Option']->aStructure_DefaultParams['count'],
+				'type' => 'number',
 			),
 			array(
-				'strFieldID'		=> 'twitter_media',
-				'strSectionID' => 'default_values',
-				'strTitle'			=> __( 'Twitter Media', 'fetch-tweets' ),
-				'strType'			=> 'checkbox',
-				'vLabel'			=> __( 'Display media images posted in the tweet that are recognized as media file by Twitter.' ),
-				'strHelp'	=> __( 'This option corresponds to the <code>twitter_media</code> argument value. For instance, with this shortcode, <code>[fetch_tweets id="10" count="30"]</code>, the count value, 30, will override this option. If the <code>count</code> parameter is not set, this option value will be used.', 'fetch-tweets' ) . ' '
+				'field_id'		=> 'twitter_media',
+				'section_id' => 'default_values',
+				'title'			=> __( 'Twitter Media', 'fetch-tweets' ),
+				'type'			=> 'checkbox',
+				'label'			=> __( 'Display media images posted in the tweet that are recognized as media file by Twitter.' ),
+				'help'	=> __( 'This option corresponds to the <code>twitter_media</code> argument value. For instance, with this shortcode, <code>[fetch_tweets id="10" count="30"]</code>, the count value, 30, will override this option. If the <code>count</code> parameter is not set, this option value will be used.', 'fetch-tweets' ) . ' '
 					. __( 'Currently only photos are supported by the Twitter API.' ),
-				'vDefault'			=> $GLOBALS['oFetchTweets_Option']->arrStructure_DefaultParams['twitter_media'],
+				'default'			=> $GLOBALS['oFetchTweets_Option']->aStructure_DefaultParams['twitter_media'],
 			),
 			array(
-				'strFieldID'		=> 'external_media',
-				'strSectionID' => 'default_values',
-				'strTitle'			=> __( 'External Media', 'fetch-tweets' ),
-				'strType'			=> 'checkbox',
-				'vLabel'			=> __( 'Replace media links of external sources to an embedded element.', 'fetch-tweets' ),
-				'strHelp'			=> __( 'This option corresponds to the <code>external_media</code> argument value. For instance, with this shortcode, <code>[fetch_tweets id="10" count="30"]</code>, the count value, 30, will override this option. If the <code>count</code> parameter is not set, this option value will be used.', 'fetch-tweets' ) . ' '
+				'field_id'		=> 'external_media',
+				'section_id' => 'default_values',
+				'title'			=> __( 'External Media', 'fetch-tweets' ),
+				'type'			=> 'checkbox',
+				'label'			=> __( 'Replace media links of external sources to an embedded element.', 'fetch-tweets' ),
+				'help'			=> __( 'This option corresponds to the <code>external_media</code> argument value. For instance, with this shortcode, <code>[fetch_tweets id="10" count="30"]</code>, the count value, 30, will override this option. If the <code>count</code> parameter is not set, this option value will be used.', 'fetch-tweets' ) . ' '
 					. __( 'Unlike the above media images, there are media links that are not categorized as media by the Twitter API. Thus, enabling this option will attempt to replace them to the embedded elements.', 'fetch-tweets' ) . ' e.g. youtube, vimeo, dailymotion etc.',
-				'vDefault'			=> $GLOBALS['oFetchTweets_Option']->arrStructure_DefaultParams['external_media'],
-			),					
-			array(  // single button
-				'strFieldID' => 'submit_default_values',
-				'strSectionID' => 'default_values',
-				'strType' => 'submit',
-				'strBeforeField' => "<div class='right-button'>",
-				'strAfterField' => "</div>",
-				'vLabelMinWidth' => 0,
-				'vLabel' => __( 'Save Changes', 'fetch-tweets' ),
-				'vClassAttribute' => 'button button-primary',
-			)			
+				'default'			=> $GLOBALS['oFetchTweets_Option']->aStructure_DefaultParams['external_media'],
+			),
+			array()
 		);
 		$this->addSettingFields(
 			array(
-				'strFieldID'		=> 'cache_for_errors',
-				'strSectionID' 		=> 'cache_settings',
-				'strTitle'			=> __( 'Cache for Errors', 'fetch-tweets' ),
-				'strType'			=> 'checkbox',
-				'vLabel'			=> __( 'Cache fetched results even for an error. This reduces the chances to reach the Twitter API rate limit.', 'fetch-tweets' ),
+				'field_id'		=> 'cache_for_errors',
+				'section_id' 		=> 'cache_settings',
+				'title'			=> __( 'Cache for Errors', 'fetch-tweets' ),
+				'type'			=> 'checkbox',
+				'label'			=> __( 'Cache fetched results even for an error.', 'fetch-tweets' ),
+				'description'	=> __( 'This reduces the chances to reach the Twitter API rate limit.', 'fetch-tweets' ),
 			),
 			array(  // single button
-				'strFieldID' => 'submit_cache_settings',
-				'strSectionID' => 'cache_settings',
-				'strType' => 'submit',
-				'strBeforeField' => "<div class='right-button'>",
-				'strAfterField' => "</div>",
-				'vLabelMinWidth' => 0,
-				'vLabel' => __( 'Save Changes', 'fetch-tweets' ),
-				'vClassAttribute' => 'button button-primary',
+				'field_id' => 'submit_cache_settings',
+				'section_id' => 'cache_settings',
+				'type' => 'submit',
+				'before_field' => "<div class='right-button'>",
+				'after_field' => "</div>",
+'vLabelMinWidth' => 0,
+				'label' => __( 'Save Changes', 'fetch-tweets' ),
+				'attributes'	=>	array(
+					'class'	=>	'button button-primary',
+				),
 			)		
 		);
 		$this->addSettingFields(
 			array(
-				'strFieldID' => 'setting_page_capability',
-				'strSectionID' => 'capabilities',
-				'strTitle' => __( 'Capability', 'fetch-tweets' ),
-				'strDescription' => __( 'Select the user role that is allowed to access the plugin setting pages.', 'fetch-tweets' )
+				'field_id' => 'setting_page_capability',
+				'section_id' => 'capabilities',
+				'title' => __( 'Capability', 'fetch-tweets' ),
+				'description' => __( 'Select the user role that is allowed to access the plugin setting pages.', 'fetch-tweets' )
 					. __( 'Default', 'fetch-tweets' ) . ': ' . __( 'Administrator', 'fetch-tweets' ),
-				'strType' => 'select',
-				'strCapability' => 'manage_options',
-				'vLabel' => array(						
+				'type' => 'select',
+				'capability' => 'manage_options',
+				'label' => array(						
 					'manage_options' => __( 'Administrator', 'responsive-column-widgets' ),
 					'edit_pages' => __( 'Editor', 'responsive-column-widgets' ),
 					'publish_posts' => __( 'Author', 'responsive-column-widgets' ),
@@ -227,24 +265,26 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 				),
 			),
 			array(  // single button
-				'strFieldID' => 'submit_misc',
-				'strSectionID' => 'capabilities',
-				'strType' => 'submit',
-				'strBeforeField' => "<div class='right-button'>",
-				'strAfterField' => "</div>",
-				'vLabelMinWidth' => 0,
-				'vLabel' => __( 'Save Changes', 'fetch-tweets' ),
-				'vClassAttribute' => 'button button-primary',
+				'field_id' => 'submit_misc',
+				'section_id' => 'capabilities',
+				'type' => 'submit',
+				'before_field' => "<div class='right-button'>",
+				'after_field' => "</div>",
+'vLabelMinWidth' => 0,
+				'label' => __( 'Save Changes', 'fetch-tweets' ),
+				'attributes'	=>	array(
+					'class'	=>	'button button-primary',
+				),
 			)			
 		);
 		$this->addSettingFields(
 			array(	
-				'strFieldID' => 'option_sections',
-				'strSectionID' => 'reset_settings',
-				'strTitle' => __( 'Options to Delete', 'fetch-tweets' ),
-				'strType' => 'checkbox',
-				'vDelimiter' => '<br />',
-				'vLabel' => array(
+				'field_id' => 'option_sections',
+				'section_id' => 'reset_settings',
+				'title' => __( 'Options to Delete', 'fetch-tweets' ),
+				'type' => 'checkbox',
+				'delimiter' => '<br />',
+				'label' => array(
 					'all' => __( 'Reset', 'fetch-tweets' ), 
 					// the followings are not supported yet
 					// 'general' => __( 'General options', 'fetch-tweets' ), 	
@@ -252,60 +292,37 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 				),
 			),
 			// array(  // single button
-				// 'strFieldID' => 'submit_reset_settings',
-				// 'strSectionID' => 'reset_settings',
-				// 'strType' => 'submit',
-				// 'strBeforeField' => "<div class='right-button'>",
-				// 'strAfterField' => "</div>",
+				// 'field_id' => 'submit_reset_settings',
+				// 'section_id' => 'reset_settings',
+				// 'type' => 'submit',
+				// 'before_field' => "<div class='right-button'>",
+				// 'after_field' => "</div>",
 				// 'vLabelMinWidth' => 0,
-				// 'vLabel' => __( 'Perform', 'fetch-tweets' ),
+				// 'label' => __( 'Perform', 'fetch-tweets' ),
 				// 'vClassAttribute' => 'button button-primary',
 			// ),
 			array(	
-				'strFieldID' => 'clear_caches',
-				'strSectionID' => 'caches',
-				'strTitle' => __( 'Clear Caches', 'fetch-tweets' ),
-				'strType' => 'checkbox',
-				'vLabel' => __( 'Clear tweet caches', 'fetch-tweets' ),
+				'field_id' => 'clear_caches',
+				'section_id' => 'caches',
+				'title' => __( 'Clear Caches', 'fetch-tweets' ),
+				'type' => 'checkbox',
+				'label' => __( 'Clear tweet caches', 'fetch-tweets' ),
 			),
 			array(  // single button
-				'strFieldID' => 'submit_reset_settings',
-				'strSectionID' => 'caches',
-				'strType' => 'submit',
-				'strBeforeField' => "<div class='right-button'>",
-				'strAfterField' => "</div>",
-				'vLabelMinWidth' => 0,
-				'vLabel' => __( 'Perform', 'fetch-tweets' ),
-				'vClassAttribute' => 'button button-primary',
+				'field_id' => 'submit_reset_settings',
+				'section_id' => 'caches',
+				'type' => 'submit',
+				'before_field' => "<div class='right-button'>",
+				'after_field' => "</div>",
+'vLabelMinWidth' => 0,
+				'label' => __( 'Perform', 'fetch-tweets' ),
+				'attributes'	=>	array(
+					'class'	=>	'button button-primary',
+				),
 			)			
 
 		);
-		$this->addSettingFields(
-			array(	
-				'strFieldID' => 'list_owner_screen_name',
-				'strSectionID' => 'add_rule_by_list',
-				'strTitle' => __( 'Owner Screen Name', 'fetch-tweets' ),
-				'strDescription' => __( 'The screen name(user name) that owns the list.', 'fetch-tweets' ) . '<br />'
-					. 'e.g. miunosoft',
-				'strType' => 'text',
-				'vValue' => '',
-				'vSize' => 40,
-			),		
-			array(  // single button
-				'strFieldID' => 'list_proceed',
-				'strSectionID' => 'add_rule_by_list',
-				'strType' => 'submit',
-				'strBeforeField' => "<div class='right-button'>",
-				'strAfterField' => "</div>",
-				'vLabelMinWidth' => 0,
-				'vLabel' => __( 'Proceed', 'fetch-tweets' ),
-				// 'vLink'	=> admin_url(),
-				// 'vLink'	=> admin_url( 'post-new.php?post_type=fetch_tweets&tweet_type=list' ),
-				// 'vRedirect'	=> admin_url(),
-				// 'vRedirect'	=> admin_url( 'post-new.php?post_type=fetch_tweets&tweet_type=list' ),
-				'vClassAttribute' => 'button button-primary',
-			)		
-		);
+
 	}	
 				
 }

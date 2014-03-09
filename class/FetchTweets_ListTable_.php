@@ -12,9 +12,6 @@
  
 */
 
-
-
-
 if ( ! class_exists( 'WP_List_Table' ) ) require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 
 
@@ -153,7 +150,7 @@ class FetchTweets_ListTable_ extends WP_List_Table {
     public function process_bulk_action() {
 		
 // echo '<h3>Template Options before Updating</h3>';
-// echo '<pre>'. print_r( $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'], true ) . '</pre>';	
+// echo '<pre>'. print_r( $GLOBALS['oFetchTweets_Option']->aOptions['arrTemplates'], true ) . '</pre>';	
 
 // echo '<h3>Set Data</h3>';
 // echo '<pre>'. print_r( $this->arrData, true ) . '</pre>';	
@@ -165,7 +162,7 @@ class FetchTweets_ListTable_ extends WP_List_Table {
             case 'activate':
 				foreach( ( array ) $_REQUEST['template'] as $strDirSlug ) {
 					$this->arrData[ $strDirSlug ]['fIsActive'] = true;
-					$GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'][ $strDirSlug ] = $this->arrData[ $strDirSlug ];
+					$GLOBALS['oFetchTweets_Option']->aOptions['arrTemplates'][ $strDirSlug ] = $this->arrData[ $strDirSlug ];
 				}
 				$GLOBALS['oFetchTweets_Option']->saveOptions();
 				wp_redirect( admin_url( 'edit.php?post_type=fetch_tweets&page=fetch_tweets_templates' ) );
@@ -173,7 +170,7 @@ class FetchTweets_ListTable_ extends WP_List_Table {
             case 'deactivate':
 				foreach( ( array ) $_REQUEST['template'] as $strDirSlug ) {
 					$this->arrData[ $strDirSlug ]['fIsActive'] = false;
-					unset( $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'][ $strDirSlug ] );	// the option array only stores active templates.
+					unset( $GLOBALS['oFetchTweets_Option']->aOptions['arrTemplates'][ $strDirSlug ] );	// the option array only stores active templates.
 				}
 				$GLOBALS['oFetchTweets_Option']->saveOptions();
 				wp_redirect( admin_url( 'edit.php?post_type=fetch_tweets&page=fetch_tweets_templates' ) );
@@ -186,14 +183,14 @@ class FetchTweets_ListTable_ extends WP_List_Table {
 				foreach( $this->arrData as &$arrTemplate ) // the passed template data array
 					$arrTemplate['fIsDefault'] = false;
 				unset( $arrTemplate ); // release the reference in foreach(), to be safe.
-				foreach( $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'] as &$arrTemplate )	// the saved template option array
+				foreach( $GLOBALS['oFetchTweets_Option']->aOptions['arrTemplates'] as &$arrTemplate )	// the saved template option array
 					$arrTemplate['fIsDefault'] = false;
 				unset( $arrTemplate ); // release the reference in foreach(), to be safe.
 				
 				// Enable the selected default template.
 				$this->arrData[ $_REQUEST['template'] ]['fIsDefault'] = true;				
-				$GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'][ $_REQUEST['template'] ] = $this->arrData[ $_REQUEST['template'] ];
-				$GLOBALS['oFetchTweets_Option']->arrOptions['arrDefaultTemplate'] = $this->arrData[ $_REQUEST['template'] ];
+				$GLOBALS['oFetchTweets_Option']->aOptions['arrTemplates'][ $_REQUEST['template'] ] = $this->arrData[ $_REQUEST['template'] ];
+				$GLOBALS['oFetchTweets_Option']->aOptions['arrDefaultTemplate'] = $this->arrData[ $_REQUEST['template'] ];
 				
 				break;	
             default:
@@ -202,13 +199,13 @@ class FetchTweets_ListTable_ extends WP_List_Table {
         }   
 
 		// Save the options.
-		// unset( $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'] );	// just in case.
+		// unset( $GLOBALS['oFetchTweets_Option']->aOptions['arrTemplates'] );	// just in case.
 		$GLOBALS['oFetchTweets_Option']->saveOptions();
 
 // echo '<h3>List Data Array</h3>';
 // echo '<pre>'. print_r( $this->arrData, true ) . '</pre>';	
 // echo '<h3>Template Options</h3>';
-// echo '<pre>'. print_r( $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'], true ) . '</pre>';	
+// echo '<pre>'. print_r( $GLOBALS['oFetchTweets_Option']->aOptions['arrTemplates'], true ) . '</pre>';	
 	
 		        
     }
@@ -218,7 +215,7 @@ class FetchTweets_ListTable_ extends WP_List_Table {
 // echo '<h3>List Data Array</h3>';
 // echo '<pre>'. print_r( $this->arrData, true ) . '</pre>';	
 // echo '<h3>Template Options</h3>';
-// echo '<pre>'. print_r( $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'], true ) . '</pre>';	
+// echo '<pre>'. print_r( $GLOBALS['oFetchTweets_Option']->aOptions['arrTemplates'], true ) . '</pre>';	
 	
         /**
          * Set how many records per page to show
@@ -277,7 +274,7 @@ class FetchTweets_ListTable_ extends WP_List_Table {
 			
             $strOrderBy = ( !empty( $_REQUEST['orderby'] ) ) ? $_REQUEST['orderby'] : 'intIndex'; //If no sort, default to title
 			if ( $strOrderBy == 'description' )
-				$strOrderBy = 'strDescription';
+				$strOrderBy = 'description';
 			else if ( $strOrderBy == 'name' )
 				$strOrderBy = 'strName';
 						

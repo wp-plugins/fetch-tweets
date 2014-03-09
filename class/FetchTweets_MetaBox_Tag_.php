@@ -4,8 +4,8 @@ abstract class FetchTweets_MetaBox_Tag_ {
 	public function __construct() {
 		
 		// Remove the default tag meta box and add a custom meta box.
-		add_action( 'admin_menu', array( $this, 'removeDefaultMetaBoxes' ) );
-		add_action( 'add_meta_boxes', array( $this, 'addCustomMetaBoxes' ) );		
+		// add_action( 'admin_menu', array( $this, 'removeDefaultMetaBoxes' ) );
+		// add_action( 'add_meta_boxes', array( $this, 'addCustomMetaBoxes' ) );		
 		
 	}
 	
@@ -13,10 +13,8 @@ abstract class FetchTweets_MetaBox_Tag_ {
 		
 		// Remove 'Keywords' (like tags) metabox
 		$strTaxonomySlug = FetchTweets_Commons::TagSlug;
-		remove_meta_box( "tagsdiv-{$strTaxonomySlug}", FetchTweets_Commons::PostTypeSlug, 'side' );
-		
-		// Remove 'Groups' (like categories) metabox
-		// remove_meta_box( 'groupdiv', 'my-custom-post-type-slug', 'side' );
+		remove_meta_box( "tagsdiv-{$strTaxonomySlug}", FetchTweets_Commons::PostTypeSlug, 'side' );	
+
 	}	
 	
 	public function addCustomMetaBoxes() {

@@ -3,7 +3,7 @@
  * Available variables passed from the caller script
  * - $arrTweets : the fetched tweet arrays.
  * - $arrArgs	: the passed arguments such as item count etc.
- * - $arrOptions : the plugin options saved in the database.
+ * - $aOptions : the plugin options saved in the database.
  * */
  
 /*
@@ -61,12 +61,12 @@ $arrDefaultTemplateValues = array(
 	),	
 );
 // Retrieve the template option values.
-if ( ! isset( $arrOptions['fetch_tweets_templates']['fetch_tweets_template_single'] ) ) {	// for the fist time of calling the template.
-	$arrOptions['fetch_tweets_templates']['fetch_tweets_template_single'] = $arrDefaultTemplateValues;
-	update_option( FetchTweets_Commons::AdminOptionKey, $arrOptions );
+if ( ! isset( $aOptions['fetch_tweets_template_single'] ) ) {	// for the fist time of calling the template.
+	$aOptions['fetch_tweets_template_single'] = $arrDefaultTemplateValues;
+	update_option( FetchTweets_Commons::AdminOptionKey, $aOptions );
 }
 // Some new setting items are not be stored in the database, so merge the saved options with the defined default values.
-$arrTemplateOptions = FetchTweets_Utilities::uniteArrays( $arrOptions['fetch_tweets_templates']['fetch_tweets_template_single'], $arrDefaultTemplateValues );	// unites arrays recursively.
+$arrTemplateOptions = FetchTweets_Utilities::uniteArrays( $aOptions['fetch_tweets_template_single'], $arrDefaultTemplateValues );	// unites arrays recursively.
 
 // Set the template option values.
 $arrArgs['avatar_size']				= isset( $arrArgs['avatar_size'] ) ? $arrArgs['avatar_size'] : $arrTemplateOptions['fetch_tweets_template_single_avatar_size'];

@@ -4,13 +4,13 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 	public function start_FetchTweets_MetaBox_Options() {
 		
 		// Register the date custom field type
-		new FetchTweets_DateCustomFieldType( get_class( $this ), 'date' );		
+		new FetchTweets_DateCustomFieldType( get_class( $this ) );		
 		
 	}
 	
 	public function setUp() {
 		
-		switch ( $this->getTweetType() ) {
+		switch ( $this->_getTweetType() ) {
 			case 'search':
 				$this->addFieldsForTweetsBySearch();
 				break;
@@ -23,29 +23,17 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 			default:	
 				break;				
 		}			
-
-		// Common fields among the other field types including search, screen_name, and list.
-		$this->addSettingFields(									
-			array(
-				'strFieldID'		=> 'cache',
-				'strTitle'			=> __( 'Cache Duration', 'fetch-tweets' ),
-				'strDescription'	=> __( 'The cache lifespan in seconds. For no cache, set 0.', 'fetch-tweets' ) . ' ' . __( 'Default:', 'fetch-tweets' ) . ': 1200',
-				'strType'			=> 'number',
-				'vDefault'			=> 60 * 20,	// 20 minutes
-			),			
-			array()
-		);
 		
 	}
 	
-	private function getTweetType() {
+	private function _getTweetType() {
 
+		// If the GET 'tweet_type' query value is set, use it.
+		if ( isset( $_GET['tweet_type'] ) && $_GET['tweet_type'] ) return $_GET['tweet_type'];
+	
 		// If the 'action' query value is edit, search for the meta field value which previously set when it is saved.
 		if ( isset( $_GET['action'], $_GET['post'] ) && $_GET['action'] == 'edit' ) 
 			return get_post_meta( $_GET['post'], 'tweet_type', true );
-	
-		// If the GET 'tweet_type' query value is set, use it.
-		if ( isset( $_GET['tweet_type'] ) && $_GET['tweet_type'] ) return $_GET['tweet_type'];
 		
 		// return the default type
 		return 'screen_name';
@@ -60,65 +48,76 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 	protected function addFieldsForTweetsByScreenName() {
 		$this->addSettingFields(
 			array(
-				'strFieldID'		=> 'tweet_type',
-				'strType'			=> 'hidden',
-				'vValue'			=> 'screen_name',
+				'field_id'		=> 'tweet_type',
+				'type'			=> 'hidden',
+				'value'			=> 'screen_name',
+				'hidden'		=>	true,
 			),						
 			array(
-				'strFieldID'		=> 'screen_name',
-				'strTitle'			=> __( 'User Name', 'fetch-tweets' ),
-				'strDescription'	=> __( 'The user name (screen name) that is used after the @ mark or the end of the twitter url.', 'fetch-tweets' ) . '',
-				'strType'			=> 'text',
+				'field_id'		=> 'screen_name',
+				'title'			=> __( 'User Name', 'fetch-tweets' ),
+				'description'	=> __( 'The user name (screen name) that is used after the @ mark or the end of the twitter url.', 'fetch-tweets' ) . '',
+				'type'			=> 'text',
 			),	
 			array(
-				'strFieldID'		=> 'item_count',
-				'strTitle'			=> __( 'Item Count', 'fetch-tweets' ),
-				'strDescription'	=> __( 'Set how many items should be fetched.', 'fetch-tweets' ) . ' ' 
+				'field_id'		=> 'item_count',
+				'title'			=> __( 'Item Count', 'fetch-tweets' ),
+				'description'	=> __( 'Set how many items should be fetched.', 'fetch-tweets' ) . ' ' 
 					. __( 'Max', 'fetch-tweets' ) . ': 200 '
 					. __( 'Default', 'fetch-tweets' ) . ': 20',
-				'strType'			=> 'number',
-				'vDefault'			=> 20,
-				'vMax'				=> 200,				
+				'type'			=> 'number',
+				'default'			=> 20,
+				'attributes'	=>	array(
+					'max'	=>	200,
+				),
 			),				
 			array(
-				'strFieldID'		=> 'search_keyword',
-				'strType'			=> 'hidden',
+				'field_id'		=> 'search_keyword',
+				'type'			=> 'hidden',
+				'hidden'		=>	true,
 			),		
 			array(
-				'strFieldID'		=> 'language',
-				'strType'			=> 'hidden',
+				'field_id'		=> 'language',
+				'type'			=> 'hidden',
+				'hidden'		=>	true,
 			),				
 			array (
-				'strFieldID'		=> 'result_type',
-				'strType'			=> 'hidden',
+				'field_id'		=> 'result_type',
+				'type'			=> 'hidden',
+				'hidden'		=>	true,
 			),			
 			array(
-				'strFieldID'		=> 'exclude_replies',
-				'strTitle'			=> 'Exclude Replies',
-				'strType'			=> 'checkbox',
-				'vLabel'			=> __( 'This prevents replies from appearing in the returned timeline.', 'fetch-tweets' ),
+				'field_id'		=> 'exclude_replies',
+				'title'			=> 'Exclude Replies',
+				'type'			=> 'checkbox',
+				'label'			=> __( 'Replies will be excluded.', 'fetch-tweets' ),
+				'description'	=> __( 'This prevents replies from appearing in the returned timeline.', 'fetch-tweets' ),
 			),		
 			array(	// since 1.2.0
-				'strFieldID'		=> 'list_id',			
-				'strType'			=> 'hidden',
+				'field_id'		=> 'list_id',			
+				'type'			=> 'hidden',
+				'hidden'		=>	true,
 			),			
 			array(
-				'strFieldID'		=> 'include_retweets',
-				'strTitle'			=> __( 'Include Retweets', 'fetch-tweets' ),
-				'vLabel'			=> __( 'Retweets will be included.', 'fetch-tweets' ),
-				'strType'			=> 'checkbox',
+				'field_id'		=> 'include_retweets',
+				'title'			=> __( 'Include Retweets', 'fetch-tweets' ),
+				'label'			=> __( 'Retweets will be included.', 'fetch-tweets' ),
+				'type'			=> 'checkbox',
 			),			
 			array(	// since 1.3.3
-				'strFieldID'		=> 'until',
-				'strType'			=> 'hidden',
+				'field_id'		=> 'until',
+				'type'			=> 'hidden',
+				'hidden'		=>	true,
 			),			
 			array(	// since 1.3.3
-				'strFieldID'		=> 'geocentric_coordinate',
-				'strType'			=> 'hidden',
+				'field_id'		=> 'geocentric_coordinate',
+				'type'			=> 'hidden',
+				'hidden'		=>	true,
 			),
 			array(	// since 1.3.3
-				'strFieldID'		=> 'geocentric_radius',
-				'strType'			=> 'hidden',
+				'field_id'		=> 'geocentric_radius',
+				'type'			=> 'hidden',
+				'hidden'		=>	true,
 			),					
 			array()
 		);	
@@ -134,36 +133,40 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 		
 		$this->addSettingFields(		
 			array(
-				'strFieldID'		=> 'tweet_type',
-				'strType'			=> 'hidden',
-				'vValue'			=> 'search',
+				'field_id'		=> 'tweet_type',
+				'type'			=> 'hidden',
+				'value'			=> 'search',
+				'hidden'		=>	true,
 			),			
 			array(	// non-used fields must be set as hidden since the callback function will assign a value.
-				'strFieldID'		=> 'screen_name',
-				'strType'			=> 'hidden',
+				'field_id'		=> 'screen_name',
+				'type'			=> 'hidden',
+				'hidden'		=>	true,
 			),				
 			array(
-				'strFieldID'		=> 'search_keyword',
-				'strTitle'			=> __( 'Search Keyword', 'fetch-tweets' ),
-				'strDescription'	=> sprintf( __( 'The keyword to search. For a complex combination of terms and operators, refer to the <strong>Search Operators</strong> section of <a href="%1$s" target="_blank">Using the Twitter Search API</a>.', 'fetch-tweets' ), 'https://dev.twitter.com/docs/using-search' ) 
+				'field_id'		=> 'search_keyword',
+				'title'			=> __( 'Search Keyword', 'fetch-tweets' ),
+				'description'	=> sprintf( __( 'The keyword to search. For a complex combination of terms and operators, refer to the <strong>Search Operators</strong> section of <a href="%1$s" target="_blank">Using the Twitter Search API</a>.', 'fetch-tweets' ), 'https://dev.twitter.com/docs/using-search' ) 
 					. ' e.g. <code>love OR hate</code>, <code>#wordpress</code>',
-				'strType'			=> 'text',
+				'type'			=> 'text',
 			),
 			array(
-				'strFieldID'		=> 'item_count',
-				'strTitle'			=> __( 'Item Count', 'fetch-tweets' ),
-				'strDescription'	=> __( 'Set how many items should be fetched.', 'fetch-tweets' ) . ' ' 
+				'field_id'		=> 'item_count',
+				'title'			=> __( 'Item Count', 'fetch-tweets' ),
+				'description'	=> __( 'Set how many items should be fetched.', 'fetch-tweets' ) . ' ' 
 					. __( 'Max', 'fetch-tweets' ) . ': 100 '
 					. __( 'Default', 'fetch-tweets' ) . ': 20',
-				'strType'			=> 'number',
-				'vDefault'			=> 20,
-				'vMax'				=> 100,				
+				'type'			=> 'number',
+				'default'			=> 20,
+				'attributes'	=>	array(
+					'max'	=>	100,
+				),
 			),				
 			array(
-				'strFieldID'		=> 'language',
-				'strTitle'			=> __( 'Language ', 'fetch-tweets' ),
-				'strType'			=> 'select',
-				'vLabel' => array( 
+				'field_id'		=> 'language',
+				'title'			=> __( 'Language ', 'fetch-tweets' ),
+				'type'			=> 'select',
+				'label' => array( 
 					'none' => __( 'Any Language', 'fetch-tweets' ),
 					'am' => __( 'Amharic (አማርኛ)', 'fetch-tweets' ),
 					'ar' => __( 'Arabic (العربية)', 'fetch-tweets' ),
@@ -217,57 +220,61 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 					'vi' => __( 'Vietnamese (Tiếng Việt)', 'fetch-tweets' ),
 					'zh' => __( 'Chinese (中文)', 'fetch-tweets' ),
 				),		
-				'vDefault' 			=> 'none',	
+				'default' 			=> 'none',	
 			),				
 			array(
-				'strFieldID'		=> 'result_type',
-				'strTitle'			=> __( 'Result Type', 'fetch-tweets' ),
-				'strType'			=> 'radio',
-				'vLabel' => array( 
+				'field_id'		=> 'result_type',
+				'title'			=> __( 'Result Type', 'fetch-tweets' ),
+				'type'			=> 'radio',
+				'label' => array( 
 					'mixed' => 'mixed' . ' - ' . __( 'includes both popular and real time results in the response.', 'fetch-tweets' ),
 					'recent' => 'recent' . ' - ' . __( 'returns only the most recent results in the response.', 'fetch-tweets' ),
 					'popular' => 'popular' . ' - ' . __( 'return only the most popular results in the response.', 'fetch-tweets' ),
 				),
-				'vDefault' => 'mixed',
+				'default' => 'mixed',
 			),
 			array(	// since 1.3.3
-				'strFieldID'		=> 'until',
-				'strTitle'			=> __( 'Date Until', 'fetch-tweets' ) . " <span class='description'>(" . __( 'optional', 'fetch-tweets' ) . ")</span>",
-				'strDescription'	=> __( 'Returns tweets generated before the given date. Set blank not to specify any date.', 'fetch-tweets' ),
-				'strType'			=> 'date',
-				'vDateFormat' 		=> 'yy-mm-dd',	// yy/mm/dd is the default format.
+				'field_id'		=> 'until',
+				'title'			=> __( 'Date Until', 'fetch-tweets' ) . " <span class='description'>(" . __( 'optional', 'fetch-tweets' ) . ")</span>",
+				'description'	=> __( 'Returns tweets generated before the given date. Set blank not to specify any date.', 'fetch-tweets' ),
+				'type'			=> 'date',
+				'date_format' 		=> 'yy-mm-dd',	// yy/mm/dd is the default format.
 			),
 			array(	// since 1.3.3
-				'strFieldID'		=> 'geocentric_coordinate',
-				'strTitle'			=> __( 'Geometric Coordinate', 'fetch-tweets' ) . " <span class='description'>(" . __( 'optional', 'fetch-tweets' ) . ")</span>",
-				'strDescription'	=> __( 'Restricts tweets to users located within a given radius of the given latitude/longitude. Leave this empty not to set any.', 'fetch-tweets' ),
-				'strType'			=> 'text',
-				'vLabel'			=> array(
+				'field_id'		=> 'geocentric_coordinate',
+				'title'			=> __( 'Geometric Coordinate', 'fetch-tweets' ) . " <span class='description'>(" . __( 'optional', 'fetch-tweets' ) . ")</span>",
+				'description'	=> __( 'Restricts tweets to users located within a given radius of the given latitude/longitude. Leave this empty not to set any.', 'fetch-tweets' ),
+				'type'			=> 'text',
+				'label'			=> array(
 					'latitude' => __( 'Latitude', 'fetch-tweets' ),
 					'longitude' => __( 'Longitude', 'fetch-tweets' ),
 				),
 			),
 			array(	// since 1.3.3
-				'strFieldID'		=> 'geocentric_radius',
-				'strTitle'			=> __( 'Geometric Radius', 'fetch-tweets' ) . " <span class='description'>(" . __( 'optional', 'fetch-tweets' ) . ")</span>",
-				'strType'			=> 'size',
-				'vDefault'			=> array( 'size' => '', 'unit' => 'mi' ),
-				'vSizeUnits'		=> array(
-					'mi' => __( 'miles', 'fetch-tweets' ), 'km' => __( 'kilometers', 'fetch-tweets' ) 
+				'field_id'		=> 'geocentric_radius',
+				'title'			=> __( 'Geometric Radius', 'fetch-tweets' ) . " <span class='description'>(" . __( 'optional', 'fetch-tweets' ) . ")</span>",
+				'type'			=> 'size',
+				'default'		=> array( 'size' => '', 'unit' => 'mi' ),
+				'units'			=> array(
+					'mi'	=>	__( 'miles', 'fetch-tweets' ),
+					'km' => __( 'kilometers', 'fetch-tweets' ),
 				),
-				'strDescription'	=> __( 'Leave this empty not to set any. In order to perform the geometric search, this option and the above coordinate must be specified.', 'fetch-tweets' ),
+				'description'	=> __( 'Leave this empty not to set any. In order to perform the geometric search, this option and the above coordinate must be specified.', 'fetch-tweets' ),
 			),			
 			array(
-				'strFieldID'		=> 'exclude_replies',
-				'strType'			=> 'hidden',
+				'field_id'		=> 'exclude_replies',
+				'type'			=> 'hidden',
+				'hidden'		=>	true,
 			),
 			array(	// since 1.2.0
-				'strFieldID'		=> 'list_id',			
-				'strType'			=> 'hidden',
+				'field_id'		=> 'list_id',			
+				'type'			=> 'hidden',
+				'hidden'		=>	true,
 			),		
 			array(
-				'strFieldID'		=> 'include_retweets',
-				'strType'			=> 'hidden',
+				'field_id'		=> 'include_retweets',
+				'type'			=> 'hidden',
+				'hidden'		=>	true,
 			),			
 			array()
 		);
@@ -286,70 +293,79 @@ class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBo
 		
 		$this->addSettingFields(		
 			array(
-				'strFieldID'		=> 'tweet_type',
-				'strType'			=> 'hidden',
-				'vValue'			=> 'list',
+				'field_id'		=> 'tweet_type',
+				'type'			=> 'hidden',
+				'value'			=> 'list',
+				'hidden'		=>	true,
 			),			
 			array(
-				'strFieldID'		=> 'list_id',
-				'strTitle'			=> __( 'Lists', 'fetch-tweets' ),
-				'strType'			=> 'select',
-				'vLabel'			=> $arrLists,
+				'field_id'		=> 'list_id',
+				'title'			=> __( 'Lists', 'fetch-tweets' ),
+				'type'			=> 'select',
+				'label'			=> $arrLists,
 			),
 			array(	// non-used fields must be set as hidden since the callback function will assign a value.
-				'strFieldID'		=> 'screen_name',
-				'strType'			=> 'hidden',
-				'vValue'			=> $strScreenName,
+				'field_id'		=> 'screen_name',
+				'type'			=> 'hidden',
+				'value'			=> $strScreenName,
+				'hidden'		=>	true,
 			),				
 			array(
-				'strFieldID'		=> 'search_keyword',
-				'strType'			=> 'hidden',
+				'field_id'		=> 'search_keyword',
+				'type'			=> 'hidden',
+				'hidden'		=>	true,
 			),
 			array(
-				'strFieldID'		=> 'item_count',
-				'strTitle'			=> __( 'Item Count', 'fetch-tweets' ),
-				'strDescription'	=> __( 'Set how many items should be fetched.', 'fetch-tweets' ) . ' ' 
+				'field_id'		=> 'item_count',
+				'title'			=> __( 'Item Count', 'fetch-tweets' ),
+				'description'	=> __( 'Set how many items should be fetched.', 'fetch-tweets' ) . ' ' 
 					. __( 'Max', 'fetch-tweets' ) . ': 100 '
 					. __( 'Default', 'fetch-tweets' ) . ': 20',
-				'strType'			=> 'number',
-				'vDefault'			=> 20,
-				'vMax'				=> 100,				
+				'type'			=> 'number',
+				'default'			=> 20,
+				'attributes'	=>	array(
+					'max'	=>	100,
+				),				
 			),				
 			array(
-				'strFieldID'		=> 'language',
-				'strType'			=> 'hidden',
+				'field_id'		=> 'language',
+				'type'			=> 'hidden',
+				'hidden'		=>	true,
 			),				
 			array(
-				'strFieldID'		=> 'result_type',
-				'strType'			=> 'hidden',
+				'field_id'		=> 'result_type',
+				'type'			=> 'hidden',
+				'hidden'		=>	true,
 			),		
 			array(
-				'strFieldID'		=> 'exclude_replies',
-				'strType'			=> 'hidden',
+				'field_id'		=> 'exclude_replies',
+				'type'			=> 'hidden',
+				'hidden'		=>	true,
 			),
 			array(
-				'strFieldID'		=> 'include_retweets',
-				'strTitle'			=> __( 'Include Retweets', 'fetch-tweets' ),
-				'vLabel'			=> __( 'Retweets will be included.', 'fetch-tweets' ),
-				'strType'			=> 'checkbox',
+				'field_id'		=> 'include_retweets',
+				'title'			=> __( 'Include Retweets', 'fetch-tweets' ),
+				'label'			=> __( 'Retweets will be included.', 'fetch-tweets' ),
+				'type'			=> 'checkbox',
 			),				
 			array(	// since 1.3.3
-				'strFieldID'		=> 'until',
-				'strType'			=> 'hidden',
+				'field_id'		=> 'until',
+				'type'			=> 'hidden',
+				'hidden'		=>	true,
 			),		
 			array(	// since 1.3.3
-				'strFieldID'		=> 'geocentric_coordinate',
-				'strType'			=> 'hidden',
+				'field_id'		=> 'geocentric_coordinate',
+				'type'			=> 'hidden',
+				'hidden'		=>	true,
 			),
 			array(	// since 1.3.3
-				'strFieldID'		=> 'geocentric_radius',
-				'strType'			=> 'hidden',
+				'field_id'		=> 'geocentric_radius',
+				'type'			=> 'hidden',
+				'hidden'		=>	true,
 			),					
 			array()
 		);
 				
-		
-		
 		
 	}
 	/**

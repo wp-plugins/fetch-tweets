@@ -3,35 +3,34 @@ abstract class FetchTweets_AdminPage_SetUp_Page extends FetchTweets_AdminPage_St
 			
 	protected function _setUpPages() {
 		
-		$this->setRootMenuPageBySlug( 'edit.php?post_type=fetch_tweets' );
+		$_sPostTypeSlug = FetchTweets_Commons::PostTypeSlug;
+		$this->setRootMenuPageBySlug( "edit.php?post_type={$_sPostTypeSlug}"  );
 		$this->addSubMenuItems(
 			array(
-				'strMenuTitle' => __( 'Add Rule by User Name', 'fetch-tweets' ),
-				'strType' => 'link',
-				'strURL' => 'post-new.php?post_type=fetch_tweets&tweet_type=screen_name',
-				'fShowPageHeadingTab' => false,
-				'numOrder' => 1,
+				'title'	=>	__( 'Add Rule by User Name', 'fetch-tweets' ),
+				'href'	=>	admin_url( "post-new.php?post_type={$_sPostTypeSlug}&tweet_type=screen_name" ),
+				// 'show_page_heading_tab'	=>	false,
+				'order'	=>	1,
 			),
 			// array(
 				// 'strMenuTitle' => __( 'Add Rule by Timeline', 'fetch-tweets' ),
-				// 'strType' => 'link',
+				// 'type' => 'link',
 				// 'strURL' => 'post-new.php?post_type=fetch_tweets&tweet_type=timeline',
 				// 'fShowPageHeadingTab' => false,
 			// ),			
 			array(
-				'strMenuTitle' => __( 'Add Rule by Search', 'fetch-tweets' ),
-				'strType' => 'link',				
-				'strURL' => 'post-new.php?post_type=fetch_tweets&tweet_type=search',
-				'fShowPageHeadingTab' => false,
+				'title' => __( 'Add Rule by Search', 'fetch-tweets' ),
+				'href'	=>	admin_url( "post-new.php?post_type={$_sPostTypeSlug}&tweet_type=search" ),
+				// 'show_page_heading_tab' => false,
 			),			
 			array(
-				'strPageTitle'	=> __( 'Add Rule by List', 'fetch-tweets' ),
-				'strPageSlug'	=> 'fetch_tweets_add_rule_by_list',
-				'strScreenIcon'	=> FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
+				'title'	=> __( 'Add Rule by List', 'fetch-tweets' ),
+				'page_slug'	=> 'fetch_tweets_add_rule_by_list',
+				'screen_icon'	=> FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
 			),			
 			// array(	// since 1.3.4
 				// 'strPageTitle'	=> __( 'Add New Account', 'fetch-tweets' ),
-				// 'strPageSlug'	=> 'fetch_tweets_add_new_account',
+				// 'page_slug'	=> 'fetch_tweets_add_new_account',
 				// 'strScreenIcon'	=> FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
 				// 'fShowInMenu' => false,
 			// ),				
@@ -40,98 +39,90 @@ abstract class FetchTweets_AdminPage_SetUp_Page extends FetchTweets_AdminPage_St
 				// 'strURL'			=> admin_url( 'edit.php?post_type=' . FetchTweets_Commons::PostTypeSlugAccounts ),
 			// ),				
 			array(
-				'strPageTitle'	=> __( 'Settings', 'fetch-tweets' ),
-				'strPageSlug'	=> 'fetch_tweets_settings',
-				'strScreenIcon'	=> FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
+				'title'	=>	__( 'Settings', 'fetch-tweets' ),
+				'page_slug'	=>	'fetch_tweets_settings',
+				'screen_icon'	=> FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
 			),
 			array(
-				'strPageTitle' => __( 'Extensions', 'fetch-tweets' ),
-				'strPageSlug' => 'fetch_tweets_extensions',
-				'strScreenIcon'	=> FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
+				'title' => __( 'Extensions', 'fetch-tweets' ),
+				'page_slug' => 'fetch_tweets_extensions',
+				'screen_icon'	=> FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
 			),			
 			array(
-				'strPageTitle' => __( 'Templates', 'fetch-tweets' ),
-				'strPageSlug' => 'fetch_tweets_templates',
-				'strScreenIcon'	=> FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
+				'title' => __( 'Templates', 'fetch-tweets' ),
+				'page_slug' => 'fetch_tweets_templates',
+				'screen_icon'	=> FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
 			)
 		);
 		$this->addInPageTabs(
+			'fetch_tweets_settings',
 			array(
-				'strPageSlug'	=> 'fetch_tweets_settings',
-				'strTabSlug'	=> 'authentication',
-				'strTitle'		=> __( 'Authentication', 'fetch-tweets' ),
-				'strParentTabSlug' => 'twitter_connect',
-				'fHide'			=> true,	
+				'tab_slug'	=> 'authentication',
+				'title'		=> __( 'Authentication', 'fetch-tweets' ),
+				'parent_tab_slug' => 'twitter_connect',
+				'show_in_page_tab'	=> false,	
 			),
 			array(
-				'strPageSlug'	=> 'fetch_tweets_settings',
-				'strTabSlug'	=> 'twitter_clear_session',
-				'strTitle'		=> 'Clear Session',
-				'fHide'			=> true,
+				'tab_slug'	=> 'twitter_clear_session',
+				'title'		=> 'Clear Session',
+				'show_in_page_tab'			=> false,
 			),
 			array(
-				'strPageSlug'	=> 'fetch_tweets_settings',
-				'strTabSlug'	=> 'twitter_connect',
-				'strTitle'		=> __( 'Authentication', 'fetch-tweets' ),
-				'numOrder'		=> 1,				
-				// 'fHide'			=> true,
+				'tab_slug'	=> 'twitter_connect',
+				'title'		=> __( 'Authentication', 'fetch-tweets' ),
+				'order'		=> 1,				
 			),			
 			array(
-				'strPageSlug'	=> 'fetch_tweets_settings',
-				'strTabSlug'	=> 'twitter_redirect',
-				'strTitle'		=> 'Redirect',
-				'fHide'			=> true,
+				'tab_slug'	=> 'twitter_redirect',
+				'title'		=> 'Redirect',
+				'show_in_page_tab'			=> false,
 			),					
 			array(
-				'strPageSlug'	=> 'fetch_tweets_settings',
-				'strTabSlug'	=> 'twitter_callback',
-				'strTitle'		=> 'Callback',
-				'fHide'			=> true,
+				'tab_slug'	=> 'twitter_callback',
+				'title'		=> 'Callback',
+				'show_in_page_tab'			=> false,
 			),								
 			array(
-				'strPageSlug'	=> 'fetch_tweets_settings',
-				'strTabSlug'	=> 'general',
-				'strTitle'		=> __( 'General', 'fetch-tweets' ),
-				'numOrder'		=> 2,				
+				'tab_slug'	=> 'general',
+				'title'		=> __( 'General', 'fetch-tweets' ),
+				'order'		=> 2,				
 			),				
 			array(
-				'strPageSlug'	=> 'fetch_tweets_settings',
-				'strTabSlug'	=> 'misc',
-				'strTitle'		=> __( 'Misc', 'fetch-tweets' ),
-				'numOrder'		=> 3,				
+				'tab_slug'	=> 'misc',
+				'title'		=> __( 'Misc', 'fetch-tweets' ),
+				'order'		=> 3,				
 			),			
 			array(
-				'strPageSlug'	=> 'fetch_tweets_settings',
-				'strTabSlug'	=> 'reset',
-				'strTitle'		=> __( 'Reset', 'fetch-tweets' ),
-				'numOrder'		=> 4,				
+				'tab_slug'	=> 'reset',
+				'title'		=> __( 'Reset', 'fetch-tweets' ),
+				'order'		=> 4,				
 			)					
 		);
 		$this->addInPageTabs(
 			array(
-				'strPageSlug'	=> 'fetch_tweets_extensions',
-				'strTabSlug'	=> 'get_extensions',
-				'strTitle'		=> __( 'Get Extensions', 'fetch-tweets' ),
-				'numOrder'		=> 10,				
+				'page_slug'	=> 'fetch_tweets_extensions',
+				'tab_slug'	=> 'get_extensions',
+				'title'		=> __( 'Get Extensions', 'fetch-tweets' ),
+				'order'		=> 10,				
 			)		
 		);
 		$this->addInPageTabs(
 			array(
-				'strPageSlug'	=> 'fetch_tweets_templates',
-				'strTabSlug'	=> 'list_template_table',
-				'strTitle'		=> __( 'Installed Templates', 'fetch-tweets' ),
-				'numOrder'		=> 1,				
+				'page_slug'	=> 'fetch_tweets_templates',
+				'tab_slug'	=> 'list_template_table',
+				'title'		=> __( 'Installed Templates', 'fetch-tweets' ),
+				'order'		=> 1,				
 			),
 			array(
-				'strPageSlug'	=> 'fetch_tweets_templates',
-				'strTabSlug'	=> 'get_templates',
-				'strTitle'		=> __( 'Get Templates', 'fetch-tweets' ),
-				'numOrder'		=> 10,				
+				'page_slug'	=> 'fetch_tweets_templates',
+				'tab_slug'	=> 'get_templates',
+				'title'		=> __( 'Get Templates', 'fetch-tweets' ),
+				'order'		=> 10,				
 			)			
 			// array(
-				// 'strPageSlug'	=> 'fetch_tweets_settings',
-				// 'strTabSlug'	=> 'management',
-				// 'strTitle'		=> __( 'Management', 'fetch-tweets' ),
+				// 'page_slug'	=> 'fetch_tweets_settings',
+				// 'tab_slug'	=> 'management',
+				// 'title'		=> __( 'Management', 'fetch-tweets' ),
 			// )
 		);		
 	}		
@@ -141,7 +132,7 @@ abstract class FetchTweets_AdminPage_SetUp_Page extends FetchTweets_AdminPage_St
 		/*
 		 * Page Styling
 		 */
-		$this->showPageHeadingTabs( false );		// disables the page heading tabs by passing false.
+		$this->setPageHeadingTabsVisibility( false );		// disables the page heading tabs by passing false.
 		$this->setInPageTabTag( 'h2' );				
 		$this->enqueueStyle(  FetchTweets_Commons::getPluginURL( '/css/admin.css' ) );
 		$this->enqueueStyle(  FetchTweets_Commons::getPluginURL( '/css/fetch_tweets_templates.css' ), 'fetch_tweets_templates' );

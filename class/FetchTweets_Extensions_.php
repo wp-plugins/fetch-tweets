@@ -39,8 +39,8 @@ abstract class FetchTweets_Extensions_ {
 				foreach ( $oFeed->get_items() as $oItem ) 	// foreach ( $oFeed->get_items( 0, $numItems * 3 ) as $item ) does not change the memory usage
 					$this->arrFeedItems[ $strURLID ][ $oItem->get_title() ] = array( 
 						'strContent'		=> $oItem->get_content(),
-						'strDescription'	=> $oItem->get_description(),
-						'strTitle'			=> $oItem->get_title(),
+						'description'	=> $oItem->get_description(),
+						'title'			=> $oItem->get_title(),
 						'strDate'			=> $oItem->get_title(),
 						'strAuthor'			=> $oItem->get_date( 'j F Y, g:i a' ),
 						'strLink'			=> $oItem->get_permalink(),	// get_link() may be used as well		

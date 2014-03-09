@@ -12,7 +12,7 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 					'all_items' => __( 'Manage Rules', 'fetch-tweets' ),	// sub menu label
 					'singular_name' => __( 'Fetch Tweets Rule', 'fetch-tweets' ),
 					'menu_name' => __( 'Fetch Tweets', 'fetch-tweets' ),	// this changes the root menu name 
-					'add_new' => __( 'Fetch Tweets by Screen Name', 'fetch-tweets' ),
+					'add_new' => __( 'Add Rule by Screen Name', 'fetch-tweets' ),
 					'add_new_item' => __( 'Add New Rule', 'fetch-tweets' ),
 					'edit' => __( 'Edit', 'fetch-tweets' ),
 					'edit_item' => __( 'Edit Rule', 'fetch-tweets' ),
@@ -34,6 +34,9 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 				'hierarchical' => false,
 				'show_admin_column' => true,
 				'screen_icon' => FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
+				// 'capabilities' => array(
+					// 'create_posts' => false,
+				// ),			
 			)		
 		);
 
@@ -55,26 +58,28 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 			)
 		);
 		
-		$strCurrentPostTypeInAdmin = isset( $GLOBALS['post_type'] ) ? $GLOBALS['post_type']
-			: isset( $_GET['post_type'] ) ? $_GET['post_type'] : '';
+		$_sCurrentPostTypeInAdmin = isset( $GLOBALS['post_type'] ) 
+			? $GLOBALS['post_type']
+			: ( isset( $_GET['post_type'] ) ? $_GET['post_type'] : '' );
 		
 		// For admin
-		if ( $strCurrentPostTypeInAdmin == $this->oProps->strPostType && is_admin() ) {
+		if ( $_sCurrentPostTypeInAdmin == $this->oProp->sPostType && is_admin() ) {
 			
 			$this->setAutoSave( false );
 			$this->setAuthorTableFilter( true );			
-			add_filter( 'enter_title_here', array( $this, 'changeTitleMetaBoxFieldLabel' ) );	// add_filter( 'gettext', array( $this, 'changeTitleMetaBoxFieldLabel' ) );
+			add_filter( 'enter_title_here', array( $this, '_replyToChangeTitleMetaBoxFieldLabel' ) );	// add_filter( 'gettext', array( $this, 'changeTitleMetaBoxFieldLabel' ) );
 			add_action( 'edit_form_after_title', array( $this, 'addTextAfterTitle' ) );	
-			// add_action( 'admin_menu', array( $this, 'editSidebarSubMenuLabel' ) );
+			
 		}
 		
-		add_filter( 'the_content', array( $this, 'previewTweets' ) );	
+		add_filter( 'the_content', array( $this, '_replyToPreviewTweets' ) );	
 				
 	}
 	
-	public function changeTitleMetaBoxFieldLabel( $strText ) {
+	public function _replyToChangeTitleMetaBoxFieldLabel( $sText ) {
 		return __( 'Set the rule name here.', 'fetch-tweets' );		
 	}
+	
 	public function addTextAfterTitle() {
 		
 		$oUserAds = isset( $GLOBALS['oFetchTweetsUserAds'] ) ? $GLOBALS['oFetchTweetsUserAds'] : new FetchTweets_UserAds;
@@ -83,37 +88,29 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 		// Text links will be inserted here.
 	}
 	
-	public function editSidebarSubMenuLabel() {
-		
-		// Changes the menu label of the first item.
-		// foreach () {
-			
-			
-		// }
-	}
 	
 	/*
 	 * Methods to print out the fetched tweets.
 	 * */
-	public function previewTweets( $strContent ) {
+	public function _replyToPreviewTweets( $strContent ) {
 
 		global $post;
 		// Used for the post type single page that functions as preview the result.
 
-		if ( ! isset( $post->post_type ) || $post->post_type != $this->oProps->strPostType ) return $strContent;
+		if ( ! isset( $post->post_type ) || $post->post_type != $this->oProp->sPostType ) return $strContent;
 
-		$intPostID = $post->ID;
-		$intCount = get_post_meta( $intPostID, 'item_count', true );
-		return fetchTweets( array( 'id' => $intPostID, 'count' => $intCount ), false );	
+		$iPostID = $post->ID;
+		$iCount = get_post_meta( $iPostID, 'item_count', true );
+		return fetchTweets( array( 'id' => $iPostID, 'count' => $iCount ), false );	
 	
 	}
 
 	/*
 	 * Extensible methods
 	 */
-	public function setColumnHeader( $arrColumnHeader ) {
-		// Set the table header.
-		return array(
+	public function columns_fetch_tweets( $aHeaderColumns ) {	// columns_{post type slug}
+		
+		return	array(
 			'cb'				=> '<input type="checkbox" />',	// Checkbox for bulk actions. 
 			'title'				=> __( 'Rule Name', 'fetch-tweets' ),		// Post title. Includes "edit", "quick edit", "trash" and "view" links. If $mode (set from $_REQUEST['mode']) is 'excerpt', a post excerpt is included between the title and links.
 			'tweettype'			=> __( 'Tweet Type', 'fetch-tweets' ),
@@ -121,43 +118,42 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 			'fetch_tweets_tag'	=> __( 'Tags', 'fetch-tweets' ),	// Tags for the post. 
 			'code'				=> __( 'Shortcode / PHP Code', 'fetch-tweets' ),
 			// 'date'			=> __( 'Date', 'fetch-tweets' ), 	// The date and publish status of the post. 
-		);		
-		// return array_merge( $arrColumnHeader, $this->arrColumnHeaders );
-	}
-	public function setSortableColumns( $arrColumns ) {
-		return array_merge( $arrColumns, $this->oProps->arrColumnSortable );		
+		);			
+		
+		
 	}	
-	
+
+	// public function sortable_fetch_tweets( $aSortableHeaderColumns ) {	// sortable_columns_{post type slug}
+		// return $aSortableHeaderColumns;
+	// }		
+
 	/*
 	 * Callback methods
 	 */
-	public function cell_fetch_tweets_fetch_tweets_tag( $strCell, $intPostID ) {
+	public function cell_fetch_tweets_fetch_tweets_tag( $sCell, $iPostID ) {	// cell_{post type}_{column key}
 		
 		// Get the genres for the post.
-		$arrTerms = get_the_terms( $intPostID, FetchTweets_Commons::TagSlug );
+		$_aTerms = get_the_terms( $iPostID, FetchTweets_Commons::TagSlug );
 	
 		// If no tag is assigned to the post,
-		if ( empty( $arrTerms ) ) return '—';
-		
-		// Variables
-		global $post;
-		$arrOutput = array();
+		if ( empty( $_aTerms ) ) return '—';
 	
 		// Loop through each term, linking to the 'edit posts' page for the specific term. 
-		foreach ( $arrTerms as $oTerm ) {
-			$arrOutput[] = sprintf( '<a href="%s">%s</a>',
-				esc_url( add_query_arg( array( 'post_type' => $post->post_type, FetchTweets_Commons::TagSlug => $oTerm->slug ), 'edit.php' ) ),
-				esc_html( sanitize_term_field( 'name', $oTerm->name, $oTerm->term_id, FetchTweets_Commons::TagSlug, 'display' ) )
+		$_aOutput = array();
+		foreach ( $_aTerms as $_oTerm ) {
+			$_aOutput[] = sprintf( '<a href="%s">%s</a>',
+				esc_url( add_query_arg( array( 'post_type' => $GLOBALS['post']->post_type, FetchTweets_Commons::TagSlug => $_oTerm->slug ), 'edit.php' ) ),
+				esc_html( sanitize_term_field( 'name', $_oTerm->name, $_oTerm->term_id, FetchTweets_Commons::TagSlug, 'display' ) )
 			);
 		}
 
 		// Join the terms, separating them with a comma.
-		return join( ', ', $arrOutput );
+		return join( ', ', $_aOutput );
 		
 	}
-	public function cell_fetch_tweets_tweettype( $strCell, $intPostID ) {
+	public function cell_fetch_tweets_tweettype( $sCell, $iPostID ) {
 		
-		switch ( get_post_meta( $intPostID, 'tweet_type', true ) ) {
+		switch ( get_post_meta( $iPostID, 'tweet_type', true ) ) {
 			case 'search':
 				return __( 'Search', 'fetch-tweets' );
 			case 'screen_name':
@@ -167,12 +163,10 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 		}
 		
 	}
-	public function cell_fetch_tweets_code( $strCell, $intPostID ) {
+	public function cell_fetch_tweets_code( $sCell, $iPostID ) {
 		return '<p>'
-			. '<span>[fetch_tweets id="' . $intPostID . '"]</span>' . '<br />'
-			. '<span>&lt;?php fetchTweets( array( ‘id’ =&gt; ' . $intPostID . ' ) ); ?&gt;</span>'
-			// . '<span>FetchTweets( ‘id’ =&gt; ' . $intPostID . ' );</span>'
-		
+				. '<span>[fetch_tweets id="' . $iPostID . '"]</span>' . '<br />'
+				. '<span>&lt;?php fetchTweets( array( ‘id’ =&gt; ' . $iPostID . ' ) ); ?&gt;</span>'		
 			. '</p>';
 	}
 	

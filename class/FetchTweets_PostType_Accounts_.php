@@ -54,7 +54,7 @@ abstract class FetchTweets_PostType_Accounts_ extends FetchTweets_AdminPageFrame
 			if ( $GLOBALS['pagenow'] == 'edit.php' && isset( $_GET['post_type'] ) && $_GET['post_type'] == FetchTweets_Commons::PostTypeSlugAccounts ) {
 
 					// add_filter( 'post_row_actions', array( $this, 'modifyRowActions' ), 10, 2 );
-				// add_filter( 'bulk_actions-edit-' . $this->oProps->strPostType, array( $this, 'modifyBulkActionsDropDownList' ) );
+				// add_filter( 'bulk_actions-edit-' . $this->oProp->sPostType, array( $this, 'modifyBulkActionsDropDownList' ) );
 			
 				// $this->setAutoSave( false );
 				$this->setAuthorTableFilter( false );
@@ -104,7 +104,7 @@ abstract class FetchTweets_PostType_Accounts_ extends FetchTweets_AdminPageFrame
 		// return array_merge( $arrColumnHeader, $this->arrColumnHeaders );
 	}
 	public function setSortableColumns( $arrColumns ) {
-		return array_merge( $arrColumns, $this->oProps->arrColumnSortable );		
+		return array_merge( $arrColumns, $this->oProp->arrColumnSortable );		
 	}		
 
 }

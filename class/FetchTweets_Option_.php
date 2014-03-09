@@ -1,29 +1,27 @@
 <?php
 abstract class FetchTweets_Option_ {
 	
-	protected static $arrStructure_Options = array(
-		'fetch_tweets_settings' => array(
-			'authentication_keys' => array(
-				'consumer_key' => '',
-				'consumer_secret' => '',
-				'access_token' => '',
-				'access_secret' => '',
-			),
-			'twitter_connect' => array(
-				'access_token' => '',
-				'access_secret' => '',
-			),
-			'default_values' => array(),
-			'capabilities' => array(),
-			'cache_settings' => array(
-				'cache_for_errors' => false,
-			),
+	protected static $aStructure_Options = array(		
+		'authentication_keys' => array(
+			'consumer_key' => '',
+			'consumer_secret' => '',
+			'access_token' => '',
+			'access_secret' => '',
+		),
+		'twitter_connect' => array(
+			'access_token' => '',
+			'access_secret' => '',
+		),
+		'default_values' => array(),
+		'capabilities' => array(),
+		'cache_settings' => array(
+			'cache_for_errors' => false,
 		),
 		'arrTemplates' => array(),	// stores template info arrays.
 		'arrDefaultTemplate' => array(),	// stores the default template info.
 	);
 	
-	public $arrStructure_DefaultParams = array(
+	public $aStructure_DefaultParams = array(
 		'tweet_type'		=> null,	// this will be set in the add/edit rule page
 		
 		'id'				=> null,
@@ -61,7 +59,7 @@ abstract class FetchTweets_Option_ {
 		'twitter_media'		=> true,
 		'external_media'	=> true,
 	);
-	public $arrStructure_DefaultTemplateOptions = array(
+	public $aStructure_DefaultTemplateOptions = array(
 		// leave them null and let each template define default values.
 		'template'			=> null,	// the template slug
 		'avatar_size'		=> null,	// 48, 
@@ -70,55 +68,109 @@ abstract class FetchTweets_Option_ {
 		'height'			=> null,	// 800,
 		'height_unit'		=> null,	// 'px',
 	);		 
-	public $arrOptions = array();	// stores the option values.
+	public $aOptions = array();	// stores the option values.
 		 
-	protected $strOptionKey = '';	// stores the option key for this plugin. 
+	protected $sOptionKey = '';	// stores the option key for this plugin. 
 		 
-	public function __construct( $strOptionKey ) {
+	public function __construct( $sOptionKey ) {
 		
-		$this->strOptionKey = $strOptionKey;
-		$this->arrOptions = $this->setOption( $strOptionKey );
-// FetchTweets_Debug::getArray( $this->arrOptions, dirname( __FILE__ ) . '/options.txt' );
+		$this->sOptionKey = $sOptionKey;
+		$this->aOptions = $this->setOption( $sOptionKey );
+// FetchTweets_Debug::logArray( $this->aOptions, dirname( __FILE__ ) . '/options.txt' );
 	}	
 	
 	/*
 	 * 
 	 * Back end methods
 	 * */
-	private function setOption( $strOptionKey ) {
+	private function setOption( $sOptionKey ) {
 		
 		// Set up the options array.
-		$vOption = get_option( $strOptionKey );
+		$vOption = get_option( $sOptionKey );
 		$vOption = ( $vOption === false ) ? array() : $vOption;		// Avoid casting array because it causes a zero key when the subject is null.
-		$arrOptions = FetchTweets_Utilities::uniteArrays( $vOption, self::$arrStructure_Options ); 	// Now $vOption is an array so merge with the default option to avoid undefined index warnings.
-
+		$aOptions = FetchTweets_Utilities::uniteArrays( $vOption, self::$aStructure_Options ); 	// Now $vOption is an array so merge with the default option to avoid undefined index warnings.
+		
+		// format the options for backward compatibility
+		// If it's the v1 option array,
+		if ( isset( $aOptions['fetch_tweets_settings'] ) || isset( $aOptions['fetch_tweets_templates'] ) ) {
+			
+			$aOptions = $this->_convertV1OptionsToV2( $aOptions );
+			add_action( 'shutdown', array( $this, 'saveOptions' ) );
+			
+		}
+		
 		// If the template option array is empty, retrieve the active template arrays.
-		if ( empty( $arrOptions['arrTemplates'] ) ) {
+		if ( empty( $aOptions['arrTemplates'] ) ) {
 			
 			$oTemplate = new FetchTweets_Templates;
 			$arrDefaultTemplate = $oTemplate->findDefaultTemplateDetails();
-			$arrOptions['arrTemplates'][ $arrDefaultTemplate['strSlug'] ] = $arrDefaultTemplate;
-			$arrOptions['arrDefaultTemplate'] = $arrDefaultTemplate;
+			$aOptions['arrTemplates'][ $arrDefaultTemplate['strSlug'] ] = $arrDefaultTemplate;
+			$aOptions['arrDefaultTemplate'] = $arrDefaultTemplate;
 			
 			// Schedule updating the option at the end of the script.
 			add_action( 'shutdown', array( $this, 'saveOptions' ) );
 			
 		}
 		
-		return $arrOptions;
+		return $aOptions;
 				
 	}
-	
+		protected function _convertV1OptionsToV2( $aOptions ) {
+
+			// Drop the page slug dimension.
+			$_aOptions = FetchTweets_Utilities::uniteArrays(
+				isset( $aOptions['fetch_tweets_settings'] ) ? $aOptions['fetch_tweets_settings'] : array(),
+				isset( $aOptions['fetch_tweets_templates'] ) ? $aOptions['fetch_tweets_templates'] : array()
+			);
+			unset( $aOptions['fetch_tweets_settings'], $aOptions['fetch_tweets_settings'] );
+
+			// For template options
+			if ( isset( $_aOptions['fetch_tweets_template_plain']['fetch_tweets_template_plain_paddings']['top'] ) ) {
+				$_aOptions['fetch_tweets_template_plain']['fetch_tweets_template_plain_paddings'][ 0 ] = $_aOptions['fetch_tweets_template_plain']['fetch_tweets_template_plain_paddings']['top'];
+				unset( $_aOptions['fetch_tweets_template_plain']['fetch_tweets_template_plain_paddings']['top'] );
+			}
+			if ( isset( $_aOptions['fetch_tweets_template_plain']['fetch_tweets_template_plain_paddings']['right'] ) ) {
+				$_aOptions['fetch_tweets_template_plain']['fetch_tweets_template_plain_paddings'][ 1 ] = $_aOptions['fetch_tweets_template_plain']['fetch_tweets_template_plain_paddings']['right'];
+				unset( $_aOptions['fetch_tweets_template_plain']['fetch_tweets_template_plain_paddings']['right'] );
+			}
+			if ( isset( $_aOptions['fetch_tweets_template_plain']['fetch_tweets_template_plain_paddings']['bottom'] ) ) {
+				$_aOptions['fetch_tweets_template_plain']['fetch_tweets_template_plain_paddings'][ 2 ] = $_aOptions['fetch_tweets_template_plain']['fetch_tweets_template_plain_paddings']['bottom'];
+				unset( $_aOptions['fetch_tweets_template_plain']['fetch_tweets_template_plain_paddings']['bottom'] );
+			}
+			if ( isset( $_aOptions['fetch_tweets_template_plain']['fetch_tweets_template_plain_paddings']['left'] ) ) {
+				$_aOptions['fetch_tweets_template_plain']['fetch_tweets_template_plain_paddings'][ 3 ] = $_aOptions['fetch_tweets_template_plain']['fetch_tweets_template_plain_paddings']['left'];
+				unset( $_aOptions['fetch_tweets_template_plain']['fetch_tweets_template_plain_paddings']['left'] );
+			}
+			if ( isset( $_aOptions['fetch_tweets_template_single']['fetch_tweets_template_single_paddings']['top'] ) ) {
+				$_aOptions['fetch_tweets_template_single']['fetch_tweets_template_single_paddings'][ 0 ] = $_aOptions['fetch_tweets_template_single']['fetch_tweets_template_single_paddings']['top'];
+				unset( $_aOptions['fetch_tweets_template_single']['fetch_tweets_template_single_paddings']['top'] );
+			}
+			if ( isset( $_aOptions['fetch_tweets_template_single']['fetch_tweets_template_single_paddings']['right'] ) ) {
+				$_aOptions['fetch_tweets_template_single']['fetch_tweets_template_single_paddings'][ 1 ] = $_aOptions['fetch_tweets_template_single']['fetch_tweets_template_single_paddings']['right'];
+				unset( $_aOptions['fetch_tweets_template_single']['fetch_tweets_template_single_paddings']['right'] );
+			}
+			if ( isset( $_aOptions['fetch_tweets_template_single']['fetch_tweets_template_single_paddings']['bottom'] ) ) {
+				$_aOptions['fetch_tweets_template_single']['fetch_tweets_template_single_paddings'][ 2 ] = $_aOptions['fetch_tweets_template_single']['fetch_tweets_template_single_paddings']['bottom'];
+				unset( $_aOptions['fetch_tweets_template_single']['fetch_tweets_template_single_paddings']['bottom'] );
+			}
+			if ( isset( $_aOptions['fetch_tweets_template_single']['fetch_tweets_template_single_paddings']['left'] ) ) {
+				$_aOptions['fetch_tweets_template_single']['fetch_tweets_template_single_paddings'][ 3 ] = $_aOptions['fetch_tweets_template_single']['fetch_tweets_template_single_paddings']['left'];
+				unset( $_aOptions['fetch_tweets_template_single']['fetch_tweets_template_single_paddings']['left'] );
+			}		
+
+			return $_aOptions + $aOptions;
+			
+		}
 	/*
 	 * Front end methods
 	 * */
 	 
 	 
 	public function getAccessTokenAuto() {
-		return $this->arrOptions['fetch_tweets_settings']['twitter_connect']['access_token'];
+		return $this->aOptions['twitter_connect']['access_token'];
 	}	
 	public function getAccessTokenSecretAuto() {
-		return $this->arrOptions['fetch_tweets_settings']['twitter_connect']['access_secret'];
+		return $this->aOptions['twitter_connect']['access_secret'];
 	}		 
 	/**
 	 * Saves the given access token and the access secret key in the option table.
@@ -127,10 +179,10 @@ abstract class FetchTweets_Option_ {
 	 * @since			1.3.0
 	 * @return			void
 	 */	 
-	public function saveAccessToken( $strAccessToken, $strAccessSecret ) {
+	public function saveAccessToken( $sAccessToken, $sAccessSecret ) {
 		
-		$this->arrOptions['fetch_tweets_settings']['twitter_connect']['access_token'] = $strAccessToken;
-		$this->arrOptions['fetch_tweets_settings']['twitter_connect']['access_secret'] = $strAccessSecret;
+		$this->aOptions['twitter_connect']['access_token'] = $sAccessToken;
+		$this->aOptions['twitter_connect']['access_secret'] = $sAccessSecret;
 		$this->saveOptions();
 		
 	}
@@ -160,21 +212,21 @@ abstract class FetchTweets_Option_ {
 	}
 	
 	public function getConsumerKey() {
-		return $this->arrOptions['fetch_tweets_settings']['authentication_keys']['consumer_key'];
+		return $this->aOptions['authentication_keys']['consumer_key'];
 	}
 	public function getConsumerSecret() {
-		return $this->arrOptions['fetch_tweets_settings']['authentication_keys']['consumer_secret'];
+		return $this->aOptions['authentication_keys']['consumer_secret'];
 	}
 	public function getAccessToken() {
-		return $this->arrOptions['fetch_tweets_settings']['authentication_keys']['access_token'];
+		return $this->aOptions['authentication_keys']['access_token'];
 	}	
 	public function getAccessTokenSecret() {
-		return $this->arrOptions['fetch_tweets_settings']['authentication_keys']['access_secret'];
+		return $this->aOptions['authentication_keys']['access_secret'];
 	}	
 	
 	public function saveOptions() {
 		
-		update_option( $this->strOptionKey, $this->arrOptions );
+		update_option( $this->sOptionKey, $this->aOptions );
 		
 	}
 	

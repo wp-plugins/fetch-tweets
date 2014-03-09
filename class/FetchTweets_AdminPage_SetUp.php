@@ -6,10 +6,12 @@ abstract class FetchTweets_AdminPage_SetUp extends FetchTweets_AdminPage_SetUp_F
 		// Show the warning message if the authentication key is not set.
 		$this->_checkAPIKeys(); 
 	
-		if ( isset( $this->oProps->arrOptions['fetch_tweets_settings']['capabilities']['setting_page_capability'] ) 
-			&& ! empty( $this->oProps->arrOptions['fetch_tweets_settings']['capabilities']['setting_page_capability'] )
-		)	
-			$this->setCapability( $this->oProps->arrOptions['fetch_tweets_settings']['capabilities']['setting_page_capability'] );
+		if ( isset( $this->oProp->aOptions['capabilities']['setting_page_capability'] ) 
+			&& ! empty( $this->oProp->aOptions['capabilities']['setting_page_capability'] )
+		) {
+			$this->setCapability( $this->oProp->aOptions['capabilities']['setting_page_capability'] );
+// FetchTweets_Debug::logArray( $this->oProp->aOptions['capabilities']['setting_page_capability'] );
+		}
 	
 		$this->_setUpPages();
 		$this->_setUpStyles();
@@ -19,7 +21,7 @@ abstract class FetchTweets_AdminPage_SetUp extends FetchTweets_AdminPage_SetUp_F
 			'<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J4UJHETVAZX34">' . __( 'Donate', 'fetch-tweets' ) . '</a>',
 			'<a href="http://en.michaeluno.jp/contact/custom-order/?lang=' . ( WPLANG ? WPLANG : 'en' ) . '">' . __( 'Order custom plugin', 'fetch-tweets' ) . '</a>'
 		);						
-		
+
 	}
 		protected function _checkAPIKeys() {
 			
@@ -31,7 +33,7 @@ abstract class FetchTweets_AdminPage_SetUp extends FetchTweets_AdminPage_SetUp_F
 		public function _replyToShowAdminNotice() {
 				
 			if ( ! (
-				( isset( $_GET['page'] ) && $this->oProps->isPageAdded( $_GET['page'] ) ) 
+				( isset( $_GET['page'] ) && $this->oProp->isPageAdded( $_GET['page'] ) ) 
 				|| ( isset( $_GET['post_type'] ) && $_GET['post_type'] == FetchTweets_Commons::PostTypeSlug )
 			) ) return; 
 			

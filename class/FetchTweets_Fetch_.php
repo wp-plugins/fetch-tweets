@@ -31,7 +31,7 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_Format {
 				? $arrArgs['tag']
 				: null );	// backward compatibility
 		$arrArgs['tag'] = is_array( $arrArgs['tag'] ) ? $arrArgs['tag'] : preg_split( "/[,]\s*/", trim( ( string ) $arrArgs['tag'] ), 0, PREG_SPLIT_NO_EMPTY );
-		$arrArgs = ( array ) $arrArgs + $this->oOption->arrOptions['fetch_tweets_settings']['default_values'] + $this->oOption->arrStructure_DefaultParams + $this->oOption->arrStructure_DefaultTemplateOptions;
+		$arrArgs = ( array ) $arrArgs + $this->oOption->aOptions['default_values'] + $this->oOption->aStructure_DefaultParams + $this->oOption->aStructure_DefaultTemplateOptions;
 		$arrArgs['id'] = isset( $arrArgs['tag_field_type'] ) && in_array( strtolower( $arrArgs['tag_field_type'] ), array( 'id', 'slug' ) )
 			? $this->getPostIDsByTag( $arrArgs['tag'], $arrArgs['tag_field_type'], trim( $arrArgs['operator'] ) )
 			: $this->getPostIDsByTagName( $arrArgs['tag'], trim( $arrArgs['operator'] ) );
@@ -141,15 +141,15 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_Format {
 		 * */
 		
 		$arrRawArgs = ( array ) $arrArgs; 
-		$arrArgs = FetchTweets_Utilities::uniteArrays( $arrRawArgs, $this->oOption->arrOptions['fetch_tweets_settings']['default_values'], $this->oOption->arrStructure_DefaultParams, $this->oOption->arrStructure_DefaultTemplateOptions );
-		// $arrArgs = $arrRawArgs + $this->oOption->arrOptions['fetch_tweets_settings']['default_values'] + $this->oOption->arrStructure_DefaultParams + $this->oOption->arrStructure_DefaultTemplateOptions;
+		$arrArgs = FetchTweets_Utilities::uniteArrays( $arrRawArgs, $this->oOption->aOptions['default_values'], $this->oOption->aStructure_DefaultParams, $this->oOption->aStructure_DefaultTemplateOptions );
+		// $arrArgs = $arrRawArgs + $this->oOption->aOptions['default_values'] + $this->oOption->aStructure_DefaultParams + $this->oOption->aStructure_DefaultTemplateOptions;
 		$arrArgs['id'] = isset( $arrArgs['ids'] ) && ! empty( $arrArgs['ids'] ) ? $arrArgs['ids'] : $arrArgs['id'];	// backward compatibility
 		$arrArgs['id'] = is_array( $arrArgs['id'] ) ? $arrArgs['id'] : preg_split( "/[,]\s*/", trim( ( string ) $arrArgs['id'] ), 0, PREG_SPLIT_NO_EMPTY );
 
 		// Debug
 		// echo var_dump( $arrArgs );
 		// echo "<pre>" . htmlspecialchars( print_r( $arrArgs, true ) ) . "</pre>";	
-		// echo "<pre>" . htmlspecialchars( print_r( $this->oOption->arrOptions, true ) ) . "</pre>";	
+		// echo "<pre>" . htmlspecialchars( print_r( $this->oOption->aOptions, true ) ) . "</pre>";	
 		// return;		
 
 		$arrTweets = $this->getTweetsAsArray( $arrArgs, $arrRawArgs );
@@ -176,7 +176,7 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_Format {
 		 * */		
 		 
 		// Make it easier for the template script to access the plugin options.
-		$arrOptions = $this->oOption->arrOptions; 
+		$aOptions = $this->oOption->aOptions; 
 		
 		// Retrieve the template slug we are going to use.
 		$arrArgs['template'] = $this->getTemplateSlug( $arrArgs['id'], $arrArgs['template'] );
@@ -189,7 +189,7 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_Format {
 	protected function getTemplateSlug( $arrPostIDs, $strTemplateSlug='' ) {
 					
 		// Return the one defined in the caller argument.
-		if ( $strTemplateSlug && isset( $this->oOption->arrOptions['arrTemplates'][ $strTemplateSlug ] ) )
+		if ( $strTemplateSlug && isset( $this->oOption->aOptions['arrTemplates'][ $strTemplateSlug ] ) )
 			return $this->checkNecessaryFileExists( $strTemplateSlug );
 		
 		// Return the one defined in the custom post rule.
@@ -201,7 +201,7 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_Format {
 		// Find the default template slug.
 		if ( 
 			empty( $strTemplateSlug ) 
-			|| ! isset( $this->oOption->arrOptions['arrTemplates'][ $strTemplateSlug ] ) 
+			|| ! isset( $this->oOption->aOptions['arrTemplates'][ $strTemplateSlug ] ) 
 		)
 			return $GLOBALS['oFetchTweets_Templates']->getDefaultTemplateSlug();
 		
@@ -215,9 +215,9 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_Format {
 		if ( 
 			( ! empty( $strTemplateSlug ) || $strTemplateSlug != '' ) 
 			&& ( 
-				! isset( $this->oOption->arrOptions['arrTemplates'][ $strTemplateSlug ] )	// this happens when the options have been reset.
-				|| ! file_exists( $this->oOption->arrOptions['arrTemplates'][ $strTemplateSlug ]['strDirPath'] . '/template.php' )
-				|| ! file_exists( $this->oOption->arrOptions['arrTemplates'][ $strTemplateSlug ]['strDirPath'] . '/style.css' )
+				! isset( $this->oOption->aOptions['arrTemplates'][ $strTemplateSlug ] )	// this happens when the options have been reset.
+				|| ! file_exists( $this->oOption->aOptions['arrTemplates'][ $strTemplateSlug ]['strDirPath'] . '/template.php' )
+				|| ! file_exists( $this->oOption->aOptions['arrTemplates'][ $strTemplateSlug ]['strDirPath'] . '/style.css' )
 			)
 		)
 			return $GLOBALS['oFetchTweets_Templates']->getDefaultTemplateSlug();		
@@ -230,12 +230,12 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_Format {
 		if ( empty( $strTemplateSlug ) && isset( $arrPostIDs[ 0 ] ) )
 			$strTemplateSlug = get_post_meta( $arrPostIDs[ 0 ], 'fetch_tweets_template', true );
 		
-		if ( empty( $strTemplateSlug ) || ! isset( $this->oOption->arrOptions['arrTemplates'][ $strTemplateSlug ] ) )
+		if ( empty( $strTemplateSlug ) || ! isset( $this->oOption->aOptions['arrTemplates'][ $strTemplateSlug ] ) )
 			return $GLOBALS['oFetchTweets_Templates']->getDefaultTemplatePath();
 			
-		$strTemplatePath = $this->oOption->arrOptions['arrTemplates'][ $strTemplateSlug ]['strTemplatePath'];
+		$strTemplatePath = $this->oOption->aOptions['arrTemplates'][ $strTemplateSlug ]['strTemplatePath'];
 		$strTemplatePath = ( ! $strTemplatePath || ! file_exists( $strTemplatePath ) )
-			? dirname( $this->oOption->arrOptions['arrTemplates'][ $strTemplateSlug ]['strCSSPath'] ) . '/template.php'
+			? dirname( $this->oOption->aOptions['arrTemplates'][ $strTemplateSlug ]['strCSSPath'] ) . '/template.php'
 			: $strTemplatePath;
 		return $strTemplatePath;			
 		

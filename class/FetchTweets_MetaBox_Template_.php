@@ -6,13 +6,14 @@ abstract class FetchTweets_MetaBox_Template_ extends FetchTweets_AdminPageFramew
 		$oTemplates = new FetchTweets_Templates;
 		$this->addSettingFields(			
 			array(
-				'strFieldID'		=> 'fetch_tweets_template',
-				'strTitle'			=> __( 'Select Template', 'fetch-tweets' ),
-				'strDescription'	=> __( 'Sets a default template for this rule. If a template is specified in a widget, the shortcode, or the function, this setting will be overriden.', 'fetch-tweets' ),
-				'vLabel'			=> $arr = $oTemplates->getTemplateArrayForSelectLabel(),
-				'strType'			=> 'select',
-				// 'strAfterField' 	=> '<pre>' . print_r( $arr, true ) . '</pre>', // debug
-				'vDefault'			=> $oTemplates->getDefaultTemplateSlug(),
+				'field_id'		=> 'fetch_tweets_template',
+				'title'			=> __( 'Select Template', 'fetch-tweets' ),
+				'description'	=> __( 'Sets a default template for this rule. If a template is specified in a widget, the shortcode, or the function, this setting will be overriden.', 'fetch-tweets' ),
+				'label'			=> $arr = $oTemplates->getTemplateArrayForSelectLabel(),
+				'type'			=> 'select',
+				// 'after_field' 	=> '<pre>' . print_r( $arr, true ) . '</pre>', // debug
+				'default'			=> $oTemplates->getDefaultTemplateSlug(),
+				'show_title_column'	=>	false,
 			),							
 			array()
 		);

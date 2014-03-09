@@ -2,7 +2,7 @@
 
 abstract class FetchTweets_Widget_ extends WP_Widget {
 
-	protected $arrStructure_FormElements = array(
+	protected $aStructure_FormElements = array(
 		'title'			=> null,
 		'selected_ids'	=> array(),
 		'count'			=> 20,	// default
@@ -25,7 +25,7 @@ abstract class FetchTweets_Widget_ extends WP_Widget {
 		echo $arrWidgetInfo['before_widget']; 
 		
 		// Avoid undefined index warnings.
-		$arrInstance = $arrInstance + $this->arrStructure_FormElements;
+		$arrInstance = $arrInstance + $this->aStructure_FormElements;
 		if ( $arrInstance['title'] )
 			echo "<h3 class='fetch-tweets-widget widget-title'>{$arrInstance['title']}</h3>";
 		
@@ -38,7 +38,7 @@ abstract class FetchTweets_Widget_ extends WP_Widget {
 	public function form( $arrInstance ) {	
 		
 		// Avoid undefined index warnings.
-		$arrInstance = $arrInstance + $this->arrStructure_FormElements;
+		$arrInstance = $arrInstance + $this->aStructure_FormElements;
 		$arrInstance['template'] = isset( $arrInstance['template'] ) 
 			? $arrInstance['template']
 			: $GLOBALS['oFetchTweets_Templates']->getDefaultTemplateSlug();
@@ -56,7 +56,7 @@ abstract class FetchTweets_Widget_ extends WP_Widget {
 		// Returns an array of filed values by a specified field.
 		// $strField can be either name or id.
 		$arrFields = array();
-		foreach( $this->arrStructure_FormElements as $strFieldKey => $v )  
+		foreach( $this->aStructure_FormElements as $strFieldKey => $v )  
 			$arrFields[ $strFieldKey ] = $strField == 'id' 
 				? $this->get_field_id( $strFieldKey )
 				: $this->get_field_name( $strFieldKey );

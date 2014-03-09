@@ -15,9 +15,9 @@
 final class FetchTweets_Commons {
 	
 	public static $sPluginPath = '';
-	public static $strPluginKey = 'fetch_tweets';
+	public static $sPluginKey = 'fetch_tweets';
 	public static $strAdminKey = 'fetch_tweets_admin';
-	public static $strOptionKey = 'fetch_tweets_option';
+	public static $sOptionKey = 'fetch_tweets_option';
 	
 	const TextDomain = 'fetch-tweets';
 	const PluginName = 'Fetch Tweets';
@@ -37,13 +37,13 @@ final class FetchTweets_Commons {
 	}
 	
 	public static function getPluginKey() {
-		return self::$strPluginKey;
+		return self::$sPluginKey;
 	}
 	public static function getAdminKey() {
 		return self::$strAdminKey;
 	}
 	public static function getOptionKey() {
-		return self::$strOptionKey;
+		return self::$sOptionKey;
 	}	
 	public static function getPluginFilePath() {
 		return self::$sPluginPath;

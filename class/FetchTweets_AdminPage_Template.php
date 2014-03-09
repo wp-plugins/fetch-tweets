@@ -35,7 +35,7 @@ abstract class FetchTweets_AdminPage_Template extends FetchTweets_AdminPage_Exte
 		<?php
 	
 // echo "<h3>Properties</h3>";			
-// echo $this->oDebug->getArray( $this->oProps );
+// echo $this->oDebug->getArray( $this->oProp );
 			
 	}
 	public function do_fetch_tweets_templates_get_templates() {
@@ -65,8 +65,8 @@ abstract class FetchTweets_AdminPage_Template extends FetchTweets_AdminPage_Exte
 				. '"'
 				. '>' 
 				. '<div class="ftws_extension_item">' 
-					. "<h4>{$arrItem['strTitle']}</h4>"
-					. $arrItem['strDescription'] 
+					. "<h4>{$arrItem['title']}</h4>"
+					. $arrItem['description'] 
 					. "<div class='get-now'><a href='{$arrItem['strLink']}' target='_blank' rel='nofollow'>" 
 						. "<input class='button button-secondary' type='submit' value='" . __( 'Get it Now', 'fetch-tweets' ) . "' />"
 					. "</a></div>"
@@ -113,7 +113,7 @@ abstract class FetchTweets_AdminPage_Template extends FetchTweets_AdminPage_Exte
 		$arrActiveTemplates = $GLOBALS['oFetchTweets_Templates']->getActiveTemplates();
 		$arrUploadedTemplates = $GLOBALS['oFetchTweets_Templates']->getUploadedTemplates();
 		$arrData = $arrActiveTemplates + $arrUploadedTemplates;
-		// $arrData = $GLOBALS['oFetchTweets_Option']->arrOptions['arrTemplates'] + $GLOBALS['oFetchTweets_Templates']->getTemplates();
+		// $arrData = $GLOBALS['oFetchTweets_Option']->aOptions['arrTemplates'] + $GLOBALS['oFetchTweets_Templates']->getTemplates();
 		foreach ( $arrData as $arrDatum ) 	// set all default flags to false.
 			$arrDatum['fIsDefault'] = false;		
 			
