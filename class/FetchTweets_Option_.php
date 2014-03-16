@@ -107,13 +107,10 @@ abstract class FetchTweets_Option_ {
 		$vOption = ( false === $vOption ) ? array() : $vOption;		// Avoid casting array because it causes a zero key when the subject is null.
 		$aOptions = FetchTweets_Utilities::uniteArrays( $vOption, self::$aStructure_Options ); 	// Now $vOption is an array so merge with the default option to avoid undefined index warnings.
 		
-		// format the options for backward compatibility
-		// If it's the v1 option array,
+		// If the v1 option array structure is present, format the options for backward compatibility
 		if ( isset( $aOptions['fetch_tweets_settings'] ) || isset( $aOptions['fetch_tweets_templates'] ) ) {
-			
 			$aOptions = $this->_convertV1OptionsToV2( $aOptions );
 			add_action( 'shutdown', array( $this, 'saveOptions' ) );
-			
 		}
 		
 		// If the template option array is empty, retrieve the active template arrays.
@@ -181,7 +178,7 @@ abstract class FetchTweets_Option_ {
 				$_aOptions['authentication_keys']['connect_method'] = 'manual';
 			}
 			if ( isset( $_aOptions['twitter_connect'] ) ) {
-				$_aOptions['twitter_connect']['is_connected'] = ( $_aOptions['authentication_keys']['access_token'] && $_aOptions['authentication_keys']['access_secret'] );
+				$_aOptions['twitter_connect']['is_connected'] = ( $_aOptions['twitter_connect']['access_token'] && $_aOptions['twitter_connect']['access_secret'] );
 				$_aOptions['twitter_connect']['connect_method'] = 'oauth';
 			}
 			
@@ -268,8 +265,8 @@ abstract class FetchTweets_Option_ {
 		$_oConnect = new FetchTweets_TwitterAPI_Verification( 
 			FetchTweets_Commons::ConsumerKey, 
 			FetchTweets_Commons::ConsumerSecret, 
-			$_oOption->aOptions['twitter_connect']['access_token'], 
-			$_oOption->aOptions['twitter_connect']['access_secret']
+			$this->aOptions['twitter_connect']['access_token'], 
+			$this->aOptions['twitter_connect']['access_secret']
 		);
 		$_aStatus = $_oConnect->getStatus();
 		$_aCredentials['screen_name'] = $_aStatus['screen_name'];
