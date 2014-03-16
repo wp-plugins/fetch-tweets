@@ -16,8 +16,22 @@ final class FetchTweets_Commons {
 	
 	public static $sPluginPath = '';
 	public static $sPluginKey = 'fetch_tweets';
-	public static $strAdminKey = 'fetch_tweets_admin';
+	public static $sAdminKey = 'fetch_tweets_admin';
 	public static $sOptionKey = 'fetch_tweets_option';
+	
+	// The below properties will be assigned automatically
+	public static $sPluginDirPath = '';
+	public static $sPluginName = '';
+	public static $sPluginURI = '';
+	public static $sPluginVersion = '';
+	public static $sPluginDescription = '';
+	public static $sPluginAuthor = '';
+	public static $sPluginAuthorURI = '';
+	public static $sPluginTextDomain = '';
+	public static $sPluginDomainPath = '';
+	public static $sPluginNetwork = '';
+	public static $sPluginSiteWide = '';
+	public static $sPluginStoreURI = '';
 	
 	const TextDomain = 'fetch-tweets';
 	const PluginName = 'Fetch Tweets';
@@ -30,17 +44,47 @@ final class FetchTweets_Commons {
 	const ConsumerKey = '97LqHiMs06VhV2rf5tUQw';
 	const ConsumerSecret = 'FIH9cr0eXtd7q9caYVqBjd5mvfUS6hZqREYsUhh9wA';
 	
-	public static function setUp( $sPluginFilePath ) {
-		
+	static public function setUp( $sPluginFilePath ) {
 		self::$sPluginPath = $sPluginFilePath;
-		
+		self::_setUpStaticProperties( $sPluginFilePath );
 	}
+		static function _setUpStaticProperties( $sPluginFilePath ) {
+
+			self::$sPluginDirPath = dirname( $sPluginFilePath );
+			self::$sPluginURI = plugins_url( '', $sPluginFilePath );
+			
+			$_aPluginData = get_file_data( 
+				$sPluginFilePath, 
+				array(
+					'sPluginName' => 'Plugin Name',
+					// 'sPluginURI' => 'Plugin URI',
+					'sPluginVersion' => 'Version',
+					'sPluginDescription' => 'Description',
+					'sPluginAuthor' => 'Author',
+					'sPluginAuthorURI' => 'Author URI',
+					'sPluginTextDomain' => 'Text Domain',
+					'sPluginDomainPath' => 'Domain Path',
+					'sPluginNetwork' => 'Network',
+					'sPluginSiteWide' => 'Site Wide Only',	// Site Wide Only is deprecated in favor of Network.
+					'sPluginStoreURI' => 'Store URI',
+				),
+				'plugin' 
+			);
+			
+			foreach( $_aPluginData as $_sKey => $_sValue ) {
+				if ( isset( self::${$_sKey} ) ) {	// must be checked as get_file_data() returns a filtered result
+					self::${$_sKey} = $_sValue;
+				}
+			}
+		
+		}	
+	
 	
 	public static function getPluginKey() {
 		return self::$sPluginKey;
 	}
 	public static function getAdminKey() {
-		return self::$strAdminKey;
+		return self::$sAdminKey;
 	}
 	public static function getOptionKey() {
 		return self::$sOptionKey;

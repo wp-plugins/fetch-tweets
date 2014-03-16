@@ -14,9 +14,9 @@
 
 final class FetchTweets_Bootstrap {
 	
-	function __construct( $strPluginFilePath ) {
+	function __construct( $sPluginFilePath ) {
 	
-		$this->strFilePath = $strPluginFilePath;	//FetchTweets_Commons::getPluginPath();
+		$this->strFilePath = $sPluginFilePath;	//FetchTweets_Commons::getPluginPath();
 		$this->_bIsAdmin = is_admin();
 		
 		// 1. Define constants.
@@ -140,7 +140,7 @@ final class FetchTweets_Bootstrap {
 		include_once( dirname( FetchTweets_Commons::getPluginFilePath() ) . '/library/admin-page-framework/fetch-tweets-admin-page-framework.min.php' );
 
 		// 2. Option Object
-		$GLOBALS['oFetchTweets_Option'] = new FetchTweets_Option( FetchTweets_Commons::$strAdminKey );
+		$GLOBALS['oFetchTweets_Option'] = new FetchTweets_Option( FetchTweets_Commons::$sAdminKey );
 
 		// 3. Templates
 		$GLOBALS['oFetchTweets_Templates'] = new FetchTweets_Templates;		
@@ -151,7 +151,7 @@ final class FetchTweets_Bootstrap {
 		
 		// 4. Admin pages
 		if ( $this->_bIsAdmin ) {
-			new FetchTweets_AdminPage( FetchTweets_Commons::$strAdminKey, $this->strFilePath );		
+			new FetchTweets_AdminPage( FetchTweets_Commons::$sAdminKey, $this->strFilePath );		
 		}
 		
 		// 5. Post Type - no need to check is_admin() because posts of custom post type can be accessed from the front-end.

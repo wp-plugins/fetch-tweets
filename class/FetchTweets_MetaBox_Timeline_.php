@@ -22,11 +22,10 @@ class FetchTweets_MetaBox_Timeline_ extends FetchTweets_AdminPageFramework_MetaB
 				'hidden'		=>	true,
 			),						
 			array(
-				'field_id'		=> 'account',
+				'field_id'		=> 'account_id',
 				'title'			=> __( 'Account', 'fetch-tweets' ),
-				'type'			=> 'select',
-				'label'			=>	apply_filters( 'fetch_tweets_filter_authenticated_accounts', $this->_getAuthenticatedAccounts() ),
-				
+				'type'			=> 'select',				
+				// 'label' => defined in the callback
 			),	
 			array(
 				'field_id'		=> 'item_count',
@@ -46,57 +45,39 @@ class FetchTweets_MetaBox_Timeline_ extends FetchTweets_AdminPageFramework_MetaB
 				'type'			=> 'checkbox',
 				'label'			=> __( 'Replies will be excluded.', 'fetch-tweets' ),
 				'description'	=> __( 'This prevents replies from appearing in the returned timeline.', 'fetch-tweets' ),
-			),			
-			// array(
-				// 'field_id'		=> 'include_retweets',
-				// 'title'			=> __( 'Include Retweets', 'fetch-tweets' ),
-				// 'label'			=> __( 'Retweets will be included.', 'fetch-tweets' ),
-				// 'type'			=> 'checkbox',
-			// ),						
+			),								
 			array()
 		);	
 	
 	}
+	
+	/**
+	 * Modify field definition arrays.
+	 */ 
+	public function field_definition_FetchTweets_MetaBox_Timeline_account_id( $aField ) {
 		
-		/**
-		 * Returns the list of accounts.
-		 */
-		protected function _getAuthenticatedAccounts() {
-			
-			$_oOption = & $GLOBALS['oFetchTweets_Option'];
-			$_aAccountList = array();
-			$_aAccountList[0] = isset( $_oOption->aOptions['twitter_connect']['screen_name'] ) 
-				? $_oOption->aOptions['twitter_connect']['screen_name']
-				: $this->_getScreenName();
-			return $_aAccountList;
-			
-		}
+		$aField['label'] = apply_filters( 'fetch_tweets_filter_authenticated_accounts', array( $this->_getScreenName() ) );
+		return $aField;
+		
+	}
+	
 		/**
 		 * Performs API request and retrieves the screen name
 		 */
 		protected function _getScreenName() {
 			
 			$_oOption = & $GLOBALS['oFetchTweets_Option'];
-			
-			// If the required option elements are not set, return an empty element.
-			if ( ! isset( $_oOption->aOptions['twitter_connect']['access_token'], $_oOption->aOptions['twitter_connect']['access_secret'] ) ) {
-				return '';
-			}
-			$_fIsManuallySet = $_oOption->isAuthKeysManuallySet();
-			
-			$_sAccessToken = $_oOption->aOptions['twitter_connect']['access_token'];
-			$_sAccessSecret = $_oOption->aOptions['twitter_connect']['access_secret'];			
-			$_sConsumerKey = $_fIsManuallySet ? $_oOption->getConsumerKey() : FetchTweets_Commons::ConsumerKey;
-			$_sConsumerSecret = $_fIsManuallySet ? $_oOption->getConsumerSecret() : FetchTweets_Commons::ConsumerSecret;
-			$oTwitterOAuth_Verification = new FetchTweets_TwitterAPI_Verification( $_sConsumerKey, $_sConsumerSecret, $_sAccessToken, $_sAccessSecret );
-			$aStatus = $oTwitterOAuth_Verification->getStatus();
-			return isset( $aStatus['screen_name'] )
-				? $aStatus['screen_name']
+			$_aCredentials = $_oOption->getCredentialsByID( 0 );
+			return isset( $_aCredentials['screen_name'] )
+				? $_aCredentials['screen_name'] 
 				: '';
-					
+								
 		}
 	
-	public function validation_FetchTweets_MetaBox_ScreenName( $arrInput ) {	// validation_ + extended class name
+	/*
+	 * Validation methods
+	 */
+	public function validation_FetchTweets_MetaBox_Timeline( $arrInput ) {	// validation_ + extended class name
 			
 		$arrInput['item_count'] = $this->oUtil->fixNumber( 
 			$arrInput['item_count'], 	// number to sanitize

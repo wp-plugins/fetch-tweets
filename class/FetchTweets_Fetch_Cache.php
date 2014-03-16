@@ -6,26 +6,24 @@
  * @subpackage		
  * @copyright		Michael Uno
  * @since			1.3.4
+ * 
+ * @filter			fetch_tweets_filter_random_credentials
  */
 abstract class FetchTweets_Fetch_Cache {
 
 	protected $arrExpiredTransientsRequestURIs = array(); // stores the expired transients' request URIs
 	
-	public function __construct() {
+	public function __construct( $sConsumerKey='', $sConsumerSecret='', $sAccessToken='', $sAccessSecret='' ) {
 	
 		// Set up the connection.
 		$this->oOption = & $GLOBALS['oFetchTweets_Option'];		
 		
-		$_fIsAuthKeysManuallySet = $this->oOption->isAuthKeysManuallySet();
-		$this->sConsumerKey = $_fIsAuthKeysManuallySet ? $this->oOption->getConsumerKey() : FetchTweets_Commons::ConsumerKey;
-		$this->sConsumerSecret = $_fIsAuthKeysManuallySet ? $this->oOption->getConsumerSecret() : FetchTweets_Commons::ConsumerSecret;
-		$this->sAccessToken = $_fIsAuthKeysManuallySet ? $this->oOption->getAccessToken() : $this->oOption->getAccessTokenAuto();
-		$this->sAccessSecret = $_fIsAuthKeysManuallySet ? $this->oOption->getAccessTokenSecret() : $this->oOption->getAccessTokenSecretAuto();
+		$_aApplicationKeys = $this->_getApplicationKeys( $sConsumerKey, $sConsumerSecret, $sAccessToken, $sAccessSecret );
 		$this->oTwitterOAuth =  new FetchTweets_TwitterOAuth( 
-			$this->sConsumerKey,
-			$this->sConsumerSecret,
-			$this->sAccessToken,
-			$this->sAccessSecret
+			$_aApplicationKeys['consumer_key'],
+			$_aApplicationKeys['consumer_secret'],
+			$_aApplicationKeys['access_token'],
+			$_aApplicationKeys['access_secret']
 		);
 						
 		$this->oBase64 = new FetchTweets_Base64;	
@@ -34,6 +32,30 @@ abstract class FetchTweets_Fetch_Cache {
 		add_action( 'shutdown', array( $this, '_replyToUpdateCacheItems' ) );
 		
 	}
+		
+		/**
+		 * Returns the application keys for the Twitter API credentials.
+		 * 
+		 * @since			2
+		 */
+		protected function _getApplicationKeys( $sConsumerKey, $sConsumerSecret, $sAccessToken, $sAccessSecret ) {
+		
+			// If the keys are directly given to the class constructor, use them.
+			if ( $sConsumerKey && $sConsumerSecret && $sAccessToken && $sAccessSecret ) {
+				return array(
+					'consumer_key' => $sConsumerKey,
+					'consumer_secret' => $sConsumerSecret,
+					'access_token' => $sAccessToken,
+					'access_secret' => $sAccessSecret,
+				);
+			}
+			
+			return apply_filters( 
+				'fetch_tweets_filter_random_credentials',  
+				$this->oOption->getCredentialsByID( 0 )
+			);
+			
+		}
 			
 	/**
 	 * Performs the API request and sets the cache.

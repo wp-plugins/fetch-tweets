@@ -15,13 +15,13 @@ abstract class FetchTweets_Fetch_ByList extends FetchTweets_Fetch_BySearch {
 	 * @remark			This is used for the form field select option.
 	 * @since			1.2.0
 	 */
-	public function getListNamesFromScreenName( $strScreenName ) {
+	public function getListNamesFromScreenName( $sScreenName, $iAccountID=0 ) {
 		
-		$arrListDetails = $this->getListsByScreenName( $strScreenName );
-		$arrListIDs = array();
-		foreach( $arrListDetails as $arrListDetail ) 
-			$arrListIDs[ $arrListDetail['id'] ] = $arrListDetail['name'];
-		return $arrListIDs;
+		$aListDetails = $this->getListsByScreenName( $sScreenName, $iAccountID );
+		$aListIDs = array();
+		foreach( $aListDetails as $aListDetail ) 
+			$aListIDs[ $aListDetail['id'] ] = $aListDetail['name'];
+		return $aListIDs;
 		
 	}
 	
@@ -29,16 +29,24 @@ abstract class FetchTweets_Fetch_ByList extends FetchTweets_Fetch_BySearch {
 	 * Fetches lists and their details owned by the specified user.
 	 * 
 	 * @see				https://dev.twitter.com/docs/api/1.1/get/lists/list
+	 * @remark			Insert credentials in to the request URI to identify the cache per authenticated account since lists can contain private.
 	 * @since			1.2.0
+	 * @since			2.0.0			Changed the scope to public as the meta box option class uses it.
 	 */ 
-	protected function getListsByScreenName( $strScreenName, $intCacheDuration=600 ) {
+	public function getListsByScreenName( $sScreenName, $iAccountID=0, $iCacheDuration=600 ) {
 		
-		// Compose the request URI.			
-		// https://api.twitter.com/1.1/lists/list.json?screen_name=twitterapi 
-		$strRequestURI = "https://api.twitter.com/1.1/lists/list.json?"
-			. "screen_name={$strScreenName}";
+		$_aAccessKeys = $this->oOption->getCredentialsByID( $iAccountID );
+		
+		// Compose the request URI - e.g. https://api.twitter.com/1.1/lists/list.json?screen_name=twitterapi
+		$_sRequestURI = "https://api.twitter.com/1.1/lists/list.json?"
+			. "screen_name={$sScreenName}"
+			. "&consumer_key=" . $_aAccessKeys['consumer_key']			//	this is not an API parameter but for the plugin transient ID
+			. "&consumer_secret=" . $_aAccessKeys['consumer_secret']	//	this is not an API parameter but for the plugin transient ID
+			. "&access_token=" . $_aAccessKeys['access_token']			//	this is not an API parameter but for the plugin transient ID
+			. "&access_secret=" . $_aAccessKeys['access_secret']		// 	this is not an API parameter but for the plugin transient ID
+		;
 			
-		return $this->doAPIRequest_Get( $strRequestURI, null, $intCacheDuration );
+		return $this->doAPIRequest_Get( $_sRequestURI, null, $iCacheDuration );
 		
 	}
 	
@@ -47,26 +55,38 @@ abstract class FetchTweets_Fetch_ByList extends FetchTweets_Fetch_BySearch {
 	 * 
 	 * @see				https://dev.twitter.com/docs/api/1.1/get/lists/statuses
 	 * @since			1.2.0
+	 * @since			1.3.4			The 'count' parameter is fixed to the max number so that the data can be reused for different count requests.
+	 * @since			2				Dropped the $iCount parameter.
+	 * 
+	 * @param			string			$sListID
+	 * @param			boolean			$fIncludeRetweets
+	 * @param			integer			$iCacheDuration			
+	 * @param			integer			$iAccountID				The credentials ID stored in the plugin. 0 is the main one.
+	 * @param			string			$sMode					Either 'public' or 'private'.
 	 */ 
-	protected function getTweetsByListID( $strListID, $intCount=20, $fIncludeRetweets=false, $intCacheDuration=600 ) {
-		
-		// Compose the request URI.
-		// $intCount = ( ( int ) $intCount ) > 200 ? 200 : $intCount;
-		$intCount = 200;	// as of 1.3.4 the maximum number of tweets are fetched so that the data can be reused for different count requests.
-			
-		// https://api.twitter.com/1.1/lists/statuses.json?slug=teams&owner_screen_name=MLS&count=1 
-		$strRequestURI = "https://api.twitter.com/1.1/lists/statuses.json?"
-			. "list_id={$strListID}"
-			// . "&slug={$strListSlug}"
-			// . "&owner_screen_name={$strOwnerScreenName}"
-			// . "&owner_id={$strOwnerID}"
-			// . "&since_id={$strSinceID}"
-			// . "&max_id={$strMaxID}"
-			. "&count={$intCount}"
-			. "&include_rts=" . ( $fIncludeRetweets ? 1 : 0 );
-			// . "&exclude_replies=" . ( $fExcludeReplies ? 1 : 0 );
-		
-		return $this->doAPIRequest_Get( $strRequestURI, null, $intCacheDuration );
+	protected function _getTweetsByListID( $sListID, $fIncludeRetweets=false, $iCacheDuration=600, $iAccountID=0, $sMode='public' ) {
+					
+		// e.g. https://api.twitter.com/1.1/lists/statuses.json?slug=teams&owner_screen_name=MLS&count=1 
+		$_aQueryArgs = array(
+			'list_id'	=>	$sListID,
+			'count'		=>	200,	// 200 is the max
+			'include_rts'	=>	( $fIncludeRetweets ? 1 : 0 ),
+			// . "&slug={$sListSlug}"
+			// . "&owner_screen_name={$sOwnerScreenName}"
+			// . "&owner_id={$sOwnerID}"
+			// . "&since_id={$sSinceID}"
+			// . "&max_id={$sMaxID}"			
+		);
+		if ( $sMode == 'private' ) {
+			$_aAccessKeys = $this->oOption->getCredentialsByID( $iAccountID );	
+			// These keys will be removed when performing the actual request as they are not part of Twitter API specifications but for generating unique cache ID. 
+			$_aQueryArgs['consumer_key'] = $_aAccessKeys['consumer_key'];
+			$_aQueryArgs['consumer_secret'] = $_aAccessKeys['consumer_secret'];
+			$_aQueryArgs['access_token'] = $_aAccessKeys['access_token'];
+			$_aQueryArgs['access_secret'] = $_aAccessKeys['access_secret'];
+		}
+		$_sRequestURI = add_query_arg( $_aQueryArgs, "https://api.twitter.com/1.1/lists/statuses.json" );		
+		return $this->doAPIRequest_Get( $_sRequestURI, null, $iCacheDuration );
 	
 	}
 	

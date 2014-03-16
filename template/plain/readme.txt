@@ -1,5 +1,9 @@
 == Change log ==
 
+= 2 =
+Changed some variable names.
+Changed the naming of margin and padding keys from 'top', 'right', 'bottom', and 'left' to 0, 1, 2, and 3 due to the update of Admin Page Framework.
+
 = 1.3.3.2 =
 Added !important to all the rules.
 

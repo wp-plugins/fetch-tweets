@@ -5,12 +5,16 @@
  * @package			Fetch Tweets
  * @subpackage		
  * @copyright		Michael Uno
- * @filters			fetch_tweets_template_path - specifies the template path.
- * @actions			fetch_tweets_action_transient_renewal - for WP Cron single event.
- * @actions			fetch_tweets_action_transient_add_oembed_elements - for WP Cron single event.
+ * @filter			fetch_tweets_template_path - specifies the template path.
+ * @action			fetch_tweets_action_transient_renewal - for WP Cron single event.
+ * @action			fetch_tweets_action_transient_add_oembed_elements - for WP Cron single event.
  */
 abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByHomeTimeline {
 	
+	/**
+	 * Returns the output of tweets by the given arguments.
+	 * 
+	 */
 	public function getTweetsOutput( $aArgs ) {	// called from the shortcode callback.
 		
 		// Capture the output buffer.
@@ -104,10 +108,10 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByHomeTimeline {
 			return $this->getTweetsBySearch( $aArgs['q'], $aArgs['count'], $aArgs['lang'], $aArgs['result_type'], $aArgs['until'], $aArgs['geocode'], $aArgs['cache'] );
 		else if ( isset( $aArgs['screen_name'] ) )	// custom call by screen name
 			return $this->getTweetsByScreenNames( $aArgs['screen_name'], $aArgs['count'], $aArgs['include_rts'], $aArgs['exclude_replies'], $aArgs['cache'] );
-		else if ( isset( $aArgs['list_id'] ) ) 	
-			return $this->getTweetsByListID( $aArgs['list_id'], $aArgs['count'], $aArgs['include_rts'], $aArgs['cache'] );
-		else if ( isset( $aArgs['account'] ) )
-			return $this->_getTweetsByHomeTimeline( $aArgs['account'], $aArgs['exclude_replies'] );
+		else if ( isset( $aArgs['list_id'] ) ) 	// only public list can be fetched with this method
+			return $this->_getTweetsByListID( $aArgs['list_id'], $aArgs['include_rts'], $aArgs['cache'] );
+		else if ( isset( $aArgs['account_id'] ) )
+			return $this->_getTweetsByHomeTimeline( $aArgs['account_id'], $aArgs['exclude_replies'] );
 		else	// normal
 			return $this->_getTweetsAsArrayByPostIDs( $aArgs['id'], $aArgs, $aRawArgs );
 		
@@ -146,15 +150,17 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByHomeTimeline {
 						$_aRetrievedTweets = $this->getTweetsBySearch( $aArgs['q'], $aArgs['count'], $aArgs['lang'], $aArgs['result_type'], $aArgs['until'], $_sGeoCode, $aArgs['cache'] );
 						break;
 					case 'list':
+						$aArgs['account_id'] = get_post_meta( $_iPostID, 'account_id', true );
+						$aArgs['mode'] = get_post_meta( $_iPostID, 'mode', true );
 						$aArgs['list_id'] = get_post_meta( $_iPostID, 'list_id', true );
 						$aArgs = FetchTweets_Utilities::uniteArrays( $aRawArgs, $aArgs ); // The direct input takes its precedence.
-						$_aRetrievedTweets = $this->getTweetsByListID( $aArgs['list_id'], $aArgs['count'], $aArgs['include_retweets'], $aArgs['cache'] );
+						$_aRetrievedTweets = $this->_getTweetsByListID( $aArgs['list_id'], $aArgs['include_retweets'], $aArgs['cache'], $aArgs['account_id'], $aArgs['mode'] );
 						break;
 					case 'home_timeline':
-						$aArgs['account'] = get_post_meta( $_iPostID, 'account', true );
-						$aArgs['exclude_replies'] = get_post_meta( $_iPostID, 'account', true );
+						$aArgs['account_id'] = get_post_meta( $_iPostID, 'account_id', true );
+						$aArgs['exclude_replies'] = get_post_meta( $_iPostID, 'exclude_replies', true );
 						$aArgs = FetchTweets_Utilities::uniteArrays( $aRawArgs, $aArgs ); // The direct input takes its precedence.
-						$_aRetrievedTweets = $this->_getTweetsByHomeTimeline( $aArgs['account'], $aArgs['exclude_replies'], $aArgs['cache'] );
+						$_aRetrievedTweets = $this->_getTweetsByHomeTimeline( $aArgs['account_id'], $aArgs['exclude_replies'], $aArgs['cache'] );
 						break;
 					case 'screen_name':
 					default:	

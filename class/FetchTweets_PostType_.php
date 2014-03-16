@@ -92,16 +92,17 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 	/*
 	 * Methods to print out the fetched tweets.
 	 * */
-	public function _replyToPreviewTweets( $strContent ) {
+	public function _replyToPreviewTweets( $sContent ) {
 
 		global $post;
 		// Used for the post type single page that functions as preview the result.
 
-		if ( ! isset( $post->post_type ) || $post->post_type != $this->oProp->sPostType ) return $strContent;
+		if ( ! isset( $post->post_type ) || $post->post_type != $this->oProp->sPostType ) return $sContent;
 
 		$iPostID = $post->ID;
 		$iCount = get_post_meta( $iPostID, 'item_count', true );
-		return fetchTweets( array( 'id' => $iPostID, 'count' => $iCount ), false );	
+		return $sContent 
+			. fetchTweets( array( 'id' => $iPostID, 'count' => $iCount ), false );	
 	
 	}
 
@@ -157,13 +158,13 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 			case 'search':
 				return __( 'Search', 'fetch-tweets' );
 			case 'screen_name':
-				return __( 'User Name', 'fetch-tweets' );
+				return __( 'Screen Name (User Timeline)', 'fetch-tweets' );
 			case 'list':
 				return __( 'List', 'fetch-tweets' );
 			case 'home_timeline':
 				return __( 'Home Timeline', 'fetch-tweets' );
 		}
-		
+
 	}
 	public function cell_fetch_tweets_code( $sCell, $iPostID ) {
 		return '<p>'

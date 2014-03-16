@@ -10,7 +10,6 @@ abstract class FetchTweets_AdminPage_SetUp extends FetchTweets_AdminPage_SetUp_F
 			&& ! empty( $this->oProp->aOptions['capabilities']['setting_page_capability'] )
 		) {
 			$this->setCapability( $this->oProp->aOptions['capabilities']['setting_page_capability'] );
-// FetchTweets_Debug::logArray( $this->oProp->aOptions['capabilities']['setting_page_capability'] );
 		}
 	
 		$this->_setUpPages();

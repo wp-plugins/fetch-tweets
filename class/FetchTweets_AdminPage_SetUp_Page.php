@@ -9,17 +9,15 @@ abstract class FetchTweets_AdminPage_SetUp_Page extends FetchTweets_AdminPage_St
 			array(
 				'title'	=>	__( 'Add Rule by User Name', 'fetch-tweets' ),
 				'href'	=>	admin_url( "post-new.php?post_type={$_sPostTypeSlug}&tweet_type=screen_name" ),
-				// 'show_page_heading_tab'	=>	false,
 				'order'	=>	1,
 			),
 			array(
 				'title' => __( 'Add Rule by Timeline', 'fetch-tweets' ),
-				'href' => admin_url( "post-new.php?post_type={$_sPostTypeSlug}&tweet_type=timeline" ),
+				'href' => admin_url( "post-new.php?post_type={$_sPostTypeSlug}&tweet_type=home_timeline" ),
 			),			
 			array(
 				'title' => __( 'Add Rule by Search', 'fetch-tweets' ),
 				'href'	=>	admin_url( "post-new.php?post_type={$_sPostTypeSlug}&tweet_type=search" ),
-				// 'show_page_heading_tab' => false,
 			),			
 			array(
 				'title'	=> __( 'Add Rule by List', 'fetch-tweets' ),
@@ -55,18 +53,13 @@ abstract class FetchTweets_AdminPage_SetUp_Page extends FetchTweets_AdminPage_St
 		$this->addInPageTabs(
 			'fetch_tweets_settings',
 			array(
-				'tab_slug'	=> 'authentication',
+				'tab_slug'	=> 'authentication',	// the manual auth keys input page
 				'title'		=> __( 'Authentication', 'fetch-tweets' ),
 				'parent_tab_slug' => 'twitter_connect',
 				'show_in_page_tab'	=> false,	
 			),
 			array(
-				'tab_slug'	=> 'twitter_clear_session',
-				'title'		=> 'Clear Session',
-				'show_in_page_tab'			=> false,
-			),
-			array(
-				'tab_slug'	=> 'twitter_connect',
+				'tab_slug'	=> 'twitter_connect',	// the oAuth connection page
 				'title'		=> __( 'Authentication', 'fetch-tweets' ),
 				'order'		=> 1,				
 			),			
@@ -135,7 +128,8 @@ abstract class FetchTweets_AdminPage_SetUp_Page extends FetchTweets_AdminPage_St
 		$this->enqueueStyle(  FetchTweets_Commons::getPluginURL( '/css/admin.css' ) );
 		$this->enqueueStyle(  FetchTweets_Commons::getPluginURL( '/css/fetch_tweets_templates.css' ), 'fetch_tweets_templates' );
 		$this->enqueueStyle(  FetchTweets_Commons::getPluginURL( '/css/fetch_tweets_settings.css' ), 'fetch_tweets_settings' );
-	 
+		$this->enqueueStyle(  FetchTweets_Commons::getPluginURL( '/css/fetch_tweets_add_rule_by_list.css' ), 'fetch_tweets_add_rule_by_list' );
+
 	}	
 				
 }

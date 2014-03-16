@@ -1,4 +1,9 @@
 <?php
+/**
+ * 
+ * @filter			fetch_tweets_filter_credentials - receives an array holding accounts credentials and the account ID.  
+ * @action			fetch_tweets_action_updated_credentials - triggered when updating the main credentials.
+ */
 abstract class FetchTweets_Option_ {
 	
 	protected static $aStructure_Options = array(		
@@ -7,11 +12,19 @@ abstract class FetchTweets_Option_ {
 			'consumer_secret' => '',
 			'access_token' => '',
 			'access_secret' => '',
+			'screen_name'	=>	'',
+			'user_id'	=>	'',		
+			'is_connected' => null,	// do not set a default value here as it will be checked if the value is set or not later
+			'connect_method' => 'manual',
 		),
 		'twitter_connect' => array(
+			// do not set 'consumer_key' and the 'consumer_secret' key so that third-party scripts can determine the connection method by checking the existence of the keys.
 			'access_token' => '',
 			'access_secret' => '',
 			'screen_name'	=>	'',
+			'user_id'	=>	'',
+			'is_connected' => null,	// do not set a default value here as it will be checked if the value is set or not later
+			'connect_method' => 'oauth',
 		),
 		'default_values' => array(),
 		'capabilities' => array(),
@@ -59,6 +72,9 @@ abstract class FetchTweets_Option_ {
 		'list_id'			=> null,	
 		'twitter_media'		=> true,
 		'external_media'	=> true,
+		
+		// since 2
+		'account_id'		=> null,	// do not set the default ID of 0 here. The fetching method will check if the value is set and if so, it considers as the home timeline tweet type.
 	);
 	public $aStructure_DefaultTemplateOptions = array(
 		// leave them null and let each template define default values.
@@ -77,7 +93,7 @@ abstract class FetchTweets_Option_ {
 		
 		$this->sOptionKey = $sOptionKey;
 		$this->aOptions = $this->setOption( $sOptionKey );
-// FetchTweets_Debug::logArray( $this->aOptions, dirname( __FILE__ ) . '/options.txt' );
+		
 	}	
 	
 	/*
@@ -88,7 +104,7 @@ abstract class FetchTweets_Option_ {
 		
 		// Set up the options array.
 		$vOption = get_option( $sOptionKey );
-		$vOption = ( $vOption === false ) ? array() : $vOption;		// Avoid casting array because it causes a zero key when the subject is null.
+		$vOption = ( false === $vOption ) ? array() : $vOption;		// Avoid casting array because it causes a zero key when the subject is null.
 		$aOptions = FetchTweets_Utilities::uniteArrays( $vOption, self::$aStructure_Options ); 	// Now $vOption is an array so merge with the default option to avoid undefined index warnings.
 		
 		// format the options for backward compatibility
@@ -159,6 +175,16 @@ abstract class FetchTweets_Option_ {
 				unset( $_aOptions['fetch_tweets_template_single']['fetch_tweets_template_single_paddings']['left'] );
 			}		
 
+			// Credentials
+			if ( isset( $_aOptions['authentication_keys'] ) ) {				
+				$_aOptions['authentication_keys']['is_connected'] = ( $_aOptions['authentication_keys']['consumer_key'] && $_aOptions['authentication_keys']['consumer_secret'] && $_aOptions['authentication_keys']['access_token'] && $_aOptions['authentication_keys']['access_secret'] );
+				$_aOptions['authentication_keys']['connect_method'] = 'manual';
+			}
+			if ( isset( $_aOptions['twitter_connect'] ) ) {
+				$_aOptions['twitter_connect']['is_connected'] = ( $_aOptions['authentication_keys']['access_token'] && $_aOptions['authentication_keys']['access_secret'] );
+				$_aOptions['twitter_connect']['connect_method'] = 'oauth';
+			}
+			
 			return $_aOptions + $aOptions;
 			
 		}
@@ -173,41 +199,122 @@ abstract class FetchTweets_Option_ {
 	public function getAccessTokenSecretAuto() {
 		return $this->aOptions['twitter_connect']['access_secret'];
 	}		 
-	/**
-	 * Saves the given access token and the access secret key in the option table.
-	 * 
-	 * @remark			This uses different keys than the ones for v1.2.0 or below because these are for the automatic authentication.
-	 * @since			1.3.0
-	 * @return			void
-	 */	 
-	public function saveAccessToken( $sAccessToken, $sAccessSecret ) {
 		
-		$this->aOptions['twitter_connect']['access_token'] = $sAccessToken;
-		$this->aOptions['twitter_connect']['access_secret'] = $sAccessSecret;
-		$this->saveOptions();
+	/**
+	 * Saves Twitter Account credentials.
+	 * 
+	 * @since			2
+	 */
+	public function saveCredentials( array $aCredentials ) {
+
+		$this->aOptions['twitter_connect'] = $aCredentials;
+		do_action( 'fetch_tweets_action_updated_credentials', $aCredentials );		
+		$this->saveOptions();	
 		
 	}
 	
 	/**
-	 * Saves the given screen name in the option table.
+	 * Returns the credentials array by the given account ID.
 	 * 
-	 * As of v2, the home timeline rule type is supported and it needs to list accounts. So the screen name is stored along with the authentication keys. 
+	 * The account ID does not refer to the Twitter user ID. It is just a post ID stored in the WordPress database.
 	 * 
 	 * @since			2
-	 * @return			void
 	 */
-	public function saveScreenName( $sScreenName ) {
+	public function getCredentialsByID( $iAccountID ) {
+
+		if ( $iAccountID <= 0 ) {
+			return $this->getCredentials();	// will returns the main one.
+		}		
+		return apply_filters( 
+			'fetch_tweets_filter_credentials', 
+			array(
+				'consumer_key' => '',
+				'consumer_secret' => '',
+				'access_token' => '',
+				'access_secret' => '',
+				'screen_name' => '',
+			), 
+			$iAccountID 
+		);	
 		
-		// If it's already set, do nothing.
-		$_sOldScreenName = isset( $this->aOptions['twitter_connect']['screen_name'] )
-			? $this->aOptions['twitter_connect']['screen_name']
-			: null;
-		if ( $_sOldScreenName === $sScreenName ) {
-			return;
+	}
+	
+	/**
+	 * Returns the credentials array.
+	 * 
+	 * @since			2
+	 */
+	public function getCredentials() {
+		
+		if ( $this->isAuthKeysManuallySet() ) {
+			return $this->aOptions['authentication_keys'];
 		}
 		
-		$this->aOptions['twitter_connect']['screen_name'] = $sScreenName;
-		$this->saveOptions();		
+		$_aCredentials = $this->aOptions['twitter_connect'];
+		$_aCredentials['consumer_key'] = FetchTweets_Commons::ConsumerKey;
+		$_aCredentials['consumer_secret'] = FetchTweets_Commons::ConsumerSecret;
+
+		// Check mandatory keys have a value
+		if ( $_aCredentials['access_token'] && $_aCredentials['access_secret'] && $_aCredentials['screen_name'] ) {
+			return $_aCredentials;
+		}
+		
+		// If the user has not connected to twitter, the access token and secret key is not set. In that case, return in the incomplete array.
+		if ( ! ( $_aCredentials['access_token'] && $_aCredentials['access_secret'] ) ) {
+			return $_aCredentials;
+		}
+		
+		// Otherwise, fetch the status to fill the user id and the screen name elements.
+		$_oConnect = new FetchTweets_TwitterAPI_Verification( 
+			FetchTweets_Commons::ConsumerKey, 
+			FetchTweets_Commons::ConsumerSecret, 
+			$_oOption->aOptions['twitter_connect']['access_token'], 
+			$_oOption->aOptions['twitter_connect']['access_secret']
+		);
+		$_aStatus = $_oConnect->getStatus();
+		$_aCredentials['screen_name'] = $_aStatus['screen_name'];
+		$_aCredentials['user_id'] = $_aStatus['id'];
+		$_aCredentials['is_connected'] = true;
+		$_aCredentials['connect_method'] = 'oauth';
+		$this->saveCredentials( $_aCredentials );	// update the options
+		return $_aCredentials;
+		
+	}
+	
+	/**
+	 * Checks if the plugin is connected to Twitter.
+	 * 
+	 * @since			2
+	 */
+	public function isConnected() {
+		
+		// The keys are manually set
+		if ( $this->isAuthKeysManuallySet() ) {
+			if ( isset( $this->aOptions['authentication_keys']['is_connected'] ) ) {
+				return $this->aOptions['authentication_keys']['is_connected'];
+			}
+			$_oConnect = new FetchTweets_TwitterAPI_Verification( 
+				$this->aOptions['authentication_keys']['consumer_key'], 
+				$this->aOptions['authentication_keys']['consumer_secret'],
+				$this->aOptions['authentication_keys']['access_token'], 
+				$this->aOptions['authentication_keys']['access_secret']
+			);
+			$_aStatus = $_oConnect->getStatus();				
+			return isset( $_aStatus['screen_name'] );
+		}
+		
+		// The keys are automatically retrieved
+		if ( isset( $this->aOptions['twitter_connect']['is_connected'] ) ) {
+			return $this->aOptions['twitter_connect']['is_connected'];
+		}
+		$_oConnect = new FetchTweets_TwitterAPI_Verification( 
+			FetchTweets_Commons::ConsumerKey,
+			FetchTweets_Commons::ConsumerSecret,
+			$this->aOptions['twitter_connect']['access_token'], 
+			$this->aOptions['twitter_connect']['access_secret']
+		);
+		$_aStatus = $_oConnect->getStatus();				
+		return isset( $_aStatus['screen_name'] );		
 		
 	}
 	

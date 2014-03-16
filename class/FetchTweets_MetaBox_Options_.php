@@ -1,4 +1,8 @@
 <?php
+/**
+ * 
+ * @deprecated			2
+ */
 class FetchTweets_MetaBox_Options_ extends FetchTweets_AdminPageFramework_MetaBox {
 	
 	public function start_FetchTweets_MetaBox_Options() {

@@ -7,10 +7,7 @@ class FetchTweets_MetaBox_List_ extends FetchTweets_AdminPageFramework_MetaBox {
 	 * @since			1.2.0
 	 */ 
 	public function setUp() {
-		
-		$strScreenName = $this->getScreenName();
-		$arrLists = $this->getLists( $strScreenName );
-		
+				
 		$this->addSettingFields(		
 			array(
 				'field_id'		=> 'tweet_type',
@@ -22,19 +19,22 @@ class FetchTweets_MetaBox_List_ extends FetchTweets_AdminPageFramework_MetaBox {
 				'field_id'		=> 'list_id',
 				'title'			=> __( 'Lists', 'fetch-tweets' ),
 				'type'			=> 'select',
-				'label'			=> $arrLists,
 			),
 			array(	// non-used fields must be set as hidden since the callback function will assign a value.
 				'field_id'		=> 'screen_name',
 				'type'			=> 'hidden',
-				'value'			=> $strScreenName,
 				'hidden'		=>	true,
 			),				
 			array(
-				'field_id'		=> 'search_keyword',
+				'field_id'		=> 'account_id',
 				'type'			=> 'hidden',
 				'hidden'		=>	true,
 			),
+			array(	// stores private or public in the validation method.
+				'field_id'		=> 'mode',	
+				'type'			=> 'hidden',
+				'hidden'		=>	true,
+			),			
 			array(
 				'field_id'		=> 'item_count',
 				'title'			=> __( 'Item Count', 'fetch-tweets' ),
@@ -48,66 +48,84 @@ class FetchTweets_MetaBox_List_ extends FetchTweets_AdminPageFramework_MetaBox {
 				),				
 			),				
 			array(
-				'field_id'		=> 'language',
-				'type'			=> 'hidden',
-				'hidden'		=>	true,
-			),				
-			array(
-				'field_id'		=> 'result_type',
-				'type'			=> 'hidden',
-				'hidden'		=>	true,
-			),		
-			array(
-				'field_id'		=> 'exclude_replies',
-				'type'			=> 'hidden',
-				'hidden'		=>	true,
-			),
-			array(
 				'field_id'		=> 'include_retweets',
 				'title'			=> __( 'Include Retweets', 'fetch-tweets' ),
 				'label'			=> __( 'Retweets will be included.', 'fetch-tweets' ),
 				'type'			=> 'checkbox',
-			),				
-			array(	// since 1.3.3
-				'field_id'		=> 'until',
-				'type'			=> 'hidden',
-				'hidden'		=>	true,
-			),		
-			array(	// since 1.3.3
-				'field_id'		=> 'geocentric_coordinate',
-				'type'			=> 'hidden',
-				'hidden'		=>	true,
-			),
-			array(	// since 1.3.3
-				'field_id'		=> 'geocentric_radius',
-				'type'			=> 'hidden',
-				'hidden'		=>	true,
-			),					
+			),							
 			array()
 		);
 				
 		
 	}
+	
+	/**
+	 * Modify the field definition arrays.
+	 */
+	public function field_definition_FetchTweets_MetaBox_List_screen_name( $aField ) {	// field_definition_{class name}_{field id}
+		$aField['value'] = $this->getScreenName();
+		return $aField;
+	}
+	
+	public function field_definition_FetchTweets_MetaBox_List_list_id( $aField ) {	// field_definition_{class name}_{field id}
+		
+		$_sScreenName = $this->getScreenName();
+		$_aLists = $this->_getLists( $_sScreenName, $this->_getAccountID() );
+		$aField['label'] = $_aLists;
+		return $aField;
+		
+	}
+	public function field_definition_FetchTweets_MetaBox_List_account_id( $aField ) {	// field_definition_{class name}_{field id}
+		$aField['value'] = $this->_getAccountID();
+		return $aField;
+	}
+		/**
+		 * Retrieves the authenticated account ID of this post(list definition).
+		 * 
+		 * @since			2
+		 */
+		protected function _getAccountID() {
+			
+			if ( isset( $_GET['account_id'] ) ) {
+				return $_GET['account_id'];
+			}
+			if ( ! isset( $_GET['post'] ) ) {
+				return 0;
+			}
+			$_iAccountID = get_post_meta( $_GET['post'], 'account_id', true );
+			return $_iAccountID
+				? $_iAccountID
+				: 0;
+							
+		}
+		
 		/**
 		 * Returns an array of lists received from the previous page; otherwise, fetches lists from the set screen name.
 		 * 
 		 */	 
-		protected function getLists( $strScreenName='' ) {
+		protected function _getLists( $sScreenName='', $iAccountID=0 ) {
 			
 			// If the cache is set from the previous page, use that.
-			$strListTransient = isset( $_GET['list_cache'] ) ? $_GET['list_cache'] : '';
-			if ( ! empty( $strListTransient ) ) {
-				$arrLists = ( array ) get_transient( $strListTransient );
-				delete_transient( $strListTransient );
-				return $arrLists;
+			$sListTransient = isset( $_GET['list_cache'] ) ? $_GET['list_cache'] : '';
+			if ( ! empty( $sListTransient ) ) {
+				$aLists = ( array ) get_transient( $sListTransient );
+				delete_transient( $sListTransient );
+				return $aLists;
 			}
 			
-			if ( empty( $strScreenName ) ) return array();	
+			if ( empty( $sScreenName ) ) return array();	
 			
 			// Fetch lists from the given screen name.
-			$oFetch = new FetchTweets_Fetch;
-			$arrLists = $oFetch->getListNamesFromScreenName( $strScreenName );
-			return $arrLists;
+			$_oOption = & $GLOBALS['oFetchTweets_Option'];
+			$_aCredentials = $_oOption->getCredentialsByID( $iAccountID );
+			$oFetch = new FetchTweets_Fetch(
+				$_aCredentials['consumer_key'],
+				$_aCredentials['consumer_secret'],
+				$_aCredentials['access_token'],
+				$_aCredentials['access_secret']
+			);
+			$aLists = $oFetch->getListNamesFromScreenName( $sScreenName, $iAccountID );
+			return $aLists;
 			
 		}
 		/**
@@ -128,17 +146,36 @@ class FetchTweets_MetaBox_List_ extends FetchTweets_AdminPageFramework_MetaBox {
 			return '';
 			
 		}
-	
-	public function validation_FetchTweets_MetaBox_Options( $arrInput ) {	// validation_ + extended class name
+		
+	/*
+	 * Validation Methods
+	 */
+	public function validation_FetchTweets_MetaBox_List( $aInput ) {	// validation_ + extended class name
 			
-		$arrInput['item_count'] = $this->oUtil->fixNumber( 
-			$arrInput['item_count'], 	// number to sanitize
+		$aInput['item_count'] = $this->oUtil->fixNumber( 
+			$aInput['item_count'], 	// number to sanitize
 			20, 	// default
 			1, 		// minimum
 			200
 		);
-
-		return $arrInput;
+		
+		$_oOption = & $GLOBALS['oFetchTweets_Option'];
+		$_aCredentials = $_oOption->getCredentialsByID( $aInput['account_id'] );
+		$_oFetch = new FetchTweets_Fetch(
+			$_aCredentials['consumer_key'],
+			$_aCredentials['consumer_secret'],
+			$_aCredentials['access_token'],
+			$_aCredentials['access_secret']
+		);
+		$_aLists = $_oFetch->getListsByScreenName( $aInput['screen_name'], $aInput['account_id'] );
+		
+		foreach( $_aLists as $_aList ) {
+			if ( $_aList['id'] == $aInput['list_id'] ) {
+				$aInput['mode'] = $_aList['mode'];
+			}
+		}
+	
+		return $aInput;
 		
 	}
 	

@@ -10,20 +10,17 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 			'fetch_tweets_settings',
 			array(
 				'section_id'		=> 'twitter_connect',
-				// 'page_slug'		=> 'fetch_tweets_settings',
 				'tab_slug'		=> 'twitter_connect',
 				'title'			=> __( 'Authenticate', 'fetch-tweets' ),
 			),		
 			array(
 				'section_id'		=> 'authentication_keys',
-				// 'page_slug'		=> 'fetch_tweets_settings',
 				'tab_slug'		=> 'authentication',
 				'title'			=> __( 'Authentication Keys', 'fetch-tweets' ),
 				'description'	=> __( 'These keys are required to process oAuth requests of the twitter API.', 'fetch-tweets' ),
 			),
 			array(
 				'section_id'		=> 'default_values',
-				// 'page_slug'		=> 'fetch_tweets_settings',
 				'tab_slug'		=> 'general',
 				'title'			=> __( 'Default Values', 'fetch-tweets' ),
 				'help'			=> __( 'Set the default option values which will be applied when the argument values are not set.', 'fetch-tweets' )
@@ -31,21 +28,18 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 			),			
 			array(
 				'section_id'		=> 'cache_settings',
-				// 'page_slug'		=> 'fetch_tweets_settings',
 				'tab_slug'		=> 'general',
 				'title'			=> __( 'Cache Settings', 'fetch-tweets' ),
 			),			
 			array(
 				'section_id'		=> 'capabilities',
 				'capability'		=> 'manage_options',
-				// 'page_slug'		=> 'fetch_tweets_settings',
 				'tab_slug'		=> 'misc',
 				'title'			=> __( 'Access Rights', 'fetch-tweets' ),
 				'description'	=> __( 'Set the access levels to the plugin setting pages.', 'fetch-tweets' ),
 			),			
 			array(
 				'section_id'		=> 'reset_settings',
-				// 'page_slug'		=> 'fetch_tweets_settings',
 				'capability'		=> 'manage_options',
 				'tab_slug'		=> 'reset',
 				'title'			=> __( 'Reset Settings', 'fetch-tweets' ),
@@ -53,7 +47,6 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 			),
 			array(
 				'section_id'		=> 'caches',
-				// 'page_slug'		=> 'fetch_tweets_settings',
 				'tab_slug'		=> 'reset',
 				'title'			=> __( 'Caches', 'fetch-tweets' ),
 				'description'	=> __( 'If you need to refresh the fetched tweets, clear the cashes.', 'fetch-tweets' ),
@@ -69,31 +62,31 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 		);
 		
 		$this->addSettingFields(
-			'add_rule_by_list',
+			'add_rule_by_list',	// target section id
+			array(	
+				'field_id' => 'list_owner_accounts',
+				'title' => __( 'Owner Accounts', 'fetch-tweets' ),
+				'description' => __( 'Select the screen name that owns the list.', 'fetch-tweets' ),
+				'type' => 'select',
+				'value' => '',
+			),			
 			array(	
 				'field_id' => 'list_owner_screen_name',
-				'section_id' => 'add_rule_by_list',
-				'title' => __( 'Owner Screen Name', 'fetch-tweets' ),
-				'description' => __( 'The screen name(user name) that owns the list.', 'fetch-tweets' ) . '<br />'
+				'title' => __( 'Owner Screen Name', 'fetch-tweets' ) . ' <span class="optional">(' . __( 'optional', 'fetch-tweets' ) . ')</span>',
+				'description' => __( 'The screen name(user name) that owns the list. When the target screen name is not listed above, specify here.', 'fetch-tweets' ) . '<br />'
 					. 'e.g. miunosoft',
 				'type' => 'text',
 				'value' => '',
 				'attributes'	=>	array(
 					'size'	=>	40,
 				),				
-			),		
+			),
 			array(  // single button
 				'field_id' => 'list_proceed',
-				'section_id' => 'add_rule_by_list',
 				'type' => 'submit',
 				'before_field' => "<div class='right-button'>",
 				'after_field' => "</div>",
-// 'vLabelMinWidth' => 0,
 				'label' => __( 'Proceed', 'fetch-tweets' ),
-				// 'href'	=> admin_url(),
-				// 'href'	=> admin_url( 'post-new.php?post_type=fetch_tweets&tweet_type=list' ),
-				// 'vRedirect'	=> admin_url(),
-				// 'vRedirect'	=> admin_url( 'post-new.php?post_type=fetch_tweets&tweet_type=list' ),
 				'attributes'	=>	array(
 					'class'	=>	'button button-primary',
 				),					
@@ -123,9 +116,10 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 			)			
 		); 
 		$this->addSettingFields(
+			'authentication_keys',
 			array(	
 				'field_id' => 'consumer_key',
-				'section_id' => 'authentication_keys',
+
 				'title' => __( 'Consumer Key', 'fetch-tweets' ),
 				'type' => 'text',
 				'attributes'	=>	array(
@@ -134,7 +128,6 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 			),
 			array(	
 				'field_id' => 'consumer_secret',
-				'section_id' => 'authentication_keys',
 				'title' => __( 'Consumer Secret', 'fetch-tweets' ),
 				'type' => 'text',
 				'attributes'	=>	array(
@@ -143,7 +136,6 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 			),
 			array(	
 				'field_id' => 'access_token',
-				'section_id' => 'authentication_keys',
 				'title' => __( 'Access Token', 'fetch-tweets' ),
 				'type' => 'text',
 				'attributes'	=>	array(
@@ -152,7 +144,6 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 			),
 			array(	
 				'field_id' => 'access_secret',
-				'section_id' => 'authentication_keys',
 				'title' => __( 'Access Secret', 'fetch-tweets' ),
 				'type' => 'text',
 				'attributes'	=>	array(
@@ -161,6 +152,17 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 				'description' => '<p class="description">' 
 					. sprintf( __( 'You can obtain those keys by logging in to <a href="%1$s" target="_blank">Twitter Developers</a>', 'fetch-tweets' ), 'https://dev.twitter.com/apps' )
 					. '</p>',
+			),
+			array(
+				'field_id' => 'connect_method',
+				'type' => 'hidden',
+				'value' => 'manual',
+				'is_hidden' => true,
+				'attributes'	=>	array(
+					'fieldrow'	=>	array(
+						'style'	=>	'display:none',
+					)
+				),
 			),
 			array(  // single button
 				'field_id' => 'submit_authentication_keys',
