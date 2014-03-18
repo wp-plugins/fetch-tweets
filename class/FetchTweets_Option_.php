@@ -102,6 +102,9 @@ abstract class FetchTweets_Option_ {
 	 * */
 	private function setOption( $sOptionKey ) {
 		
+		// Flags
+		$_fOptionsModified = false;
+		
 		// Set up the options array.
 		$vOption = get_option( $sOptionKey );
 		$vOption = ( false === $vOption ) ? array() : $vOption;		// Avoid casting array because it causes a zero key when the subject is null.
@@ -110,7 +113,8 @@ abstract class FetchTweets_Option_ {
 		// If the v1 option array structure is present, format the options for backward compatibility
 		if ( isset( $aOptions['fetch_tweets_settings'] ) || isset( $aOptions['fetch_tweets_templates'] ) ) {
 			$aOptions = $this->_convertV1OptionsToV2( $aOptions );
-			add_action( 'shutdown', array( $this, 'saveOptions' ) );
+			$_fOptionsModified = true;
+			
 		}
 		
 		// If the template option array is empty, retrieve the active template arrays.
@@ -120,10 +124,11 @@ abstract class FetchTweets_Option_ {
 			$arrDefaultTemplate = $oTemplate->findDefaultTemplateDetails();
 			$aOptions['arrTemplates'][ $arrDefaultTemplate['strSlug'] ] = $arrDefaultTemplate;
 			$aOptions['arrDefaultTemplate'] = $arrDefaultTemplate;
-			
-			// Schedule updating the option at the end of the script.
-			add_action( 'shutdown', array( $this, 'saveOptions' ) );
-			
+			$_fOptionsModified = true;
+		}
+		
+		if ( $_fOptionsModified ) {
+			$this->saveOptions( $aOptions );
 		}
 		
 		return $aOptions;
@@ -136,7 +141,7 @@ abstract class FetchTweets_Option_ {
 				isset( $aOptions['fetch_tweets_settings'] ) ? $aOptions['fetch_tweets_settings'] : array(),
 				isset( $aOptions['fetch_tweets_templates'] ) ? $aOptions['fetch_tweets_templates'] : array()
 			);
-			unset( $aOptions['fetch_tweets_settings'], $aOptions['fetch_tweets_settings'] );
+			unset( $aOptions['fetch_tweets_settings'], $aOptions['fetch_tweets_templates'] );
 
 			// For template options
 			if ( isset( $_aOptions['fetch_tweets_template_plain']['fetch_tweets_template_plain_paddings']['top'] ) ) {
@@ -247,7 +252,7 @@ abstract class FetchTweets_Option_ {
 			return $this->aOptions['authentication_keys'];
 		}
 		
-		$_aCredentials = $this->aOptions['twitter_connect'];
+		$_aCredentials = $this->aOptions['twitter_connect'] + self::$aStructure_Options['twitter_connect'];
 		$_aCredentials['consumer_key'] = FetchTweets_Commons::ConsumerKey;
 		$_aCredentials['consumer_secret'] = FetchTweets_Commons::ConsumerSecret;
 
@@ -353,10 +358,10 @@ abstract class FetchTweets_Option_ {
 		return $this->aOptions['authentication_keys']['access_secret'];
 	}	
 	
-	public function saveOptions() {
+	public function saveOptions( $aOptions=null ) {
 		
-		update_option( $this->sOptionKey, $this->aOptions );
-		
+		update_option( $this->sOptionKey, $aOptions ? $aOptions : $this->aOptions );
+
 	}
 	
 }

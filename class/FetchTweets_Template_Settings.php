@@ -19,9 +19,10 @@ abstract class FetchTweets_Template_Settings {
 	/*
 	 * No need to modify the constructor.
 	 * */
-	public function __construct() {
+	public function __construct( $sTemplateDirPath='' ) {
 		
-		$this->sTemplateID = md5( dirname( __FILE__ ) );
+		$_sTemplateDirPath = $sTemplateDirPath ? $sTemplateDirPath : dirname( __FILE__ );
+		$this->sTemplateID = md5( $_sTemplateDirPath );
 		
 		// tabs_{instantiated class name}_{page slug}
 		add_filter( 'tabs_' . $this->sParentAdminPaggeClassName . "_" . $this->sParentPageSlug, array( $this, '_replyToAddInPageTab' ) );
@@ -31,7 +32,7 @@ abstract class FetchTweets_Template_Settings {
 		
 		// fields_{instantiated class name}
 		add_filter( "fields_" . $this->sParentAdminPaggeClassName, array( $this, 'addSettingFields' ) );
-		
+
 		// validation_{page slug}_{tab slug}
 		add_filter( "validation_{$this->sParentPageSlug}_{$this->sParentTabSlug}", array( $this, 'validateSettings' ), 10, 2 );
 			
