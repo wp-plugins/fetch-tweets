@@ -21,6 +21,8 @@ abstract class FetchTweets_AdminPage_Extension extends FetchTweets_AdminPage_Aut
 		$this->arrColumnInfo = $this->arrColumnInfoDefault;
 		foreach( $arrFeedItems as $strTitle => $arrItem ) {
 			
+			if ( ! isset( $arrItem['title'] ) ) continue;
+			
 			// Increment the position
 			$this->arrColumnInfo['numCurrColPos']++;
 			

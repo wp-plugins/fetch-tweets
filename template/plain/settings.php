@@ -17,6 +17,7 @@ class FetchTweets_Template_Settings_Plain extends FetchTweets_Template_Settings 
 	protected $sParentPageSlug = 'fetch_tweets_templates';	// in the url, the ... part of ?page=... 
 	protected $sParentTabSlug = 'plain';	// in the url, the ... part of &tab=...
 	protected $sTemplateName = 'Plain';	// the template name
+	protected $sSectionID = 'fetch_tweets_template_plain';
 	
 	/*
 	 * Modify these methods. 
@@ -25,8 +26,8 @@ class FetchTweets_Template_Settings_Plain extends FetchTweets_Template_Settings 
 	 * */
 	public function addSettingSections( $aSections ) {
 			
-		$aSections[ 'fetch_tweets_template_plain' ] = array(
-			'section_id'	=> 'fetch_tweets_template_plain',
+		$aSections[ $this->sSectionID ] = array(
+			'section_id'	=> $this->sSectionID,
 			'page_slug'		=> $this->sParentPageSlug,
 			'tab_slug'		=> $this->sParentTabSlug,
 			'title'			=> $this->sTemplateName,
@@ -44,10 +45,10 @@ class FetchTweets_Template_Settings_Plain extends FetchTweets_Template_Settings 
 		
 		if ( ! class_exists( 'FetchTweets_Commons' ) ) return $aFields;	// if the main class does not exist, do nothing.
 		
-		$aFields['fetch_tweets_template_plain'] = array();
-		$aFields['fetch_tweets_template_plain']['fetch_tweets_template_plain_avatar_size'] = array(
+		$aFields[ $this->sSectionID ] = array();
+		$aFields[ $this->sSectionID ]['fetch_tweets_template_plain_avatar_size'] = array(
 			'field_id' => 'fetch_tweets_template_plain_avatar_size',
-			'section_id' => 'fetch_tweets_template_plain',
+			'section_id' => $this->sSectionID,
 			'title' => __( 'Profile Image Size', 'fetch-tweets' ),
 			'description' => __( 'The avatar size in pixel. Set 0 for no avatar.', 'fetch-tweets' ) . ' ' . __( 'Default', 'fetch-tweets' ) . ': 48',
 			'type' => 'number',
@@ -56,9 +57,9 @@ class FetchTweets_Template_Settings_Plain extends FetchTweets_Template_Settings 
 				'size'	=>	 10,
 			),
 		);	
-		$aFields['fetch_tweets_template_plain']['fetch_tweets_template_plain_avatar_position'] = array(
+		$aFields[ $this->sSectionID ]['fetch_tweets_template_plain_avatar_position'] = array(
 			'field_id' => 'fetch_tweets_template_plain_avatar_position',
-			'section_id' => 'fetch_tweets_template_plain',
+			'section_id' => $this->sSectionID,
 			'title' => __( 'Profile Image Position', 'fetch-tweets' ),
 			'type' => 'radio',
 			'label' => array(
@@ -67,9 +68,9 @@ class FetchTweets_Template_Settings_Plain extends FetchTweets_Template_Settings 
 			),
 			'default' => 'left', 
 		);				
-		$aFields['fetch_tweets_template_plain']['fetch_tweets_template_plain_width'] = array(
+		$aFields[ $this->sSectionID ]['fetch_tweets_template_plain_width'] = array(
 			'field_id' => 'fetch_tweets_template_plain_width',
-			'section_id' => 'fetch_tweets_template_plain',
+			'section_id' => $this->sSectionID,
 			'title' => __( 'Width', 'fetch-tweets' ),
 			'description' => __( 'The width of the output.', 'fetch-tweets' ) . ' ' . __( 'Default', 'fetch-tweets' ) . ': 100%',
 			'type' => 'size',
@@ -84,9 +85,9 @@ class FetchTweets_Template_Settings_Plain extends FetchTweets_Template_Settings 
 			),
 			'delimiter' => '<br />',
 		);
-		$aFields['fetch_tweets_template_plain']['fetch_tweets_template_plain_height'] = array(
+		$aFields[ $this->sSectionID ]['fetch_tweets_template_plain_height'] = array(
 			'field_id' => 'fetch_tweets_template_plain_height',
-			'section_id' => 'fetch_tweets_template_plain',
+			'section_id' => $this->sSectionID,
 			'title' => __( 'Height', 'fetch-tweets' ),
 			'description' => __( 'The height of the output.', 'fetch-tweets' ) . ' ' . __( 'Default', 'fetch-tweets' ) . ': 400px',
 			'type' => 'size',
@@ -101,9 +102,9 @@ class FetchTweets_Template_Settings_Plain extends FetchTweets_Template_Settings 
 			),
 			'delimiter' => '<br />',
 		);		
-		$aFields['fetch_tweets_template_plain']['fetch_tweets_template_plain_margins'] = array(
+		$aFields[ $this->sSectionID ]['fetch_tweets_template_plain_margins'] = array(
 			'field_id' => 'fetch_tweets_template_plain_margins',
-			'section_id' => 'fetch_tweets_template_plain',
+			'section_id' => $this->sSectionID,
 			'title' => __( 'Margins', 'fetch-tweets' ),
 			'description' => __( 'The margins of the output element. Leave them empty not to set any margin.', 'fetch-tweets' ),
 			'type' => 'size',
@@ -120,9 +121,9 @@ class FetchTweets_Template_Settings_Plain extends FetchTweets_Template_Settings 
 				'label'	=>	__( 'Left', 'fetch-tweets' ),
 			),
 		);		
-		$aFields['fetch_tweets_template_plain']['fetch_tweets_template_plain_paddings'] = array(
+		$aFields[ $this->sSectionID ]['fetch_tweets_template_plain_paddings'] = array(
 			'field_id' => 'fetch_tweets_template_plain_paddings',
-			'section_id' => 'fetch_tweets_template_plain',
+			'section_id' => $this->sSectionID,
 			'title' => __( 'Paddings', 'fetch-tweets' ),
 			'description' => __( 'The paddings of the output element. Leave them empty not to set any padding.', 'fetch-tweets' ),
 			'type' => 'size',
@@ -140,16 +141,16 @@ class FetchTweets_Template_Settings_Plain extends FetchTweets_Template_Settings 
 			),			
 		);		
 						
-		$aFields['fetch_tweets_template_plain']['fetch_tweets_template_plain_background_color'] = array(
+		$aFields[ $this->sSectionID ]['fetch_tweets_template_plain_background_color'] = array(
 			'field_id' => 'fetch_tweets_template_plain_background_color',
-			'section_id' => 'fetch_tweets_template_plain',
+			'section_id' => $this->sSectionID,
 			'title' => __( 'Background Color', 'fetch-tweets' ),
 			'type' => 'color',
 			'default' => 'transparent',
 		);		
-		$aFields['fetch_tweets_template_plain']['fetch_tweets_template_plain_intent_buttons'] = array(
+		$aFields[ $this->sSectionID ]['fetch_tweets_template_plain_intent_buttons'] = array(
 			'field_id' => 'fetch_tweets_template_plain_intent_buttons',
-			'section_id' => 'fetch_tweets_template_plain',
+			'section_id' => $this->sSectionID,
 			'title' => __( 'Intent Buttons', 'fetch-tweets' ),
 			'description' => __( 'These are for Favourite, Reply, and Retweet buttons.', 'fetch-tweets' ),
 			'type' => 'radio',
@@ -160,17 +161,17 @@ class FetchTweets_Template_Settings_Plain extends FetchTweets_Template_Settings 
 			),
 			'default' => 2,
 		);
-		$aFields['fetch_tweets_template_plain']['fetch_tweets_template_plain_intent_script'] = array(
+		$aFields[ $this->sSectionID ]['fetch_tweets_template_plain_intent_script'] = array(
 			'field_id' => 'fetch_tweets_template_plain_intent_script',
-			'section_id' => 'fetch_tweets_template_plain',
+			'section_id' => $this->sSectionID,
 			'title' => __( 'Intent Button Script', 'fetch-tweets' ),
 			'type' => 'checkbox',
 			'label' => __( 'Insert the intent button script that enables a pop-up window for Favorite, Reply, and Retweet.', 'fetch-tweets' ),
 			'default' => 1,
 		);
-		$aFields['fetch_tweets_template_plain']['fetch_tweets_template_plain_visibilities'] = array(
+		$aFields[ $this->sSectionID ]['fetch_tweets_template_plain_visibilities'] = array(
 			'field_id' => 'fetch_tweets_template_plain_visibilities',
-			'section_id' => 'fetch_tweets_template_plain',
+			'section_id' => $this->sSectionID,
 			'title' => __( 'Visibilities', 'fetch-tweets' ),
 			'type' => 'checkbox',
 			'label' => array(
@@ -190,13 +191,12 @@ class FetchTweets_Template_Settings_Plain extends FetchTweets_Template_Settings 
 				'intent_buttons'	=> true,
 			),
 		);			
-		$aFields['fetch_tweets_template_plain']['fetch_tweets_template_plain_submit'] = array(
+		$aFields[ $this->sSectionID ]['fetch_tweets_template_plain_submit'] = array(
 			'field_id' => 'fetch_tweets_template_plain_submit',
-			'section_id' => 'fetch_tweets_template_plain',
+			'section_id' => $this->sSectionID,
 			'type' => 'submit',
 			'before_field' => "<div class='right-button'>",
 			'after_field' => "</div>",
-'vLabelMinWidth' => 0,
 			'label' => __( 'Save Changes', 'fetch-tweets' ),
 			'attributes'	=>	array(
 				'class'	=>	'button button-primary',

@@ -49,7 +49,12 @@ abstract class FetchTweets_Fetch_ByTag extends FetchTweets_Fetch_Template {
 		return $this->getPostIDsByTag( $arrTermSlugs, 'slug', $strOperator );
 				
 	}
-	public function getPostIDsByTag( $arrTermSlugs, $strFieldType='slug', $strOperator='AND' ) {	// public as the feeder extension uses it.
+	
+	/**
+	 * 
+	 * @remark			The scope is public as the feeder extension uses it.
+	 */
+	public function getPostIDsByTag( $arrTermSlugs, $strFieldType='slug', $strOperator='AND' ) {	
 
 		if ( empty( $arrTermSlugs ) )
 			return array();
