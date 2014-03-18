@@ -224,4 +224,4 @@ class FetchTweets_Template_Settings_Single extends FetchTweets_Template_Settings
 	}
 	
 }
-new FetchTweets_Template_Settings_Single;
+new FetchTweets_Template_Settings_Single( dirname( __FILE__ ) );

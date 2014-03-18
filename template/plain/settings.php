@@ -212,4 +212,4 @@ class FetchTweets_Template_Settings_Plain extends FetchTweets_Template_Settings 
 	}
 	
 }
-new FetchTweets_Template_Settings_Plain;
+new FetchTweets_Template_Settings_Plain( dirname( __FILE__ ) );
