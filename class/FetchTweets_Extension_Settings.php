@@ -6,11 +6,11 @@ abstract class FetchTweets_Extension_Settings {
 	
 	// Do not modify these properties.
 	protected $sParentAdminPaggeClassName = 'FetchTweets_AdminPage';
+	protected $sParentPageSlug = 'fetch_tweets_extensions';	// in the url, the ... part in ?page=... 
 	
 	/*
 	 * These must be overridden in the extended class.
 	 * */
-	protected $sParentPageSlug = '';	// in the url, the ... part in ?page=... 
 	protected $sParentTabSlug = '';	// in the url, the ... part in &tab=...
 	protected $sExtensionName = '';	// the extension name
 	protected $sSectionID = '';	
@@ -18,7 +18,7 @@ abstract class FetchTweets_Extension_Settings {
 	/*
 	 * No need to modify the constructor.
 	 * */
-	public function __construct() {
+	public function __construct( $sScriptFilePath='' ) {
 		
 		// tabs_{class name}_{page slug}
 		add_filter( "tabs_" . $this->sParentAdminPaggeClassName . "_" . $this->sParentPageSlug, array( $this, '_replyToAddInPageTab' ) );
@@ -31,8 +31,26 @@ abstract class FetchTweets_Extension_Settings {
 		
 		// validation_{page slug}_{tab slug}
 		add_filter( "validation_{$this->sParentPageSlug}_{$this->sParentTabSlug}", array( $this, 'validateSettings' ), 10, 2 );
-			
+	
+		if ( $sScriptFilePath ) {
+			$_sPluginBaseName = plugin_basename( $sScriptFilePath ); 
+			add_filter( "plugin_action_links_{$_sPluginBaseName}", array( $this, '_replyToInsertPluginLink' ) );
+		}
+	
 	}
+	
+	public function _replyToInsertPluginLink( $aLinks ) {
+			
+		$_sSettingPageURL = admin_url( 
+			'edit.php?post_type=' . FetchTweets_Commons::PostTypeSlug 
+			. '&page=' . $this->sParentPageSlug
+			. '&tab=' . $this->sParentTabSlug
+		);
+		$_sPluginLink = "<a href='{$_sSettingPageURL}'>" . __( 'Settings', 'fetch-tweets' ) . "</a>";
+		array_unshift( $aLinks, $_sPluginLink ); 
+		return $aLinks; 
+		
+	}	
 	
 	/*
 	 * 	No need to modify these method.
