@@ -7,11 +7,11 @@ abstract class FetchTweets_Template_Settings {
 	// Do not modify these properties.
 	protected $sParentAdminPaggeClassName = 'FetchTweets_AdminPage';
 	protected $sTemplateID = '';	// assigned in the constructor.
+	protected $sParentPageSlug = 'fetch_tweets_templates';	// in the url, the ... part in ?page=... 
 	
 	/*
 	 * These must be overridden in the extended class.
 	 * */
-	protected $sParentPageSlug = '';	// in the url, the ... part in ?page=... 
 	protected $sParentTabSlug = '';	// in the url, the ... part in &tab=...
 	protected $sTemplateName = '';	// the template name
 	protected $sSectionID = '';	// sets the main section ID; it's okay to have more than one section IDs though. 
