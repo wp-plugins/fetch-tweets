@@ -4,6 +4,7 @@
  * @copyright   Copyright (c) 2013, Michael Uno
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  * @since		1.0.0
+ * @since		2.0.1			Fixed a bug that the first item always gets deleted when retrieving from the transient.
  * @description	Creates links for the user.
 */
 abstract class FetchTweets_UserAds_ {
@@ -85,11 +86,12 @@ abstract class FetchTweets_UserAds_ {
 		
 		$strURLID = md5( serialize( is_string( $arrURLs ) ? array( $arrURLs ) : $arrURLs ) );
 		
+		// Prepare the feed items
 		if ( ! isset( $this->arrFeedItems[ $strURLID ] ) ) {
 			$this->arrFeedItems[ $strURLID ] = ( array ) get_transient( $this->strTransientPrefix . $strURLID );
-			unset( $this->arrFeedItems[ $strURLID ][0] );	// casting array causes the 0 key,
-		}
-			
+			$this->arrFeedItems[ $strURLID ] = array_filter( $this->arrFeedItems[ $strURLID ] );	// casting array causes the 0 key
+		}	
+		
 		// If it's out of stock, fill the array by fetching the feed.
 		shuffle( $this->arrFeedItems[ $strURLID ] );
 		$this->arrFeedItems[ $strURLID ] = array_unique( $this->arrFeedItems[ $strURLID ] );
@@ -102,8 +104,9 @@ abstract class FetchTweets_UserAds_ {
 			foreach( $arrURLs as $strURL ) {
 								
 				$oFeed = $this->getFeedObj( $strURL, $numItems * 10 );	// multiplied by three to store items more than enough for next calls.
-				foreach ( $oFeed->get_items() as $item ) 	// foreach ( $oFeed->get_items( 0, $numItems * 3 ) as $item ) does not change the memory usage
-					$this->arrFeedItems[ $strURLID ][] = $oReplace->Perform( $item->get_content() );
+				foreach ( $oFeed->get_items() as $_oItem ) {	// foreach ( $oFeed->get_items( 0, $numItems * 3 ) as $item ) does not change the memory usage
+					$this->arrFeedItems[ $strURLID ][] = $oReplace->Perform( $_oItem->get_content() );
+				}
 				
 				// For PHP below 5.3 to release the memory.
 				$oFeed->__destruct(); // Do what PHP should be doing on it's own.
@@ -119,16 +122,12 @@ abstract class FetchTweets_UserAds_ {
 		
 		$this->arrFeedItems[ $strURLID ] = array_unique( $this->arrFeedItems[ $strURLID ] );
 		shuffle( $this->arrFeedItems[ $strURLID ] );
-		// $arrOut = array();
-		// foreach( ( array ) array_rand( $this->arrFeedItems[ $strURLID ], $numItems ) as $intKey ) {
-			// $arrOut[] = $this->arrFeedItems[ $strURLID ][ $intKey ];
-			// unset( $this->arrFeedItems[ $strURLID ][ $intKey ] );
-		// }
-		// return implode( '', $arrOut );
-		$strOut = '';
-		for ( $i = 1; $i <= $numItems; $i++ ) 
-			$strOut .= array_pop( $this->arrFeedItems[ $strURLID ] );		
-		return $strOut; 		
+
+		$_sOut = '';
+		for ( $i = 1; $i <= $numItems; $i++ ) {
+			$_sOut .= array_pop( $this->arrFeedItems[ $strURLID ] );		
+		}
+		return $_sOut;
 		
 	}
 	public function get160xNTopRight( $numItems=1 ) {		
@@ -184,19 +183,20 @@ abstract class FetchTweets_UserAds_ {
 
 		// This is used to create transients to prevent delays in page load.
 	
-		$arrAllURLs = array_merge( 
+		$_aAllURLs = array_merge( 
 			$this->arrURLFeedText,  
 			// $this->arrURLFeed160x600,
-			$this->arrURLFeed468x60,
-			$this->arrURLFeed728x90,
-			$this->arrURLFeed160xNTopRight,
-			$this->arrURLFeed160xN
+			// $this->arrURLFeed468x60,
+			// $this->arrURLFeed728x90,
+			// $this->arrURLFeed160xNTopRight,
+			// $this->arrURLFeed160xN,
+			array()
 		);
 		
-		foreach( $arrAllURLs as $strURL ) {
+		foreach( $_aAllURLs as $_sURL ) {
 			
 			// Passing 0 to the third parameter renews the cache.
-			$oTextFeed = $this->getFeedObj( $strURL, 1, 0 );	
+			$oTextFeed = $this->getFeedObj( $_sURL, 1, 0 );	
 			
 			// For PHP below 5.3 to release the memory ( SimplePie specific method ).
 			$oTextFeed->__destruct(); // Do what PHP should be doing on it's own.
