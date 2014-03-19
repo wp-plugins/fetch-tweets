@@ -206,11 +206,12 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 
 == Changelog ==
 
-= 2 =
+= 2 - 03/19/2014 =
 * Added the ability to create a rule by home timeline.
 * Added the geometry coordinate picker field for the search tweet type.
 * Renewed the positions of meta boxes in the rule definition page. 
-* Updated the [Admin Page Framework](http://wordpress.org/plugins/admin-page-framework/) library to v3.0.2b.
+* (Breaking changes) Changed the internal options structure. Accordingly, options of custom templates may be affected.
+* (Breaking changes) Updated the [Admin Page Framework](http://wordpress.org/plugins/admin-page-framework/) library to v3.0.2b. Accordingly, setting pages of custom templates may be affected.
 
 = 1.3.5.1 - 03/06/2014 =
 * Fixed a bug that caused a fatal error when newly connecting to Twitter introduced since v1.3.5.
