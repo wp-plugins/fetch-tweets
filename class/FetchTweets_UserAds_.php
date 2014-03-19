@@ -12,9 +12,13 @@ abstract class FetchTweets_UserAds_ {
 	// URLs by locale
 	protected $arrURLFeedText = array(
 		'en' => array( 
-			'http://feeds.feedburner.com/GANLinkTextRandom40',
+			// 'http://feeds.feedburner.com/GANLinkTextRandom40',
+			'http://feeds.feedburner.com/FetchTweetsInformation',
 		),
-		'ja' => array( 'http://feeds.feedburner.com/MiunosoftTextLinks-Jp' ),
+		'ja' => array( 
+			// 'http://feeds.feedburner.com/MiunosoftTextLinks-Jp' 
+			'http://feeds.feedburner.com/FetchTweetsInformation',
+		),
 	);	
 	protected $arrURLFeed160xNTopRight = array(
 		'en' => array( 'http://feeds.feedburner.com/Miunosoft-160xnTopRight' ),
