@@ -22,32 +22,26 @@ abstract class FetchTweets_AdminPage_SetUp_Page extends FetchTweets_AdminPage_St
 			array(
 				'title'	=> __( 'Add Rule by List', 'fetch-tweets' ),
 				'page_slug'	=> 'fetch_tweets_add_rule_by_list',
-				'screen_icon'	=> FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
+				'screen_icon'	=> FetchTweets_Commons::getPluginURL( "/asset/image/screen_icon_32x32.png" ),
 			),			
-			// array(	// since 1.3.4
-				// 'strPageTitle'	=> __( 'Add New Account', 'fetch-tweets' ),
-				// 'page_slug'	=> 'fetch_tweets_add_new_account',
-				// 'strScreenIcon'	=> FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
-				// 'fShowInMenu' => false,
-			// ),				
-			// array(	// since 1.3.4
-				// 'strMenuTitle'		=> __( 'Manage Accounts', 'amazon-auto-links' ),
-				// 'strURL'			=> admin_url( 'edit.php?post_type=' . FetchTweets_Commons::PostTypeSlugAccounts ),
-			// ),				
+			array(
+				'title'	=> __( 'Add Rule by Feed', 'fetch-tweets' ),
+				'href'	=>	admin_url( "post-new.php?post_type={$_sPostTypeSlug}&tweet_type=feed" ),
+			),										
 			array(
 				'title'	=>	__( 'Settings', 'fetch-tweets' ),
 				'page_slug'	=>	'fetch_tweets_settings',
-				'screen_icon'	=> FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
+				'screen_icon'	=> FetchTweets_Commons::getPluginURL( "/asset/image/screen_icon_32x32.png" ),
 			),
 			array(
 				'title' => __( 'Extensions', 'fetch-tweets' ),
 				'page_slug' => 'fetch_tweets_extensions',
-				'screen_icon'	=> FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
+				'screen_icon'	=> FetchTweets_Commons::getPluginURL( "/asset/image/screen_icon_32x32.png" ),
 			),			
 			array(
 				'title' => __( 'Templates', 'fetch-tweets' ),
 				'page_slug' => 'fetch_tweets_templates',
-				'screen_icon'	=> FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
+				'screen_icon'	=> FetchTweets_Commons::getPluginURL( "/asset/image/screen_icon_32x32.png" ),
 			)
 		);
 		$this->addInPageTabs(
@@ -125,10 +119,10 @@ abstract class FetchTweets_AdminPage_SetUp_Page extends FetchTweets_AdminPage_St
 		 */
 		$this->setPageHeadingTabsVisibility( false );		// disables the page heading tabs by passing false.
 		$this->setInPageTabTag( 'h2' );				
-		$this->enqueueStyle(  FetchTweets_Commons::getPluginURL( '/css/admin.css' ) );
-		$this->enqueueStyle(  FetchTweets_Commons::getPluginURL( '/css/fetch_tweets_templates.css' ), 'fetch_tweets_templates' );
-		$this->enqueueStyle(  FetchTweets_Commons::getPluginURL( '/css/fetch_tweets_settings.css' ), 'fetch_tweets_settings' );
-		$this->enqueueStyle(  FetchTweets_Commons::getPluginURL( '/css/fetch_tweets_add_rule_by_list.css' ), 'fetch_tweets_add_rule_by_list' );
+		$this->enqueueStyle(  FetchTweets_Commons::getPluginURL( '/asset/css/admin.css' ) );
+		$this->enqueueStyle(  FetchTweets_Commons::getPluginURL( '/asset/css/fetch_tweets_templates.css' ), 'fetch_tweets_templates' );
+		$this->enqueueStyle(  FetchTweets_Commons::getPluginURL( '/asset/css/fetch_tweets_settings.css' ), 'fetch_tweets_settings' );
+		$this->enqueueStyle(  FetchTweets_Commons::getPluginURL( '/asset/css/fetch_tweets_add_rule_by_list.css' ), 'fetch_tweets_add_rule_by_list' );
 
 	}	
 				

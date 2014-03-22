@@ -40,7 +40,7 @@ class FetchTweets_DateCustomFieldType extends FetchTweets_AdminPageFramework_Fie
 	 */
 	protected function getEnqueuingStyles() { 
 		return array(
-			dirname( FetchTweets_Commons::$sPluginPath ) . '/css/jquery-ui/jquery-ui-1.10.3.min.css',
+			dirname( FetchTweets_Commons::$sPluginPath ) . '/asset/css/jquery-ui/jquery-ui-1.10.3.min.css',
 		);
 	}	
 	

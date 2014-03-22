@@ -49,7 +49,7 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 				'section_id'		=> 'caches',
 				'tab_slug'		=> 'reset',
 				'title'			=> __( 'Caches', 'fetch-tweets' ),
-				'description'	=> __( 'If you need to refresh the fetched tweets, clear the cashes.', 'fetch-tweets' ),
+				'description'	=> __( 'If you need to refresh the fetched tweets, clear the caches.', 'fetch-tweets' ),
 			)			
 		);	
 		$this->addSettingSections(
@@ -95,9 +95,9 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 		
 		// Add setting fields
  		$this->addSettingFields(
+			'twitter_connect',
 			array(	
 				'field_id' => 'connect_to_twitter',
-				'section_id' => 'twitter_connect',
 				'title' => __( 'Connect to Twitter', 'fetch-tweets' ),
 				'label' => __( 'Connect', 'fetch-tweets' ),
 				'href' => add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'twitter_redirect' ), admin_url( $GLOBALS['pagenow'] ) ),
@@ -105,7 +105,6 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 			),	
 			array(	
 				'field_id' => 'manual_authentication',
-				'section_id' => 'twitter_connect',
 				'title' => __( 'Manual', 'fetch-tweets' ),
 				'label' => __( 'Set Keys Manually', 'fetch-tweets' ),
 				'href' => add_query_arg( array( 'post_type' => 'fetch_tweets', 'page' => 'fetch_tweets_settings', 'tab' => 'authentication', 'settings-updated' => false ) ),
@@ -166,7 +165,6 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 			),
 			array(  // single button
 				'field_id' => 'submit_authentication_keys',
-				'section_id' => 'authentication_keys',
 				'type' => 'submit',
 				'before_field' => "<div class='right-button'>",
 				'after_field' => "</div>",
@@ -178,9 +176,9 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 		);
 		// default_values
 		$this->addSettingFields(
+			'default_values',
 			array(
 				'field_id' => 'count',
-				'section_id' => 'default_values',
 				'title' => __( 'Number of Items', 'fetch-tweets' ),
 				'help' => __( 'The number of tweets to display.', 'fetch-tweets' )
 					. __( 'Default', 'fetch-tweets' ) . ': ' . $GLOBALS['oFetchTweets_Option']->aStructure_DefaultParams['count']
@@ -190,7 +188,6 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 			),
 			array(
 				'field_id'		=> 'twitter_media',
-				'section_id' => 'default_values',
 				'title'			=> __( 'Twitter Media', 'fetch-tweets' ),
 				'type'			=> 'checkbox',
 				'label'			=> __( 'Display media images posted in the tweet that are recognized as media file by Twitter.' ),
@@ -200,7 +197,6 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 			),
 			array(
 				'field_id'		=> 'external_media',
-				'section_id' => 'default_values',
 				'title'			=> __( 'External Media', 'fetch-tweets' ),
 				'type'			=> 'checkbox',
 				'label'			=> __( 'Replace media links of external sources to an embedded element.', 'fetch-tweets' ),
@@ -211,21 +207,31 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 			array()
 		);
 		$this->addSettingFields(
+			'cache_settings',
 			array(
 				'field_id'		=> 'cache_for_errors',
-				'section_id' 		=> 'cache_settings',
 				'title'			=> __( 'Cache for Errors', 'fetch-tweets' ),
 				'type'			=> 'checkbox',
 				'label'			=> __( 'Cache fetched results even for an error.', 'fetch-tweets' ),
 				'description'	=> __( 'This reduces the chances to reach the Twitter API rate limit.', 'fetch-tweets' ),
 			),
+			array(
+				'field_id'		=> 'caching_mode',
+				'title'			=> __( 'Caching Mode', 'fetch-tweets' ),
+				'type'			=> 'radio',
+				'label'			=> array(
+					'normal'	=>	__( 'Normal', 'fetch-tweets' ) . ' - ' . __( 'uses WP Cron.', 'fetch-tweets' ),
+					'intense'	=>	__( 'Intense', 'fetch-tweets' ) . ' - ' . __( 'uses the plugin caching method.', 'fetch-tweets' ),
+				),
+				'after_label'	=>	'<br />',
+				'default'		=>	'normal',
+			),			
 			array(  // single button
 				'field_id' => 'submit_cache_settings',
-				'section_id' => 'cache_settings',
 				'type' => 'submit',
 				'before_field' => "<div class='right-button'>",
 				'after_field' => "</div>",
-'vLabelMinWidth' => 0,
+				'label_min_width'	=>	0,
 				'label' => __( 'Save Changes', 'fetch-tweets' ),
 				'attributes'	=>	array(
 					'class'	=>	'button button-primary',
@@ -233,9 +239,9 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 			)		
 		);
 		$this->addSettingFields(
+			'capabilities',
 			array(
 				'field_id' => 'setting_page_capability',
-				'section_id' => 'capabilities',
 				'title' => __( 'Capability', 'fetch-tweets' ),
 				'description' => __( 'Select the user role that is allowed to access the plugin setting pages.', 'fetch-tweets' )
 					. __( 'Default', 'fetch-tweets' ) . ': ' . __( 'Administrator', 'fetch-tweets' ),
@@ -251,11 +257,10 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 			),
 			array(  // single button
 				'field_id' => 'submit_misc',
-				'section_id' => 'capabilities',
 				'type' => 'submit',
 				'before_field' => "<div class='right-button'>",
 				'after_field' => "</div>",
-'vLabelMinWidth' => 0,
+				'label_min_width'	=>	0,
 				'label' => __( 'Save Changes', 'fetch-tweets' ),
 				'attributes'	=>	array(
 					'class'	=>	'button button-primary',
@@ -263,9 +268,9 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 			)			
 		);
 		$this->addSettingFields(
+			'reset_settings',
 			array(	
 				'field_id' => 'option_sections',
-				'section_id' => 'reset_settings',
 				'title' => __( 'Options to Delete', 'fetch-tweets' ),
 				'type' => 'checkbox',
 				'delimiter' => '<br />',
@@ -286,26 +291,27 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 				// 'label' => __( 'Perform', 'fetch-tweets' ),
 				// 'vClassAttribute' => 'button button-primary',
 			// ),
+			array()
+		);
+		$this->addSettingFields(
+			'caches',
 			array(	
 				'field_id' => 'clear_caches',
-				'section_id' => 'caches',
 				'title' => __( 'Clear Caches', 'fetch-tweets' ),
 				'type' => 'checkbox',
 				'label' => __( 'Clear tweet caches', 'fetch-tweets' ),
 			),
 			array(  // single button
 				'field_id' => 'submit_reset_settings',
-				'section_id' => 'caches',
 				'type' => 'submit',
 				'before_field' => "<div class='right-button'>",
 				'after_field' => "</div>",
-'vLabelMinWidth' => 0,
+				'label_min_width'	=>	0,
 				'label' => __( 'Perform', 'fetch-tweets' ),
 				'attributes'	=>	array(
 					'class'	=>	'button button-primary',
 				),
 			)			
-
 		);
 
 	}	

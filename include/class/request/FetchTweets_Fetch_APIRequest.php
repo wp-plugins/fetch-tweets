@@ -43,13 +43,29 @@ abstract class FetchTweets_Fetch_APIRequest extends FetchTweets_Fetch_Cache {
 					'key'	=> $strArrayKey,
 				);
 			}
-
+// FetchTweets_Debug::logArray( 'cache is used: ' . $strRequestURI );
 			return ( array ) $this->oBase64->decode( $arrTransient['data'] );
 			
 		}
-
-		return $this->setAPIGETRequestCache( $strRequestURI, $strArrayKey );
+		
+		
+		return $this->_isTwitterAPIRequest( $strRequestURI )
+			? $this->setAPIGETRequestCache( $strRequestURI, $strArrayKey )	// Twitter API request
+			: $this->setGETRequestCache( $strRequestURI );	// not an API request
 		
 	}	
+	
+		/**
+		 * Checks if the given URI is for Twitter API.
+		 * 
+		 * @since			2.0.1
+		 */
+		protected function _isTwitterAPIRequest( $sURL ) {
+			
+			return ( 'api.twitter.com' == parse_url( $sURL,  PHP_URL_HOST ) );
+			
+		}
+		
+	
 	
 }

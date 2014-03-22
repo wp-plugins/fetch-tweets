@@ -29,11 +29,11 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 				// 'supports' => array( 'title', 'editor', 'comments', 'thumbnail' ),	// 'custom-fields'
 				'supports' => array( 'title' ),
 				'taxonomies' => array( '' ),
-				'menu_icon' => FetchTweets_Commons::getPluginURL( '/image/menu_icon_16x16.png' ),
+				'menu_icon' => FetchTweets_Commons::getPluginURL( '/asset/image/menu_icon_16x16.png' ),
 				'has_archive' => true,
 				'hierarchical' => false,
 				'show_admin_column' => true,
-				'screen_icon' => FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),
+				'screen_icon' => FetchTweets_Commons::getPluginURL( "/asset/image/screen_icon_32x32.png" ),
 				// 'capabilities' => array(
 					// 'create_posts' => false,
 				// ),			
@@ -163,6 +163,8 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 				return __( 'List', 'fetch-tweets' );
 			case 'home_timeline':
 				return __( 'Home Timeline', 'fetch-tweets' );
+			case 'feed':
+				return __( 'Feed', 'fetch-tweets' );				
 		}
 
 	}

@@ -9,7 +9,7 @@
  * @action			fetch_tweets_action_transient_renewal - for WP Cron single event.
  * @action			fetch_tweets_action_transient_add_oembed_elements - for WP Cron single event.
  */
-abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByHomeTimeline {
+abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByFeed {
 	
 	/**
 	 * Returns the output of tweets by the given arguments.
@@ -161,6 +161,11 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByHomeTimeline {
 						$aArgs['exclude_replies'] = get_post_meta( $_iPostID, 'exclude_replies', true );
 						$aArgs = FetchTweets_Utilities::uniteArrays( $aRawArgs, $aArgs ); // The direct input takes its precedence.
 						$_aRetrievedTweets = $this->_getTweetsByHomeTimeline( $aArgs['account_id'], $aArgs['exclude_replies'], $aArgs['cache'] );
+						break;
+					case 'feed':
+						$aArgs['json_url'] = get_post_meta( $_iPostID, 'json_url', true );
+						$aArgs = FetchTweets_Utilities::uniteArrays( $aRawArgs, $aArgs ); // The direct input takes its precedence.
+						$_aRetrievedTweets = $this->_getTweetsByJSONFeed( $aArgs['json_url'], $aArgs['cache'] );
 						break;
 					case 'screen_name':
 					default:	

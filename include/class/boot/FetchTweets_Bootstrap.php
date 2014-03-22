@@ -16,35 +16,38 @@ final class FetchTweets_Bootstrap {
 	
 	function __construct( $sPluginFilePath ) {
 	
-		$this->strFilePath = $sPluginFilePath;	//FetchTweets_Commons::getPluginPath();
+		$this->_sFilePath = $sPluginFilePath;	//FetchTweets_Commons::getPluginPath();
 		$this->_bIsAdmin = is_admin();
 		
 		// 1. Define constants.
-		// $this->defineConstants();
+		// $this->_defineConstants();
 		
 		// 2. Set global variables.
-		$this->setGlobals();
+		$this->_setGlobalVariables();
 		
 		// 3. Set up auto-load classes.
-		$this->loadClasses( $this->strFilePath );
+		$this->_loadClasses( $this->_sFilePath );
 		
 		// 4. Set up activation hook.
-		register_activation_hook( $this->strFilePath, array( $this, 'doWhenPluginActivates' ) );
+		register_activation_hook( $this->_sFilePath, array( $this, '_replyToDoWhenPluginActivates' ) );
 		
 		// 5. Set up deactivation hook.
-		register_deactivation_hook( $this->strFilePath, array( $this, 'doWhenPluginDeactivates' ) );
+		register_deactivation_hook( $this->_sFilePath, array( $this, '_replyToDoWhenPluginDeactivates' ) );
 		
 		// 6. Set up localization.
-		$this->localize();
+		$this->_localize();
 		
-		// 7. Schedule to call start up functions when all the plugins get loaded.
-		add_action( 'plugins_loaded', array( $this, 'loadPlugin' ), 999, 1 );
+		// 7. Check requirements.
+		add_action( 'admin_init', array( $this, '_replyToCheckRequirements' ) );
+		
+		// 8. Schedule to call start up functions when all the plugins get loaded.
+		add_action( 'plugins_loaded', array( $this, '_replyToLoadPluginComponents' ), 999, 1 );
 			
 	}	
 	
-	// private function defineConstants() {}
+	// private function _defineConstants() {}
 	
-	private function setGlobals() {
+	private function _setGlobalVariables() {
 		
 		$GLOBALS['oFetchTweets_Option'] = null;	// stores the option object
 		$GLOBALS['oFetchTweets_Templates'] = null;	// stores the template object
@@ -57,30 +60,46 @@ final class FetchTweets_Bootstrap {
 				
 	}
 	
-	private function loadClasses( $sFilePath ) {
+	private function _loadClasses( $sFilePath ) {
 		
 		$_sPluginDir =  dirname( $sFilePath );
 		
 		// Auto-loads classes placed in the finals folder.
-		if ( ! class_exists( 'FetchTweets_RegisterClasses' ) ) 
-			include_once( $_sPluginDir . '/class_final/FetchTweets_RegisterClasses.php' );		
+		if ( ! class_exists( 'FetchTweets_AutoLoad' ) ) {
+			include_once( $_sPluginDir . '/include/class/boot/registry/FetchTweets_AutoLoad.php' );	
+		}
 		
-		// Register finalized classes right away.
-		$oRC = new FetchTweets_RegisterClasses( $_sPluginDir . '/class_final', $GLOBALS['arrFetchTweets_FinalClasses'] );
-		$oRC->registerClasses();
+		// Register the classes for boot now.
+		new FetchTweets_AutoLoad( $_sPluginDir . '/include/class/boot', $GLOBALS['arrFetchTweets_FinalClasses'] );
 		
 		// Schedule to register regular classes when all the plugins are loaded. This allows other scripts to modify the loading class files.
-		add_action( 'plugins_loaded', array( new FetchTweets_RegisterClasses( $_sPluginDir . '/class', $GLOBALS['arrFetchTweets_Classes'] ), 'registerClasses' ) );
+		add_action( 'plugins_loaded', array( $this, '_replyToRegisterOtherClasses' ) );		
 		
 		FetchTweets_Commons::setUp( $sFilePath );
 		
 	}
+		/**
+		 * Registers regular classes to be auto loaded.
+		 * 
+		 */
+		public function _replyToRegisterOtherClasses() {
+			
+			$_sIncludeDir = dirname( $this->_sFilePath ) . DIRECTORY_SEPARATOR . 'include' . DIRECTORY_SEPARATOR . 'class';
+			new FetchTweets_AutoLoad( 
+				$_sIncludeDir, 
+				$GLOBALS['arrFetchTweets_Classes'], 
+				array( 'exclude_dirs' => $_sIncludeDir . DIRECTORY_SEPARATOR . '/boot' )
+			);
+						
+		}
+	/**
+	 * 
+	 * @since			2.0.1
+	 */
+	public function _replyToCheckRequirements() {
 
-	public function doWhenPluginActivates() {
-		
-		// Requirement Check
-		$oRequirement = new FetchTweets_Requirements( 
-			$this->strFilePath,
+		new FetchTweets_Requirements( 
+			$this->_sFilePath,
 			array(
 				'php' => array(
 					'version' => '5.2.4',
@@ -97,48 +116,50 @@ final class FetchTweets_Bootstrap {
 					// 'DOMDocument' => sprintf( __( 'The plugin requires the <a href="%1$s">libxml</a> extension to be activated.', 'pseudo-image' ), 'http://www.php.net/manual/en/book.libxml.php' ),
 				// ),
 				'constants'	=> array(),
-			),
-			True, 			// if it fails it will deactivate the plugin
-			null			// do not hook
-		);
-		$oRequirement->checkRequirements();
-	
+			)
+		);	
+		
+	}
+		
+	public function _replyToDoWhenPluginActivates() {
+			
 		// Schedule transient set-ups
 		wp_schedule_single_event( time(), 'fetch_tweets_action_setup_transients' );		
 		
 	}
 	
-	public function doWhenPluginDeactivates() {
+	public function _replyToDoWhenPluginDeactivates() {
 		
 		FetchTweets_Transient::clearTransients();
 		
 	}	
 	
-	private function localize() {
+	private function _localize() {
 		
 		load_plugin_textdomain( 
 			FetchTweets_Commons::TextDomain, 
 			false, 
-			dirname( plugin_basename( $this->strFilePath ) ) . '/language/'
+			dirname( plugin_basename( $this->_sFilePath ) ) . '/language/'
 		);
 		
 		if ( $this->_bIsAdmin ) {
 			load_plugin_textdomain( 
 				'admin-page-framework', 
 				false, 
-				dirname( plugin_basename( $this->strFilePath ) ) . '/language/'
+				dirname( plugin_basename( $this->_sFilePath ) ) . '/language/'
 			);		
 		}
 		
 	}		
 	
-	public function loadPlugin() {
+	public function _replyToLoadPluginComponents() {
 		
 		// All the necessary classes have been already loaded.
 		
 		// 1. Load Necessary libraries
-		include_once( dirname( FetchTweets_Commons::getPluginFilePath() ) . '/library/admin-page-framework/fetch-tweets-admin-page-framework.min.php' );
-
+		include_once( dirname( FetchTweets_Commons::getPluginFilePath() ) . '/include/library/admin-page-framework/fetch-tweets-admin-page-framework.min.php' );
+		require_once( dirname( FetchTweets_Commons::$sPluginPath ) . '/include/library/TwitterOAuth/twitteroauth.php' );
+		
 		// 2. Option Object
 		$GLOBALS['oFetchTweets_Option'] = new FetchTweets_Option( FetchTweets_Commons::$sAdminKey );
 
@@ -146,36 +167,37 @@ final class FetchTweets_Bootstrap {
 		$GLOBALS['oFetchTweets_Templates'] = new FetchTweets_Templates;		
 		$GLOBALS['oFetchTweets_Templates']->loadFunctionsOfActiveTemplates();
 		add_action( 'wp_enqueue_scripts', array( $GLOBALS['oFetchTweets_Templates'], 'enqueueActiveTemplateStyles' ) );
-		if ( $this->_bIsAdmin )
+		if ( $this->_bIsAdmin ) {
 			$GLOBALS['oFetchTweets_Templates']->loadSettingsOfActiveTemplates();
+		}
 		
 		// 4. Admin pages
 		if ( $this->_bIsAdmin ) {
-			new FetchTweets_AdminPage( FetchTweets_Commons::$sAdminKey, $this->strFilePath );		
+			new FetchTweets_AdminPage( FetchTweets_Commons::$sAdminKey, $this->_sFilePath );		
 		}
 		
 		// 5. Post Type - no need to check is_admin() because posts of custom post type can be accessed from the front-end.
-		new FetchTweets_PostType( FetchTweets_Commons::PostTypeSlug, null, $this->strFilePath ); 	// post type slug
-		// new FetchTweets_PostType_Accounts( FetchTweets_Commons::PostTypeSlugAccounts, null, $this->strFilePath ); 	// post type slug		
+		new FetchTweets_PostType( FetchTweets_Commons::PostTypeSlug, null, $this->_sFilePath ); 	// post type slug
 		
 		// 6. Meta-boxes
 		if ( $this->_bIsAdmin ) {
 			$this->_registerMetaBoxes();
 		}
 						
-		// 7. Shortcode
-		new FetchTweets_Shortcode( 'fetch_tweets' );	// e.g. [fetch_tweets id="143"]
+		// 7. Shortcode - enables the shortcode. e.g. [fetch_tweets id="143"]
+		new FetchTweets_Shortcode( 'fetch_tweets' );	
 			
 		// 8. Widgets
 		add_action( 'widgets_init', 'FetchTweets_WidgetByID::registerWidget' );
 		add_action( 'widgets_init', 'FetchTweets_WidgetByTag::registerWidget' );
 				
-		// 9. Events
+		// 9. Events - handles background processes.
 		new FetchTweets_Event;	
 		
 		// 10. MISC
-		if ( $this->_bIsAdmin )
+		if ( $this->_bIsAdmin ) {
 			$GLOBALS['oFetchTweetsUserAds'] = isset( $GLOBALS['oFetchTweetsUserAds'] ) ? $GLOBALS['oFetchTweetsUserAds'] : new FetchTweets_UserAds;
+		}
 		
 		// 10. WordPress version backward compatibility.
 		$this->_defineConstantesForBackwardCompatibility();
@@ -227,6 +249,15 @@ final class FetchTweets_Bootstrap {
 				'default'	// priority
 			);
 		}	
+		if ( $_sTweetType == 'feed' || $_bIsUpdatePost ) {
+			new FetchTweets_MetaBox_Feed(
+				'fetch_tweets_meta_box_feed',	// meta box ID
+				__( 'Tweets by Feed', 'fetch-tweets' ),	// meta box title
+				array( FetchTweets_Commons::PostTypeSlug ),	// post, page, etc.
+				'normal',	// context
+				'default'	// priority
+			);			
+		}
 
 		new FetchTweets_MetaBox_Cache(
 			'fetch_tweets_meta_box_cache',	// meta box ID

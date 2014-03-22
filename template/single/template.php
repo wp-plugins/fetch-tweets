@@ -215,7 +215,7 @@ $sGMTOffset = ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 					<li class='fetch-tweets-single-intent-reply'>
 						<a href='https://twitter.com/intent/tweet?in_reply_to=<?php echo $_aDetail['id_str']; ?>' rel='nofollow' target='_blank' title='<?php _e( 'Reply', 'fetch-tweets' ); ?>'>
 							<?php if ( $aArgs['intent_buttons'] == 1 || $aArgs['intent_buttons'] == 2 ) : ?>
-							<span class='fetch-tweets-single-intent-icon' style='background-image: url("<?php echo FetchTweets_Commons::getPluginURL( 'image/reply_48x16.png' ); ?>");' ></span>
+							<span class='fetch-tweets-single-intent-icon' style='background-image: url("<?php echo FetchTweets_Commons::getPluginURL( 'asset/image/reply_48x16.png' ); ?>");' ></span>
 							<?php endif; ?>
 							<?php if ( $aArgs['intent_buttons'] == 1 || $aArgs['intent_buttons'] == 3 ) : ?>
 							<span class='fetch-tweets-single-intent-buttons-text'><?php _e( 'Reply', 'fetch-tweets' ); ?></span>
@@ -225,7 +225,7 @@ $sGMTOffset = ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 					<li class='fetch-tweets-single-intent-retweet'>
 						<a href='https://twitter.com/intent/retweet?tweet_id=<?php echo $_aDetail['id_str'];?>' rel='nofollow' target='_blank' title='<?php _e( 'Retweet', 'fetch-tweets' ); ?>'>
 							<?php if ( $aArgs['intent_buttons'] == 1 || $aArgs['intent_buttons'] == 2 ) : ?>
-							<span class='fetch-tweets-single-intent-icon' style='background-image: url("<?php echo FetchTweets_Commons::getPluginURL( 'image/retweet_48x16.png' ); ?>");' ></span>
+							<span class='fetch-tweets-single-intent-icon' style='background-image: url("<?php echo FetchTweets_Commons::getPluginURL( 'asset/image/retweet_48x16.png' ); ?>");' ></span>
 							<?php endif; ?>
 							<?php if ( $aArgs['intent_buttons'] == 1 || $aArgs['intent_buttons'] == 3 ) : ?>
 							<span class='fetch-tweets-single-intent-buttons-text'><?php _e( 'Retweet', 'fetch-tweets' ); ?></span>
@@ -235,7 +235,7 @@ $sGMTOffset = ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 					<li class='fetch-tweets-single-intent-favorite'>
 						<a href='https://twitter.com/intent/favorite?tweet_id=<?php echo $_aDetail['id_str'];?>' rel='nofollow' target='_blank' title='<?php _e( 'Favorite', 'fetch-tweets' ); ?>'>
 							<?php if ( $aArgs['intent_buttons'] == 1 || $aArgs['intent_buttons'] == 2 ) : ?>
-							<span class='fetch-tweets-single-intent-icon' style='background-image: url("<?php echo FetchTweets_Commons::getPluginURL( 'image/favorite_48x16.png' ); ?>");' ></span>
+							<span class='fetch-tweets-single-intent-icon' style='background-image: url("<?php echo FetchTweets_Commons::getPluginURL( 'asset/image/favorite_48x16.png' ); ?>");' ></span>
 							<?php endif; ?>
 							<?php if ( $aArgs['intent_buttons'] == 1 || $aArgs['intent_buttons'] == 3 ) : ?>
 							<span class='fetch-tweets-single-intent-buttons-text'><?php _e( 'Favorite', 'fetch-tweets' ); ?></span>

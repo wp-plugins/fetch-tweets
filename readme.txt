@@ -196,6 +196,10 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 * Type `#HASHTAG AND from:SCREENNAME` in the Search Keyword meta box option field. Change the part, `#HASHTAG`, to your searching hash tag and the part, `SCREENNAME`, to the account's screen name to fetch tweets from.
 * Create a rule by pressing the Publish button.
 
+= Why don't tweets update? =
+
+It could be that your host disables WP Cron. In that case, try the intense caching mode which can be configured via `Dashboard` -> `Fetch Tweets` -> `Settings` -> `General` -> `Cache Settings` -> `Caching Mode`.
+
 == Screenshots ==
 
 1. ***Tweets Displayed in Page and Sidebar***
@@ -205,6 +209,10 @@ See the How to Create Own Template section of the **[Other Notes](http://wordpre
 5. ***Authentication***
 
 == Changelog ==
+
+= 2.0.1 =
+* Added the ability to create a rule by external JSON feed source.
+* Added the `Caching Mode` option.
 
 = 2 - 03/19/2014 =
 * Added the ability to create a rule by home timeline.

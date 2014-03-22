@@ -39,7 +39,7 @@ class FetchTweets_GeometryCustomFieldType extends FetchTweets_AdminPageFramework
 	protected function getEnqueuingScripts() { 
 		return array(
 			"http://maps.googleapis.com/maps/api/js?sensor=false",	// load this first
-			dirname( FetchTweets_Commons::$sPluginPath ) . '/js/jquery-gmaps-latlon-picker.js',	// load this next - a file path can be passed, ( as well as a url )
+			dirname( FetchTweets_Commons::$sPluginPath ) . '/asset/js/jquery-gmaps-latlon-picker.js',	// load this next - a file path can be passed, ( as well as a url )
 		);
 	}	
 
@@ -48,7 +48,7 @@ class FetchTweets_GeometryCustomFieldType extends FetchTweets_AdminPageFramework
 	 */
 	protected function getEnqueuingStyles() { 
 		return array(
-			dirname( FetchTweets_Commons::$sPluginPath ) . '/css/jquery-gmaps-latlon-picker.css',	// a file path can be passed, ( as well as a url )
+			dirname( FetchTweets_Commons::$sPluginPath ) . '/asset/css/jquery-gmaps-latlon-picker.css',	// a file path can be passed, ( as well as a url )
 		); 
 	}	
 	

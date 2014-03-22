@@ -57,6 +57,8 @@ abstract class FetchTweets_Fetch_Format extends FetchTweets_Fetch_APIRequest {
 		
 		foreach( $arrTweets as $intIndex => &$arrTweet ) {
 			
+			if ( ! is_array( $arrTweet ) ) continue;
+			
 			if ( in_array( $arrTweet[ 'id_str' ], $arrTweetIDs ) ) continue;
 			$arrTweetIDs[] = $arrTweet[ 'id_str' ];
 										

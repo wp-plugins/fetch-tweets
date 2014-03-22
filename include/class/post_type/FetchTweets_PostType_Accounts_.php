@@ -34,8 +34,8 @@ abstract class FetchTweets_PostType_Accounts_ extends FetchTweets_AdminPageFrame
 				// 'menu_position' => 120,
 				'supports' => array( 'title' ),	// 'supports' => array( 'title', 'editor', 'comments', 'thumbnail' ),	// 'custom-fields'
 				'taxonomies' => array( '' ),
-				'menu_icon' => FetchTweets_Commons::getPluginURL( '/image/menu_icon_16x16.png' ),
-				'screen_icon' => FetchTweets_Commons::getPluginURL( "/image/screen_icon_32x32.png" ),				
+				'menu_icon' => FetchTweets_Commons::getPluginURL( '/asset/image/menu_icon_16x16.png' ),
+				'screen_icon' => FetchTweets_Commons::getPluginURL( "/asset/image/screen_icon_32x32.png" ),				
 				'has_archive' => false,
 				'hierarchical' => false,
 				'show_admin_column' => true,
