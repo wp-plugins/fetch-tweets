@@ -5,7 +5,7 @@ class FetchTweets_MetaBox_Feed_ extends FetchTweets_AdminPageFramework_MetaBox {
 	/**
 	 * Adds form fields for the options to fetch tweets by feed.
 	 * 
-	 * @since			2.0.1
+	 * @since			2.1
 	 */ 
 	public function setup() {
 		

@@ -58,7 +58,7 @@ abstract class FetchTweets_Fetch_APIRequest extends FetchTweets_Fetch_Cache {
 		/**
 		 * Checks if the given URI is for Twitter API.
 		 * 
-		 * @since			2.0.1
+		 * @since			2.1
 		 */
 		protected function _isTwitterAPIRequest( $sURL ) {
 			

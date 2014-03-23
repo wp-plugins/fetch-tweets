@@ -94,7 +94,7 @@ final class FetchTweets_Bootstrap {
 		}
 	/**
 	 * 
-	 * @since			2.0.1
+	 * @since			2.1
 	 */
 	public function _replyToCheckRequirements() {
 

@@ -60,7 +60,7 @@ abstract class FetchTweets_Fetch_Cache {
 	/**
 	 * Performs HTTP GET request with the given URL and sets the cache.
 	 * 
-	 * @since			2.0.1
+	 * @since			2.1
 	 * @remark			The scope is public as the event class calls it.
 	 */
 	public function setGETRequestCache( $sRequestURI ) {

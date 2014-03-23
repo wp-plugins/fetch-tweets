@@ -30,7 +30,7 @@ abstract class FetchTweets_Option_ {
 		'capabilities' => array(),
 		'cache_settings' => array(
 			'cache_for_errors' => false,
-			'caching_mode'	=>	'normal',	// 2.0.1+
+			'caching_mode'	=>	'normal',	// 2.1+
 		),
 		'arrTemplates' => array(),	// stores template info arrays.
 		'arrDefaultTemplate' => array(),	// stores the default template info.

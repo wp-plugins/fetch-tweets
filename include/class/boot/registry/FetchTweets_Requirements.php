@@ -4,7 +4,7 @@
  * @copyright   Copyright (c) 2013, Michael Uno
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  * @since		1.0.0
- * @since		2.0.1			Merged with the one used by the Feeder extension.
+ * @since		2.1			Merged with the one used by the Feeder extension.
  * @description	Checks the specified requirements and if it fails, it deactivates the plugin.
 */
 final class FetchTweets_Requirements {

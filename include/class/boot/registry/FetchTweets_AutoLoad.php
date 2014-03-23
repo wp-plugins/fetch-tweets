@@ -5,7 +5,7 @@
  * @package     Fetch Tweets
  * @copyright   Copyright (c) 2013, Michael Uno
  * @authorurl	http://michaeluno.jp
- * @since		2.0.1
+ * @since		2.1
  */
 
 final class FetchTweets_AutoLoad {

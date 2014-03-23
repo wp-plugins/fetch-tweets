@@ -210,7 +210,7 @@ It could be that your host disables WP Cron. In that case, try the intense cachi
 
 == Changelog ==
 
-= 2.0.1 =
+= 2.1 - 03/23/2014 =
 * Added the ability to create a rule by external JSON feed source.
 * Added the `Caching Mode` option.
 
