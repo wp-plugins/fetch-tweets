@@ -50,7 +50,7 @@ abstract class FetchTweets_Event_ {
 			$_oRedirect->go( $_GET['fetch_tweets_link'] );	// will exit there.
 		}
 			
-		// Draw cached image.
+		// Draw the cached image.
 		if ( isset( $_GET['fetch_tweets_image'] ) && $_GET['fetch_tweets_image'] && is_user_logged_in() ) {
 			
 			$_oImageLoader = new FetchTweets_ImageHandler( 'FTWS' );
