@@ -21,7 +21,7 @@ It allows developers to write additional add-ons and templates. One of the exten
 If you are a theme developer, you can easily customize the template for the tweet outputs. Just copy the existing template and modify the copied files and rename the template name. Then place the copied folder into the theme folder. And there you go! Your own template will be listed in the plugin’s setting page. This way, when the plugin updates, you won’t loose your modifications.
 
 <h4>Features</h4>
-* **User Timeline** - by specifying the user name, the timeline can be fetched and displayed.
+* **User Timeline by Screen Name** - by specifying the user name, the timeline can be fetched and displayed as well as your account's home timeline.
 * **Search Results** - by specifying the search keyword, the results can be fetched and displayed.
 * **Lists**	- tweet timeline for members of the specified list can be fetched and displayed.
 * **Mashups** - you can display the combined results from multiple rule sets of your choosing.
@@ -210,6 +210,9 @@ It could be that your host disables WP Cron. In that case, try the intense cachi
 
 == Changelog ==
 
+= 2.1.1 =
+* Tweaked the routines of plugin setting pages not to affect the other admin pages as much as possible.
+
 = 2.1 - 03/23/2014 =
 * Added the ability to create a rule by external JSON feed source.
 * Added the `Caching Mode` option.
@@ -218,8 +221,8 @@ It could be that your host disables WP Cron. In that case, try the intense cachi
 * Added the ability to create a rule by home timeline.
 * Added the geometry coordinate picker field for the search tweet type.
 * Renewed the positions of meta boxes in the rule definition page. 
-* (Breaking changes) Changed the internal options structure. Accordingly, options of custom templates may be affected.
-* (Breaking changes) Updated the [Admin Page Framework](http://wordpress.org/plugins/admin-page-framework/) library to v3.0.2b. Accordingly, setting pages of custom templates may be affected.
+* (Breaking change) Changed the internal options structure. Accordingly, options of custom templates may be affected.
+* (Breaking change) Updated the [Admin Page Framework](http://wordpress.org/plugins/admin-page-framework/) library to v3.0.2b. Accordingly, setting pages of custom templates may be affected.
 
 = 1.3.5.1 - 03/06/2014 =
 * Fixed a bug that caused a fatal error when newly connecting to Twitter introduced since v1.3.5.
