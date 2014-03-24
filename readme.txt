@@ -21,7 +21,7 @@ It allows developers to write additional add-ons and templates. One of the exten
 If you are a theme developer, you can easily customize the template for the tweet outputs. Just copy the existing template and modify the copied files and rename the template name. Then place the copied folder into the theme folder. And there you go! Your own template will be listed in the plugin’s setting page. This way, when the plugin updates, you won’t loose your modifications.
 
 <h4>Features</h4>
-* **User Timeline by Screen Name** - by specifying the user name, the timeline can be fetched and displayed as well as your account's home timeline.
+* **Fetching Timeline** - by specifying the user name, the timeline can be fetched and displayed as well as your account's home timeline.
 * **Search Results** - by specifying the search keyword, the results can be fetched and displayed.
 * **Lists**	- tweet timeline for members of the specified list can be fetched and displayed.
 * **Mashups** - you can display the combined results from multiple rule sets of your choosing.
