@@ -210,8 +210,8 @@ It could be that your host disables WP Cron. In that case, try the intense cachi
 
 == Changelog ==
 
-= 2.1.1 =
-* Tweaked the routines of plugin setting pages not to affect the other admin pages as much as possible.
+= 2.1.1 - 03/25/2014 =
+* Tweaked the routines of plugin setting pages.
 
 = 2.1 - 03/23/2014 =
 * Added the ability to create a rule by external JSON feed source.
