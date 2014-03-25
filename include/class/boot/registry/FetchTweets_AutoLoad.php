@@ -57,7 +57,7 @@ final class FetchTweets_AutoLoad {
 		$_aFilePaths = $aRecursiveOptions['is_recursive']
 			? $this->doRecursiveGlob( $sClassDirPath . '*.' . $this->getGlobPatternExtensionPart( $aAllowedExtensions ), GLOB_BRACE, $aRecursiveOptions['exclude_dirs'] )
 			: ( array ) glob( $sClassDirPath . '*.' . $this->getGlobPatternExtensionPart( $aAllowedExtensions ), GLOB_BRACE );
-
+		$_aFilePaths = array_filter( $_aFilePaths );	// drop non-value elements.
 		/*
 		 * Now the structure of $_aFilePaths looks like:
 			array
@@ -89,8 +89,11 @@ final class FetchTweets_AutoLoad {
 		 */
 		protected function doRecursiveGlob( $sPathPatten, $iFlags=0, $asExcludeDirs=array() ) {
 
-			$_aFiles = ( array ) glob( $sPathPatten, $iFlags );
-			foreach ( ( array ) glob( dirname( $sPathPatten ) . DIRECTORY_SEPARATOR . '*', GLOB_ONLYDIR|GLOB_NOSORT ) as $_sDirPath ) {
+			$_aFiles = glob( $sPathPatten, $iFlags );	
+			$_aFiles = is_array( $_aFiles ) ? $_aFiles : array();	// glob() can return false.
+			$_aDirs = glob( dirname( $sPathPatten ) . DIRECTORY_SEPARATOR . '*', GLOB_ONLYDIR|GLOB_NOSORT );
+			$_aDirs = is_array( $_aDirs ) ? $_aDirs : array();
+			foreach ( $_aDirs as $_sDirPath ) {
 
 				if ( in_array( $_sDirPath, ( array ) $asExcludeDirs ) ) continue;
 				
