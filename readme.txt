@@ -210,6 +210,9 @@ It could be that your host disables WP Cron. In that case, try the intense cachi
 
 == Changelog ==
 
+= 2.1.1.1 =
+* Fixed the warning: `Invalid argument supplied for foreach() in ...wp-content/plugins/fetch-tweets/include/class/boot/registry/FetchTweets_AutoLoad.php on line 93`, which occurs on servers that do not give permission to read directories.
+
 = 2.1.1 - 03/25/2014 =
 * Tweaked the routines of plugin setting pages.
 
