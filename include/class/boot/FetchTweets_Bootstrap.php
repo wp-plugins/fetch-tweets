@@ -213,7 +213,7 @@ final class FetchTweets_Bootstrap {
 		
 		$_bIsUpdatePost = ( empty( $_GET ) && $GLOBALS['pagenow'] == 'post.php' );	// when saving the meta data, the GET array is empty
 		$_sTweetType = $this->_getTweetType();
-		if ( $_sTweetType == 'search' || $_bIsUpdatePost ) {
+		if ( 'search' == $_sTweetType || $_bIsUpdatePost ) {
 			new FetchTweets_MetaBox_Search(
 				'fetch_tweets_meta_box_search',	// meta box ID
 				__( 'Tweets by Search', 'fetch-tweets' ),	// meta box title
@@ -222,7 +222,7 @@ final class FetchTweets_Bootstrap {
 				'default'	// priority
 			);
 		}
-		if ( $_sTweetType == 'home_timeline' || $_bIsUpdatePost ) {
+		if ( 'home_timeline' == $_sTweetType || $_bIsUpdatePost ) {
 			new FetchTweets_MetaBox_Timeline(
 				'fetch_tweets_meta_box_timeline',	// meta box ID
 				__( 'Tweets by Timeline', 'fetch-tweets' ),	// meta box title
@@ -231,7 +231,7 @@ final class FetchTweets_Bootstrap {
 				'default'	// priority
 			);
 		}		
-		if ( $_sTweetType == 'screen_name' || $_bIsUpdatePost ) {
+		if ( 'screen_name' == $_sTweetType || $_bIsUpdatePost ) {
 			new FetchTweets_MetaBox_ScreenName(
 				'fetch_tweets_meta_box_screen_name',	// meta box ID
 				__( 'Tweets by Screen Name', 'fetch-tweets' ),	// meta box title
@@ -240,7 +240,7 @@ final class FetchTweets_Bootstrap {
 				'default'	// priority
 			);
 		}
-		if ( $_sTweetType == 'list' || $_bIsUpdatePost ) {			
+		if ( 'list' == $_sTweetType || $_bIsUpdatePost ) {			
 			new FetchTweets_MetaBox_List(
 				'fetch_tweets_meta_box_list',	// meta box ID
 				__( 'Tweets by List', 'fetch-tweets' ),	// meta box title
@@ -249,16 +249,25 @@ final class FetchTweets_Bootstrap {
 				'default'	// priority
 			);
 		}	
-		if ( $_sTweetType == 'feed' || $_bIsUpdatePost ) {
+		if ( 'feed' == $_sTweetType || $_bIsUpdatePost ) {
 			new FetchTweets_MetaBox_Feed(
 				'fetch_tweets_meta_box_feed',	// meta box ID
 				__( 'Tweets by Feed', 'fetch-tweets' ),	// meta box title
 				array( FetchTweets_Commons::PostTypeSlug ),	// post, page, etc.
 				'normal',	// context
 				'default'	// priority
-			);			
+			);		
 		}
-
+		if ( 'custom_query' == $_sTweetType || $_bIsUpdatePost ) {
+			new FetchTweets_MetaBox_CustomQuery(
+				'fetch_tweets_meta_box_custom_query',	// meta box ID
+				__( 'Request with Custom Query', 'fetch-tweets' ),	// meta box title
+				array( FetchTweets_Commons::PostTypeSlug ),	// post, page, etc.
+				'normal',	// context
+				'default'	// priority
+			);		
+		}
+		
 		new FetchTweets_MetaBox_Cache(
 			'fetch_tweets_meta_box_cache',	// meta box ID
 			__( 'Cache', 'fetch-tweets' ),		// meta box title

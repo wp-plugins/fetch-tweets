@@ -30,7 +30,12 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 				'section_id'		=> 'cache_settings',
 				'tab_slug'		=> 'general',
 				'title'			=> __( 'Cache Settings', 'fetch-tweets' ),
-			),			
+			),
+			array(
+				'section_id'		=> 'search',
+				'tab_slug'		=> 'general',
+				'title'			=> __( 'Search', 'fetch-tweets' ),
+			),				
 			array(
 				'section_id'		=> 'capabilities',
 				'capability'		=> 'manage_options',
@@ -225,7 +230,16 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 				),
 				'after_label'	=>	'<br />',
 				'default'		=>	'normal',
-			),			
+			)
+		);
+		$this->addSettingFields(
+			'search',
+			array(
+				'field_id'		=> 'is_searchable',
+				'title'			=> __( 'Rules', 'fetch-tweets' ),
+				'type'			=> 'checkbox',
+				'label'			=> __( 'The preview pages of created rules be searchable with the WordPress search form.', 'fetch-tweets' ),
+			),		
 			array(  // single button
 				'field_id' => 'submit_cache_settings',
 				'type' => 'submit',
@@ -236,7 +250,7 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 				'attributes'	=>	array(
 					'class'	=>	'button button-primary',
 				),
-			)		
+			)			
 		);
 		$this->addSettingFields(
 			'capabilities',

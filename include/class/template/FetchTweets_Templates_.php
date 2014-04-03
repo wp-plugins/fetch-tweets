@@ -205,14 +205,15 @@ abstract class FetchTweets_Templates_ {
 			if ( ! file_exists( $arrTemplate['strTemplatePath'] ) ) continue;
 			if ( ! $arrTemplate['fIsActive'] ) continue;
 			
-			$strSettingsPath = $arrTemplate['strSettingsPath'] 
+			$_sSettingsPath = $arrTemplate['strSettingsPath'] 
 				? $arrTemplate['strSettingsPath']
 				: ( file_exists( dirname( $arrTemplate['strCSSPath'] ) . '/settings.php' )
 					? dirname( $arrTemplate['strCSSPath'] ) . '/settings.php'
 					: null
 				);
-			if ( $strSettingsPath )
-				include_once( $strSettingsPath );
+			if ( $_sSettingsPath && file_exists( $_sSettingsPath ) ) {
+				include_once( $_sSettingsPath );
+			}
 						
 		}
 	}

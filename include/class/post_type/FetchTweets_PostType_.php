@@ -5,6 +5,8 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 	// public function setUp() {
 	public function start_FetchTweets_PostType() {
 
+		$_oOption = $GLOBALS['oFetchTweets_Option'];
+
 		$this->setPostTypeArgs(
 			array(			// argument - for the array structure, refer to http://codex.wordpress.org/Function_Reference/register_post_type#Arguments
 				'labels' => array(
@@ -22,7 +24,7 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 					'search_items' => __( 'Search Rules', 'fetch-tweets' ),
 					'not_found' => __( 'No rule found for fetching tweets', 'fetch-tweets' ),
 					'not_found_in_trash' => __( 'No Rule Found for Fetching Tweets in Trash', 'fetch-tweets' ),
-					'parent' => 'Parent Rule'
+					'parent' => 'Parent Rule',
 				),
 				'public' => true,
 				'menu_position' => 110,
@@ -37,6 +39,7 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 				// 'capabilities' => array(
 					// 'create_posts' => false,
 				// ),			
+				'exclude_from_search' => ! $_oOption->aOptions['search']['is_searchable'],
 			)		
 		);
 
@@ -165,6 +168,8 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 				return __( 'Home Timeline', 'fetch-tweets' );
 			case 'feed':
 				return __( 'Feed', 'fetch-tweets' );				
+			case 'custom_query':
+				return __( 'Custom Query', 'fetch-tweets' );								
 		}
 
 	}

@@ -30,7 +30,10 @@ abstract class FetchTweets_Option_ {
 		'capabilities' => array(),
 		'cache_settings' => array(
 			'cache_for_errors' => false,
-			'caching_mode'	=>	'normal',	// 2.1+
+			'caching_mode'	=>	'normal',	// [2.1+]
+		),
+		'search'	=>	array(
+			'is_searchable'	=> false,
 		),
 		'arrTemplates' => array(),	// stores template info arrays.
 		'arrDefaultTemplate' => array(),	// stores the default template info.
@@ -69,13 +72,14 @@ abstract class FetchTweets_Option_ {
 			'unit' => 'mi',
 		),
 		
-		// since 1.2.0
+		// [1.2.0+]
 		'list_id'			=> null,	
 		'twitter_media'		=> true,
 		'external_media'	=> true,
 		
-		// since 2
+		// [2+]
 		'account_id'		=> null,	// do not set the default ID of 0 here. The fetching method will check if the value is set and if so, it considers as the home timeline tweet type.
+		
 	);
 	public $aStructure_DefaultTemplateOptions = array(
 		// leave them null and let each template define default values.

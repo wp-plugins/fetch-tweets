@@ -9,7 +9,7 @@
  * @action			fetch_tweets_action_transient_renewal - for WP Cron single event.
  * @action			fetch_tweets_action_transient_add_oembed_elements - for WP Cron single event.
  */
-abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByFeed {
+abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByCustomRequest {
 	
 	/**
 	 * Returns the output of tweets by the given arguments.
@@ -69,6 +69,10 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByFeed {
 		// return;		
 
 		$_aTweets = $this->getTweetsAsArray( $aArgs, $aRawArgs );
+		if ( isset( $_aTweets['_debug'] ) && $_aTweets['_debug'] ) {
+			$this->_includeTemplate( $_aTweets, $aArgs, $this->oOption->aOptions );
+			return;			
+		}
 		if ( empty( $_aTweets ) || ! is_array( $_aTweets ) ) {
 			_e( 'No result could be fetched.', 'fetch-tweets' );
 			return;
@@ -119,6 +123,7 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByFeed {
 		protected function _getTweetsAsArrayByPostIDs( $vPostIDs, $aArgs, $aRawArgs ) {	
 		
 			$_aTweets = array();
+			$_fDebug = false;
 			foreach( ( array ) $vPostIDs as $_iPostID ) {
 				
 				$aArgs['tweet_type'] = get_post_meta( $_iPostID, 'tweet_type', true );
@@ -167,6 +172,12 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByFeed {
 						$aArgs = FetchTweets_Utilities::uniteArrays( $aRawArgs, $aArgs ); // The direct input takes its precedence.
 						$_aRetrievedTweets = $this->_getTweetsByJSONFeed( $aArgs['json_url'], $aArgs['cache'] );
 						break;
+					case 'custom_query':
+						$aArgs['custom_query'] = get_post_meta( $_iPostID, 'custom_query', true );
+						$aArgs = FetchTweets_Utilities::uniteArrays( $aRawArgs, $aArgs ); // The direct input takes its precedence.
+						$_aRetrievedTweets = $this->_getResponseWithCustomRequest( $aArgs['custom_query'] );
+						$_fDebug = true;
+						break;
 					case 'screen_name':
 					default:	
 						$aArgs['screen_name'] = get_post_meta( $_iPostID, 'screen_name', true );	
@@ -178,6 +189,10 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByFeed {
 
 				$_aTweets = array_merge( $_aRetrievedTweets, $_aTweets );
 					
+			}
+			
+			if ( $_fDebug ) {
+				$_aTweets['_debug'] = true;
 			}
 			
 			return $_aTweets;

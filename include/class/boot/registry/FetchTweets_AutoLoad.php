@@ -25,6 +25,8 @@ final class FetchTweets_AutoLoad {
 	);
 	
 	/**
+	 * Sets up properties and performs registering classes.
+	 * 
 	 * param			array			$sClassDirPath		the target directory path to scan
 	 * param			array			$aClasses			the link to the array storing registered classes outside this object.
 	 * The structure of %aClasses must be consist of elements of a key-value pair of a file path and the key of the class name.

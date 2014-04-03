@@ -210,6 +210,11 @@ It could be that your host disables WP Cron. In that case, try the intense cachi
 
 == Changelog ==
 
+= 2.2.0 = 
+- Added an option that determines whether the rule pages should be searchable with the WordPress search form.
+- Added the `Debug` template.
+- Added the ability to add a rule by custom API request.
+
 = 2.1.1.1 - 03/25/2014 =
 * Fixed the warnings: `Invalid argument supplied for foreach() in ...wp-content/plugins/fetch-tweets/include/class/boot/registry/FetchTweets_AutoLoad.php on line 93`, which occurred on some servers.
 

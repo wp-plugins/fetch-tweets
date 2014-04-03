@@ -27,7 +27,11 @@ abstract class FetchTweets_AdminPage_SetUp_Page extends FetchTweets_AdminPage_St
 			array(
 				'title'	=> __( 'Add Rule by Feed', 'fetch-tweets' ),
 				'href'	=>	admin_url( "post-new.php?post_type={$_sPostTypeSlug}&tweet_type=feed" ),
-			),										
+			),				
+			array(
+				'title'	=> __( 'Add Rule by Custom Query', 'fetch-tweets' ),
+				'href'	=>	admin_url( "post-new.php?post_type={$_sPostTypeSlug}&tweet_type=custom_query" ),
+			),			
 			array(
 				'title'	=>	__( 'Settings', 'fetch-tweets' ),
 				'page_slug'	=>	'fetch_tweets_settings',
