@@ -15,13 +15,14 @@ abstract class FetchTweets_Fetch_APIRequest extends FetchTweets_Fetch_Cache {
 	 * This checks the existent caches and if it's not expired it uses the cache.
 	 * 
 	 * @since			1.2.0
-	 * @access			protected
+	 * @since			2.2.0			Changed the scope to public to let extension plugins to use this method.
+	 * @access			public
 	 * @param			string			$strRequestURI				The GET request URI with the query.
 	 * @param			string			$strArrayKey				The key name of the result tweet array. The search results holds the tweets in the "status" array; in that case "status" needs to be passed.
 	 * @param			integer			$intCacheDuration			The cache duration in seconds.
 	 * @return			array
 	 */ 
-	protected function doAPIRequest_Get( $strRequestURI, $strArrayKey=null, $intCacheDuration=600 ) {
+	public function doAPIRequest_Get( $strRequestURI, $strArrayKey=null, $intCacheDuration=600 ) {
 
 		// Create an ID from the URI.
 		$strRequestID = FetchTweets_Commons::TransientPrefix . "_" . md5( trim( $strRequestURI ) );
