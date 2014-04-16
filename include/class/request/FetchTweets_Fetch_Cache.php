@@ -206,7 +206,7 @@ abstract class FetchTweets_Fetch_Cache {
 			$_sTransientKey, 
 			array( 'mod' => $iTime ? $iTime : time(), 'data' => $this->oBase64->encode( $vData ) )
 		);
-// FetchTweets_Debug::logArray( 'set transient: ' . $sRequestURI );
+FetchTweets_Debug::logArray( 'set transient: ' . $sRequestURI );
 
 		// Schedules the action to run in the background with WP Cron. If already scheduled, skip.
 		// This adds the embedding elements which takes some time to process.
@@ -219,7 +219,7 @@ abstract class FetchTweets_Fetch_Cache {
 		);	
 		
 		if ( 'intense' == $this->oOption->aOptions['cache_settings']['caching_mode'] ) {
-			FetchTweets_Cron::triggerBackgroundProcess( null, true );
+			FetchTweets_Cron::see( array(), true );
 		} else {
 			wp_remote_get( site_url( "/wp-cron.php" ), array( 'timeout' => 0.01, 'sslverify'   => false, ) );
 		}
@@ -301,7 +301,7 @@ abstract class FetchTweets_Fetch_Cache {
 			
 		}
 		if ( $_iScheduled && 'intense' == $this->oOption->aOptions['cache_settings']['caching_mode'] ) {
-			FetchTweets_Cron::triggerBackgroundProcess();	
+			FetchTweets_Cron::see();	
 		} else {
 			wp_remote_get( site_url( "/wp-cron.php" ), array( 'timeout' => 0.01, 'sslverify'   => false, ) );
 		}
