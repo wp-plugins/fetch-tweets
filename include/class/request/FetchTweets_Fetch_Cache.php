@@ -206,7 +206,7 @@ abstract class FetchTweets_Fetch_Cache {
 			$_sTransientKey, 
 			array( 'mod' => $iTime ? $iTime : time(), 'data' => $this->oBase64->encode( $vData ) )
 		);
-FetchTweets_Debug::logArray( 'set transient: ' . $sRequestURI );
+// FetchTweets_Debug::logArray( 'set transient: ' . $sRequestURI );
 
 		// Schedules the action to run in the background with WP Cron. If already scheduled, skip.
 		// This adds the embedding elements which takes some time to process.
