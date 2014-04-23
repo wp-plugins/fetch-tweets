@@ -7,10 +7,10 @@
  * @authorurl	http://michaeluno.jp
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  * @since		1.0.0
- * @actionhooks
- *  - fetch_tweets_action_setup_transients
- *  - fetch_tweets_action_simplepie_renew_cache
- *  - fetch_tweets_action_transient_renewal
+ * @action			hook			fetch_tweets_action_setup_transients
+ * @action			hook			fetch_tweets_action_simplepie_renew_cache
+ * @action			hook			fetch_tweets_action_transient_renewal
+ * @filter			apply			fetch_tweets_filter_plugin_cron_actions			Applies to the action arrays that the plugin Cron triggers.
 	
 */
 abstract class FetchTweets_Event_ {
@@ -32,11 +32,14 @@ abstract class FetchTweets_Event_ {
 		// This must be called after the above action hooks are added.
 		if ( 'intense' == $GLOBALS['oFetchTweets_Option']->aOptions['cache_settings']['caching_mode'] ) {			
 			new FetchTweets_Cron(
-				array(
-					'fetch_tweets_action_transient_renewal',
-					'fetch_tweets_action_transient_add_oembed_elements',
-					'fetch_tweets_action_simplepie_renew_cache',
-				) 
+				apply_filters(
+					'fetch_tweets_filter_plugin_cron_actions',
+					array(
+						'fetch_tweets_action_transient_renewal',
+						'fetch_tweets_action_transient_add_oembed_elements',
+						'fetch_tweets_action_simplepie_renew_cache',
+					)
+				)
 			);	
 		} else {
 			if ( FetchTweets_Cron::isBackground() ) {
