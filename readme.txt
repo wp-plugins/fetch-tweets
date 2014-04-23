@@ -3,7 +3,7 @@ Contributors: Michael Uno, miunosoft
 Donate link: http://en.michaeluno.jp/donate
 Tags: twitter, twitter widget, tweets, tweet, widget, widgets, post, posts, page, pages, custom post type, API, Twitter API, REST, oAuth, shortcode, sidebar, plugin, template
 Requires at least: 3.3
-Tested up to: 3.8.1
+Tested up to: 3.9
 Stable tag: 2.1.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -211,6 +211,7 @@ It could be that your host disables WP Cron. In that case, try the intense cachi
 == Changelog ==
 
 = 2.2.0 = 
+- Updated the [Admin Page Framework](http://wordpress.org/plugins/admin-page-framework/) library to v3.0.5b.
 - Added an option that determines whether the rule pages should be searchable with the WordPress search form.
 - Added the `Debug` template.
 - Added the ability to add a rule by custom API request.
