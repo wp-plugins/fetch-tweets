@@ -1,6 +1,7 @@
 <?php
 
 abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_PostType {
+// abstract class FetchTweets_PostType_ extends AdminPageFramework_PostType {
 	
 	// public function setUp() {
 	public function start_FetchTweets_PostType() {

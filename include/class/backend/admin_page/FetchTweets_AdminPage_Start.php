@@ -1,6 +1,6 @@
 <?php
-// abstract class FetchTweets_AdminPage_Start extends AdminPageFramework {
 abstract class FetchTweets_AdminPage_Start extends FetchTweets_AdminPageFramework {
+	// abstract class FetchTweets_AdminPage_Start extends AdminPageFramework {
 
 	public function start_FetchTweets_AdminPage() {
 				

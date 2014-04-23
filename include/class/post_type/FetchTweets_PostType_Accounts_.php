@@ -9,6 +9,7 @@
  * 
  */
 abstract class FetchTweets_PostType_Accounts_ extends FetchTweets_AdminPageFramework_PostType {
+// abstract class FetchTweets_PostType_Accounts_ extends AdminPageFramework_PostType {
 
 	public function start_FetchTweets_PostType_Accounts() {
 
