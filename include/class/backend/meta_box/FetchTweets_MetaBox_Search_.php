@@ -160,7 +160,7 @@ class FetchTweets_MetaBox_Search_ extends FetchTweets_AdminPageFramework_MetaBox
 				// 'hidden'		=>	true,
 			// ),		
 			// array(
-				// 'field_id'		=> 'include_retweets',
+				// 'field_id'		=> 'include_rts',
 				// 'type'			=> 'hidden',
 				// 'hidden'		=>	true,
 			// ),			

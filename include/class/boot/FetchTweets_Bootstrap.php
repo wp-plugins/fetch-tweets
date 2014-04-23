@@ -221,6 +221,13 @@ final class FetchTweets_Bootstrap {
 				'normal',	// context
 				'default'	// priority
 			);
+			new FetchTweets_MetaBox_Search_Advanced(	// [2.2+]
+				'fetch_tweets_meta_box_search_advanced',	// meta box ID
+				__( 'Tweets by Search Advanced Options', 'fetch-tweets' ),	// meta box title
+				array( FetchTweets_Commons::PostTypeSlug ),	// post, page, etc.
+				'normal',	// context
+				'low'	// priority	// ('high', 'core', 'default' or 'low') 
+			);
 		}
 		if ( 'home_timeline' == $_sTweetType || $_bIsUpdatePost ) {
 			new FetchTweets_MetaBox_Timeline(

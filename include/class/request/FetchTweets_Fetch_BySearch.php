@@ -13,6 +13,7 @@ abstract class FetchTweets_Fetch_BySearch extends FetchTweets_Fetch_ByTag {
 	 * Fetches tweets by search keyword.
 	 * 
 	 * @see			https://dev.twitter.com/docs/api/1.1/get/search/tweets
+	 * @ramark		This request type does not support the 'include_rts' option. The Twitter API does not support it.
 	 */ 
 	protected function getTweetsBySearch( $strKeyword, $intCount=100, $strLang='en', $strResultType='mixed', $strUntil='', $strGeoCode='', $intCacheDuration=600 ) {
 

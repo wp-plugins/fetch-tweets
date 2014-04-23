@@ -177,9 +177,11 @@ $sGMTOffset = ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 		// If the necessary key is not set, skip.
 		if ( ! isset( $_aDetail['user'] ) ) continue;
 		
-		// Check if it's a retweet.
-		$aTweet = isset( $_aDetail['retweeted_status']['text'] ) ? $_aDetail['retweeted_status'] : $_aDetail;
-		$sRetweetClassProperty = isset( $_aDetail['retweeted_status']['text'] ) ? 'fetch-tweets-single-retweet' : '';
+		// Check if it's a .retweet
+		$_fIsRetweet = isset( $_aDetail['retweeted_status']['text'] );		
+		if ( $_fIsRetweet && ! $aArgs['include_rts'] ) continue;
+		$aTweet = $_fIsRetweet ? $_aDetail['retweeted_status'] : $_aDetail;
+		$sRetweetClassProperty = $_fIsRetweet ? 'fetch-tweets-single-retweet' : '';
 		
 	?>
     <div class='fetch-tweets-single-item <?php echo $sRetweetClassProperty; ?>' >
@@ -187,7 +189,7 @@ $sGMTOffset = ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 			<p class='fetch-tweets-single-text'>
 				<?php echo trim( $aTweet['text'] ); ?>
 				<span class='fetch-tweets-single-credit'>
-					<?php if ( isset( $_aDetail['retweeted_status']['text'] ) ) : ?>
+					<?php if ( $_fIsRetweet ) : ?>
 					<span class='fetch-tweets-single-retweet-credit'>
 						<?php echo _e( 'Retweeted by', 'fetch-tweets' ) . ' '; ?>
 						<a href='https://twitter.com/<?php echo $_aDetail['user']['screen_name']; ?>' target='_blank'>

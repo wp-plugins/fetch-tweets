@@ -48,7 +48,7 @@ class FetchTweets_MetaBox_List_ extends FetchTweets_AdminPageFramework_MetaBox {
 				),				
 			),				
 			array(
-				'field_id'		=> 'include_retweets',
+				'field_id'		=> 'include_rts',
 				'title'			=> __( 'Include Retweets', 'fetch-tweets' ),
 				'label'			=> __( 'Retweets will be included.', 'fetch-tweets' ),
 				'type'			=> 'checkbox',

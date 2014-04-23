@@ -60,7 +60,7 @@ class FetchTweets_MetaBox_ScreenName_ extends FetchTweets_AdminPageFramework_Met
 				// 'hidden'		=>	true,
 			// ),			
 			array(
-				'field_id'		=> 'include_retweets',
+				'field_id'		=> 'include_rts',
 				'title'			=> __( 'Include Retweets', 'fetch-tweets' ),
 				'label'			=> __( 'Retweets will be included.', 'fetch-tweets' ),
 				'type'			=> 'checkbox',

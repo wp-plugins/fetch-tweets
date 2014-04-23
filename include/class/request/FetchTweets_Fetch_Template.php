@@ -26,7 +26,7 @@ abstract class FetchTweets_Fetch_Template extends FetchTweets_Fetch_Format {
 		$arrOptions = & $aOptions;
 		
 		// Retrieve the template slug we are going to use.
-		$aArgs['template'] = $this->_getTemplateSlug( $aArgs['id'], $aArgs['template'] );
+		$aArgs['template'] = $this->_getTemplateSlug( ( array ) $aArgs['id'], $aArgs['template'] );
 		
 		// Call the template. ( template.php )
 		include( apply_filters( "fetch_tweets_template_path", $this->_getTemplatePath( $aArgs['id'], $aArgs['template'] ), $aArgs ) );		
@@ -34,7 +34,7 @@ abstract class FetchTweets_Fetch_Template extends FetchTweets_Fetch_Format {
 	}
 	
 		protected function _getTemplateSlug( $arrPostIDs, $strTemplateSlug='' ) {
-						
+
 			// Return the one defined in the caller argument.
 			if ( $strTemplateSlug && isset( $this->oOption->aOptions['arrTemplates'][ $strTemplateSlug ] ) )
 				return $this->_checkNecessaryFileExists( $strTemplateSlug );

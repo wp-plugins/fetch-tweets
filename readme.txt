@@ -210,7 +210,9 @@ It could be that your host disables WP Cron. In that case, try the intense cachi
 
 == Changelog ==
 
-= 2.2.0 = 
+= 2.2.0 =
+- Made the built-in templates respect the `Include Retweets` option value.
+- Added the `Include Retweets` option for the `Search` and `Home Timeline` rule type. 
 - Updated the [Admin Page Framework](http://wordpress.org/plugins/admin-page-framework/) library to v3.0.5b.
 - Added an option that determines whether the rule pages should be searchable with the WordPress search form.
 - Added the `Debug` template.

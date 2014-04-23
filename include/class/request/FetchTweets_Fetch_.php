@@ -103,10 +103,10 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByCustomRequest {
 	 * Fetches tweets based on the argument.
 	 * 
 	 * @remark			The scope is public as the feed extension uses it.
-	 * @param			array			$arrArgs			The argument array that is merged with the default option values.
+	 * @param			array			$aArgs				The argument array that is merged with the default option values. It is passed by reference to let assign post meta options.
 	 * @param			array			$aRawArgs			The raw argument array that is not merged with any. Used by the _getTweetsAsArrayByPostIDs() method that fetches tweets by post ID.
 	 */
-	public function getTweetsAsArray( $aArgs, $aRawArgs ) {	
+	public function getTweetsAsArray( & $aArgs, $aRawArgs ) {	
 
 		if ( isset( $aArgs['q'] ) )	// custom call by search keyword
 			return $this->getTweetsBySearch( $aArgs['q'], $aArgs['count'], $aArgs['lang'], $aArgs['result_type'], $aArgs['until'], $aArgs['geocode'], $aArgs['cache'] );
@@ -115,12 +115,17 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByCustomRequest {
 		else if ( isset( $aArgs['list_id'] ) ) 	// only public list can be fetched with this method
 			return $this->_getTweetsByListID( $aArgs['list_id'], $aArgs['include_rts'], $aArgs['cache'] );
 		else if ( isset( $aArgs['account_id'] ) )
-			return $this->_getTweetsByHomeTimeline( $aArgs['account_id'], $aArgs['exclude_replies'] );
+			return $this->_getTweetsByHomeTimeline( $aArgs['account_id'], $aArgs['exclude_replies'], $aArgs['include_rts'] );
 		else	// normal
 			return $this->_getTweetsAsArrayByPostIDs( $aArgs['id'], $aArgs, $aRawArgs );
 		
 	}
-		protected function _getTweetsAsArrayByPostIDs( $vPostIDs, $aArgs, $aRawArgs ) {	
+		/**
+		 * 
+		 * @param			array|integer			$vPostIDs			The target post ID of the Fetch Tweet rule post type.
+		 * @param			array					$aArgs				The argument array. It is passed by reference to let assign post meta options.
+		 */
+		protected function _getTweetsAsArrayByPostIDs( $vPostIDs, & $aArgs, $aRawArgs ) {	
 		
 			$_aTweets = array();
 			$_fDebug = false;
@@ -128,7 +133,7 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByCustomRequest {
 				
 				$aArgs['tweet_type'] = get_post_meta( $_iPostID, 'tweet_type', true );
 				$aArgs['count'] = get_post_meta( $_iPostID, 'item_count', true );
-				$aArgs['include_retweets'] = get_post_meta( $_iPostID, 'include_retweets', true );
+				$aArgs['include_rts'] = get_post_meta( $_iPostID, 'include_rts', true );
 				$aArgs['cache'] = get_post_meta( $_iPostID, 'cache', true );
 				
 				$_aRetrievedTweets = array();
@@ -150,7 +155,7 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByCustomRequest {
 							// "latitude,longitude,radius",
 							$_sGeoCode = trim( $aArgs['geocentric_coordinate']['latitude'] ) . "," . trim( $aArgs['geocentric_coordinate']['longitude'] ) 
 								. "," . trim( $aArgs['geocentric_radius']['size'] ) . $aArgs['geocentric_radius']['unit'] ;
-						}
+						}						
 						$aArgs = FetchTweets_Utilities::uniteArrays( $aRawArgs, $aArgs ); // The direct input takes its precedence.
 						$_aRetrievedTweets = $this->getTweetsBySearch( $aArgs['q'], $aArgs['count'], $aArgs['lang'], $aArgs['result_type'], $aArgs['until'], $_sGeoCode, $aArgs['cache'] );
 						break;
@@ -159,13 +164,13 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByCustomRequest {
 						$aArgs['mode'] = get_post_meta( $_iPostID, 'mode', true );
 						$aArgs['list_id'] = get_post_meta( $_iPostID, 'list_id', true );
 						$aArgs = FetchTweets_Utilities::uniteArrays( $aRawArgs, $aArgs ); // The direct input takes its precedence.
-						$_aRetrievedTweets = $this->_getTweetsByListID( $aArgs['list_id'], $aArgs['include_retweets'], $aArgs['cache'], $aArgs['account_id'], $aArgs['mode'] );
+						$_aRetrievedTweets = $this->_getTweetsByListID( $aArgs['list_id'], $aArgs['include_rts'], $aArgs['cache'], $aArgs['account_id'], $aArgs['mode'] );
 						break;
 					case 'home_timeline':
 						$aArgs['account_id'] = get_post_meta( $_iPostID, 'account_id', true );
 						$aArgs['exclude_replies'] = get_post_meta( $_iPostID, 'exclude_replies', true );
 						$aArgs = FetchTweets_Utilities::uniteArrays( $aRawArgs, $aArgs ); // The direct input takes its precedence.
-						$_aRetrievedTweets = $this->_getTweetsByHomeTimeline( $aArgs['account_id'], $aArgs['exclude_replies'], $aArgs['cache'] );
+						$_aRetrievedTweets = $this->_getTweetsByHomeTimeline( $aArgs['account_id'], $aArgs['exclude_replies'], $aArgs['include_rts'], $aArgs['cache'] );
 						break;
 					case 'feed':
 						$aArgs['json_url'] = get_post_meta( $_iPostID, 'json_url', true );
@@ -184,7 +189,7 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByCustomRequest {
 						$aArgs['screen_name'] = get_post_meta( $_iPostID, 'screen_name', true );	
 						$aArgs['exclude_replies'] = get_post_meta( $_iPostID, 'exclude_replies', true );	
 						$aArgs = FetchTweets_Utilities::uniteArrays( $aRawArgs, $aArgs ); // The direct input takes its precedence.
-						$_aRetrievedTweets = $this->getTweetsByScreenNames( $aArgs['screen_name'], $aArgs['count'], $aArgs['include_retweets'], $aArgs['exclude_replies'], $aArgs['cache'] );
+						$_aRetrievedTweets = $this->getTweetsByScreenNames( $aArgs['screen_name'], $aArgs['count'], $aArgs['include_rts'], $aArgs['exclude_replies'], $aArgs['cache'] );
 						break;				
 				}	
 

@@ -107,11 +107,13 @@ $sGMTOffset = ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 		if ( ! isset( $_aDetail['user'] ) ) continue;
 		
 		// Check if it's a retweet.
-		$aTweet = isset( $_aDetail['retweeted_status']['text'] ) ? $_aDetail['retweeted_status'] : $_aDetail;
-		$sRetweetClassProperty = isset( $_aDetail['retweeted_status']['text'] ) ? 'fetch-tweets-retweet' : '';
+		$_fIsRetweet = isset( $_aDetail['retweeted_status']['text'] );
+		if ( $_fIsRetweet && ! $aArgs['include_rts'] ) continue;
+		$aTweet = $_fIsRetweet ? $_aDetail['retweeted_status'] : $_aDetail;
+		$sRetweetClassSelector = $_fIsRetweet ? 'fetch-tweets-retweet' : '';
 		
 	?>
-    <div class='fetch-tweets-item <?php echo $sRetweetClassProperty; ?>' >
+    <div class='fetch-tweets-item <?php echo $sRetweetClassSelector; ?>' >
 
 		<?php if ( $aArgs['avatar_size'] > 0  && $aArgs['visibilities']['avatar'] ) : ?>
 		<div class='fetch-tweets-profile-image' style="max-width:<?php echo $aArgs['avatar_size'];?>px; float:<?php echo $aArgs['avatar_position']; ?>; clear:<?php echo $aArgs['avatar_position']; ?>;">

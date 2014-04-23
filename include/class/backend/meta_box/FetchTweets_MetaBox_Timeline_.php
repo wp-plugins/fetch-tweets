@@ -41,11 +41,17 @@ class FetchTweets_MetaBox_Timeline_ extends FetchTweets_AdminPageFramework_MetaB
 			),						
 			array(
 				'field_id'		=> 'exclude_replies',
-				'title'			=> 'Exclude Replies',
+				'title'			=> __( 'Exclude Replies', 'fetch-tweets' ),
 				'type'			=> 'checkbox',
 				'label'			=> __( 'Replies will be excluded.', 'fetch-tweets' ),
 				'description'	=> __( 'This prevents replies from appearing in the returned timeline.', 'fetch-tweets' ),
-			),								
+			),
+			array(
+				'field_id'		=> 'include_rts',
+				'title'			=> __( 'Include Retweets', 'fetch-tweets' ),
+				'type'			=> 'checkbox',
+				'label'			=> __( 'Retweets will be included.', 'fetch-tweets' ),
+			),					
 			array()
 		);	
 	
