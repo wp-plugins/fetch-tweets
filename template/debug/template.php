@@ -7,5 +7,4 @@
  * */
  
  
- 
- FetchTweets_Debug::dumpArray( $aTweets );
+ var_dump( $aTweets );

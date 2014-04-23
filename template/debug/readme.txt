@@ -1,4 +1,4 @@
 == Change log ==
 
-= 1.0 =
+= 2.2 =
 Initial release.
