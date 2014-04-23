@@ -22,7 +22,17 @@ class FetchTweets_MetaBox_CustomQuery_ extends FetchTweets_AdminPageFramework_Me
 				'description'	=> __( 'The API request URI to send to Twitter.com.', 'fetch-tweets' ) . '<br />'
 					. 'e.g. ' .  '<code>https://api.twitter.com/1.1/lists/members.json?slug=wordpress-community&owner_screen_name=miunosoft&cursor=-1</code>',
 				'type'			=> 'text',
-			),	
+			),
+			array(
+				'field_id'		=> 'response_key',
+				'title'			=> __( 'Response Key', 'fetch-tweets' ),
+				'description'	=> __( 'The response element key to extract. For instance, the Search API returns tweets in an element of the key, <code>status</code>.', 'fetch-tweets' ),	// . '<br />'
+					// . 'e.g. ' .  '<code>status</code>',
+				'type'			=> 'text',
+				'attributes'	=>	array(
+					'size'			=> 10,
+				),
+			),			
 			array()
 		);
 		

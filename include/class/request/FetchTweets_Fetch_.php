@@ -174,8 +174,9 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByCustomRequest {
 						break;
 					case 'custom_query':
 						$aArgs['custom_query'] = get_post_meta( $_iPostID, 'custom_query', true );
+						$aArgs['response_key'] = get_post_meta( $_iPostID, 'response_key', true );
 						$aArgs = FetchTweets_Utilities::uniteArrays( $aRawArgs, $aArgs ); // The direct input takes its precedence.
-						$_aRetrievedTweets = $this->_getResponseWithCustomRequest( $aArgs['custom_query'] );
+						$_aRetrievedTweets = $this->_getResponseWithCustomRequest( $aArgs['custom_query'], $aArgs['response_key'], $aArgs['cache'] );
 						$_fDebug = true;
 						break;
 					case 'screen_name':

@@ -14,7 +14,7 @@ abstract class FetchTweets_Fetch_ByCustomRequest extends FetchTweets_Fetch_ByFee
 	 * 
 	 * @since			2.1
 	 */
-	protected function _getResponseWithCustomRequest( $sRequestURI ) {
+	protected function _getResponseWithCustomRequest( $sRequestURI, $sResponseKey, $iCacheDuration ) {
 		
 		// Sanitize and validate the url.
 		$sRequestURI = trim( $sRequestURI );
@@ -22,7 +22,7 @@ abstract class FetchTweets_Fetch_ByCustomRequest extends FetchTweets_Fetch_ByFee
 			return array();			
 		}
 		
-		$_aResponse = $this->doAPIRequest_Get( $sRequestURI );		
+		$_aResponse = $this->doAPIRequest_Get( $sRequestURI, $sResponseKey, $iCacheDuration );
 		return $_aResponse;
 		
 		
