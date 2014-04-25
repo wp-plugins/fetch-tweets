@@ -1,5 +1,8 @@
 == Change log ==
 
+= 2.2.1 =
+Made larger profile image sizes set in the template setting page take effect in preview pages.
+
 = 2.2 =
 Changed to respect the `include_rts` option value.
 

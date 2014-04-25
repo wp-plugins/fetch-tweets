@@ -238,7 +238,7 @@ abstract class FetchTweets_AdminPage_SetUp_Form extends FetchTweets_AdminPage_Se
 				'field_id'		=> 'is_searchable',
 				'title'			=> __( 'Rules', 'fetch-tweets' ),
 				'type'			=> 'checkbox',
-				'label'			=> __( 'The preview pages of created rules be searchable with the WordPress search form.', 'fetch-tweets' ),
+				'label'			=> __( 'Make the preview pages of created rules searchable with the WordPress search form.', 'fetch-tweets' ),
 			),		
 			array(  // single button
 				'field_id' => 'submit_cache_settings',

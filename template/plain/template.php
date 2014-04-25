@@ -88,6 +88,7 @@ $sMargins = ( $sMarginTop ? "margin-top: {$sMarginTop}; " : "" ) . ( $sMarginRig
 $sPaddings = ( $sPaddingTop ? "padding-top: {$sPaddingTop}; " : "" ) . ( $sPaddingRight ? "padding-right: {$sPaddingRight}; " : "" ) . ( $sPaddingBottom ? "padding-bottom: {$sPaddingBottom}; " : "" ) . ( $sPaddingLeft ? "padding-left: {$sPaddingLeft}; " : "" );
 $sMarginForImage = $aArgs['visibilities']['avatar'] ? ( ( $aArgs['avatar_position'] == 'left' ? "margin-left: " : "margin-right: " ) . ( ( int ) $aArgs['avatar_size'] ) . "px" ) : "";
 $sGMTOffset = ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+$fIsSSL = is_ssl();
 
 /*
  * For debug - uncomment the following line to see the contents of the arrays.
@@ -115,10 +116,12 @@ $sGMTOffset = ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 	?>
     <div class='fetch-tweets-item <?php echo $sRetweetClassSelector; ?>' >
 
-		<?php if ( $aArgs['avatar_size'] > 0  && $aArgs['visibilities']['avatar'] ) : ?>
+		<?php if ( $aArgs['avatar_size'] > 0  && $aArgs['visibilities']['avatar'] ) : 
+			$sAvatarURL = getTwitterProfileImageURLBySize( $fIsSSL ? $aTweet['user']['profile_image_url_https'] : $aTweet['user']['profile_image_url'], $aArgs['avatar_size'] );
+		?>
 		<div class='fetch-tweets-profile-image' style="max-width:<?php echo $aArgs['avatar_size'];?>px; float:<?php echo $aArgs['avatar_position']; ?>; clear:<?php echo $aArgs['avatar_position']; ?>;">
 			<a href='https://twitter.com/<?php echo $aTweet['user']['screen_name']; ?>' target='_blank'>
-				<img src='<?php echo $aTweet['user']['profile_image_url']; ?>' style="max-width:<?php echo $aArgs['avatar_size'];?>px;" />
+				<img src='<?php echo $sAvatarURL; ?>' style="max-width:<?php echo $aArgs['avatar_size'];?>px;" />
 			</a>
 		</div>
 		<?php endif; ?>

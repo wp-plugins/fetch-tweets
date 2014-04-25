@@ -16,9 +16,10 @@ $sUserName = null;
 $sRetweetClassProperty = '';
 $sUserLang = null;
 $sUserDescription = null;
+$fIsSSL = is_ssl();
 foreach( $aTweets as $_aDetail ) {
 	if ( ! isset( $_aDetail['user']['profile_image_url'] ) ) continue;
-	$sUserAvatarURL = $_aDetail['user']['profile_image_url'];
+	$sUserAvatarURL = $fIsSSL ? $_aDetail['user']['profile_image_url_https'] : $_aDetail['user']['profile_image_url'];
 	$sUserScreenName = $_aDetail['user']['screen_name'];
 	$sUserName = $_aDetail['user']['name'];
 	$sUserLang = $_aDetail['user']['lang'];
@@ -113,7 +114,7 @@ $sMargins = ( $sMarginTop ? "margin-top: {$sMarginTop}; " : "" ) . ( $sMarginRig
 $sPaddings = ( $sPaddingTop ? "padding-top: {$sPaddingTop}; " : "" ) . ( $sPaddingRight ? "padding-right: {$sPaddingRight}; " : "" ) . ( $sPaddingBottom ? "padding-bottom: {$sPaddingBottom}; " : "" ) . ( $sPaddingLeft ? "padding-left: {$sPaddingLeft}; " : "" );
 $sMarginForImage = $aArgs['visibilities']['avatar'] ? ( ( $aArgs['avatar_position'] == 'left' ? "margin-left: " : "margin-right: " ) . ( ( int ) $aArgs['avatar_size'] + 10 ) . "px" ) : "";
 $sGMTOffset = ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
-
+$sUserAvatarURL = getTwitterProfileImageURLBySize( $sUserAvatarURL, $aArgs['avatar_size'] );
 /*
  * For debugs - uncomment the below line to see the contents of the array.
  */  

@@ -71,6 +71,12 @@ abstract class FetchTweets_Fetch_Format extends FetchTweets_Fetch_APIRequest {
 		}
 		
 	}
+	
+		/**
+		 * 
+		 * @remark			The profile image size won't be passed unless the call is made from a widget or shortcode with direct argument.
+		 * In other words, for preview pages, the profile image url needs to be taken cared of separately.
+		 */
 		protected function formatTweetArray( $arrTweet, $intProfileImageSize=48, $fTwitterMedia=true, $fExternalMedia=true ) {
 			
 			// Avoid undefined index warnings.
@@ -223,13 +229,15 @@ abstract class FetchTweets_Fetch_Format extends FetchTweets_Fetch_APIRequest {
 		// e.g. https://twitter.com/search?q=%23PHP&src=hash
 		return preg_replace( '/#(\w+?)(\W|$)/', '<a href="https://twitter.com/search?q=%23$1&src=hash" target="_blank">#$1</a>$2', $strText );
 	}		
+	/**
+	 * 
+	 * url format example: 
+	 * 	http://a0.twimg.com/profile_images/.../..._normal.jpeg
+	 * 	https://si0.twimg.com/profile_images/../..._normal.jpeg		
+	 * @see			https://dev.twitter.com/docs/user-profile-images-and-banners
+	 */
 	protected function adjustProfileImageSize( $strURL, $intImageSize ) {
-		
-		// reference: https://dev.twitter.com/docs/user-profile-images-and-banners
-		// url example: 
-		// http://a0.twimg.com/profile_images/.../..._normal.jpeg
-		// https://si0.twimg.com/profile_images/../..._normal.jpeg		
-		
+
 		if ( empty( $strURL ) ) return $strURL;
 		
 		$intImageSize = ! is_numeric( $intImageSize ) ? 48 : $intImageSize;
