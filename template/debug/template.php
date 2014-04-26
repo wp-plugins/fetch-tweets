@@ -6,5 +6,8 @@
  * - $aOptions : the plugin options saved in the database.
  * */
  
+ ?>
+<div class='var_dump'>
+	<?php var_dump( $aTweets ); ?>
+</div>
  
- var_dump( $aTweets );
