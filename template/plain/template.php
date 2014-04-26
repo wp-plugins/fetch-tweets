@@ -121,7 +121,7 @@ $fIsSSL = is_ssl();
 		?>
 		<div class='fetch-tweets-profile-image' style="max-width:<?php echo $aArgs['avatar_size'];?>px; float:<?php echo $aArgs['avatar_position']; ?>; clear:<?php echo $aArgs['avatar_position']; ?>;">
 			<a href='https://twitter.com/<?php echo $aTweet['user']['screen_name']; ?>' target='_blank'>
-				<img src='<?php echo $sAvatarURL; ?>' style="max-width:<?php echo $aArgs['avatar_size'];?>px;" />
+				<img src='<?php echo $sAvatarURL; ?>' style="max-width:<?php echo $aArgs['avatar_size'];?>px; border-radius: 5px;" />
 			</a>
 		</div>
 		<?php endif; ?>

@@ -265,6 +265,15 @@ final class FetchTweets_Bootstrap {
 				'default'	// priority
 			);		
 		}
+		if ( 'tweet_id' == $_sTweetType || $_bIsUpdatePost ) {
+			new FetchTweets_MetaBox_TweetID(
+				'fetch_tweets_meta_box_custom_query',	// meta box ID
+				__( 'Tweets by ID', 'fetch-tweets' ),	// meta box title
+				array( FetchTweets_Commons::PostTypeSlug ),	// post, page, etc.
+				'normal',	// context
+				'default'	// priority
+			);		
+		}		
 		if ( 'custom_query' == $_sTweetType || $_bIsUpdatePost ) {
 			new FetchTweets_MetaBox_CustomQuery(
 				'fetch_tweets_meta_box_custom_query',	// meta box ID

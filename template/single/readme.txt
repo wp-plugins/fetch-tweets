@@ -1,5 +1,8 @@
 == Change log ==
 
+= 2.3 =
+Added the `border-radius` property to the profile image element.
+
 = 2.2.1 =
 Made larger profile image sizes set in the template setting page take effect in preview pages.
 

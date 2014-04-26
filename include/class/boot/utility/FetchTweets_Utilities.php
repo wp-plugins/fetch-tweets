@@ -169,4 +169,21 @@ final class FetchTweets_Utilities {
 			: $iSetTime;
 		
 	}
+	
+	/**
+	 * Trims each sub-string element delimited by commas in the given string.
+	 * 
+	 * Used in form-validation methods.
+	 * 
+	 * @since			2.3
+	 */
+	static public function sanitizeCommaDelimitedString( $sInput, $fIncludeWhiteSpace=true ) {
+		
+		$_aElements =  preg_split( "/[,]\s*/", trim( ( string ) $sInput ), 0, PREG_SPLIT_NO_EMPTY );
+		return $fIncludeWhiteSpace
+			? implode( ', ', $_aElements )
+			: implode( ',', $_aElements )
+		;
+	}
+	
 }

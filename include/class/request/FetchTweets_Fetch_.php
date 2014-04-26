@@ -9,7 +9,7 @@
  * @action			fetch_tweets_action_transient_renewal - for WP Cron single event.
  * @action			fetch_tweets_action_transient_add_oembed_elements - for WP Cron single event.
  */
-abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByCustomRequest {
+abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByTweetID {
 	
 	/**
 	 * Returns the output of tweets by the given arguments.
@@ -116,6 +116,9 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByCustomRequest {
 			return $this->_getTweetsByListID( $aArgs['list_id'], $aArgs['include_rts'], $aArgs['cache'] );
 		else if ( isset( $aArgs['account_id'] ) )
 			return $this->_getTweetsByHomeTimeline( $aArgs['account_id'], $aArgs['exclude_replies'], $aArgs['include_rts'] );
+		else if ( isset( $aArgs['tweet_id'] ) ) {
+			return $this->_getResponseByTweetID( $aArgs['tweet_id'], $aArgs['cache'] );
+		}
 		else	// normal
 			return $this->_getTweetsAsArrayByPostIDs( $aArgs['id'], $aArgs, $aRawArgs );
 		
@@ -183,6 +186,11 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByCustomRequest {
 						$aArgs = FetchTweets_Utilities::uniteArrays( $aRawArgs, $aArgs ); // The direct input takes its precedence.
 						$_aRetrievedTweets = $this->_getResponseWithCustomRequest( $aArgs['custom_query'], $aArgs['response_key'], $aArgs['cache'] );
 						$_fDebug = true;
+						break;
+					case 'tweet_id':
+						$aArgs['tweet_id'] = get_post_meta( $_iPostID, 'tweet_id', true );
+						$aArgs = FetchTweets_Utilities::uniteArrays( $aRawArgs, $aArgs ); // The direct input takes its precedence.
+						$_aRetrievedTweets = $this->_getResponseByTweetID( $aArgs['tweet_id'], $aArgs['cache'] );
 						break;
 					case 'screen_name':
 					default:	

@@ -210,6 +210,11 @@ It could be that your host disables WP Cron. In that case, try the intense cachi
 
 == Changelog ==
 
+= 2.3.0 =
+- Added the `border-radius` property to the profile image element in the built-in templates.
+- Added the ability to create a rule by tweet ID.
+- Tweaked the styling of the `debug` template.
+
 = 2.2.1 - 04/26/2014 =
 - Rephrased a label of an option item.
 - Made larger profile image sizes set in the template setting page take effect in preview pages.

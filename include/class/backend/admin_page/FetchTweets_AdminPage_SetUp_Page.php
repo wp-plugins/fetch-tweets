@@ -7,7 +7,7 @@ abstract class FetchTweets_AdminPage_SetUp_Page extends FetchTweets_AdminPage_St
 		$this->setRootMenuPageBySlug( "edit.php?post_type={$_sPostTypeSlug}"  );
 		$this->addSubMenuItems(
 			array(
-				'title'	=>	__( 'Add Rule by User Name', 'fetch-tweets' ),
+				'title'	=>	__( 'Add Rule by Screen Name', 'fetch-tweets' ),
 				'href'	=>	admin_url( "post-new.php?post_type={$_sPostTypeSlug}&tweet_type=screen_name" ),
 				'order'	=>	1,
 			),
@@ -29,9 +29,13 @@ abstract class FetchTweets_AdminPage_SetUp_Page extends FetchTweets_AdminPage_St
 				'href'	=>	admin_url( "post-new.php?post_type={$_sPostTypeSlug}&tweet_type=feed" ),
 			),				
 			array(
+				'title'	=> __( 'Add Rule by Tweet ID', 'fetch-tweets' ),
+				'href'	=>	admin_url( "post-new.php?post_type={$_sPostTypeSlug}&tweet_type=tweet_id" ),
+			),			
+			array(
 				'title'	=> __( 'Add Rule by Custom Query', 'fetch-tweets' ),
 				'href'	=>	admin_url( "post-new.php?post_type={$_sPostTypeSlug}&tweet_type=custom_query" ),
-			),			
+			),
 			array(
 				'title'	=>	__( 'Settings', 'fetch-tweets' ),
 				'page_slug'	=>	'fetch_tweets_settings',

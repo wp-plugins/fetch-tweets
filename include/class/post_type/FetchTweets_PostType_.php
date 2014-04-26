@@ -101,12 +101,20 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 		global $post;
 		// Used for the post type single page that functions as preview the result.
 
-		if ( ! isset( $post->post_type ) || $post->post_type != $this->oProp->sPostType ) return $sContent;
+		if ( ! isset( $post->post_type ) || $post->post_type != $this->oProp->sPostType ) {
+			return $sContent;
+		}
 
-		$iPostID = $post->ID;
-		$iCount = get_post_meta( $iPostID, 'item_count', true );
+		$_iPostID = $post->ID;
+		$_iCount = get_post_meta( $_iPostID, 'item_count', true );
 		return $sContent 
-			. fetchTweets( array( 'id' => $iPostID, 'count' => $iCount ), false );	
+			. fetchTweets( 
+				array( 
+					'id' => $_iPostID,
+					'count' => $_iCount,
+				),
+				false // do not echo
+			);	
 	
 	}
 
@@ -171,6 +179,8 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 				return __( 'Feed', 'fetch-tweets' );				
 			case 'custom_query':
 				return __( 'Custom Query', 'fetch-tweets' );								
+			case 'tweet_id':	// 2.3+
+				return __( 'Tweet ID', 'fetch-tweets' );												
 		}
 
 	}
