@@ -123,7 +123,6 @@ In order to set multiple tags, pass them with commas as the delimiter. e.g.
 
 = How to Create Own Template =
 
-
 **Step 1**
 
 Copy the folder named ***plain*** or ***single*** in the plugin's template folder. Rename the copied folder to something you like.
@@ -132,10 +131,10 @@ Copy the folder named ***plain*** or ***single*** in the plugin's template folde
 
 Edit the following files.
 
-* **style.css**
-* **template.php**
-* **functions.php** ( optional ) - if not edited, do not include it. Be careful not to declare any PHP function or class that is already declared in the original file.
-* **settings.php** ( optional ) - if not edited, do not include it. Be careful not to declare any PHP function or class that is already declared in the original file.
+* **style.css** - defines the template's CSS rules. Also some of the information in the header comment sections will appear in the template listing table.
+* **template.php** - defines the layout of the tweets. PHP coding skill is required.
+* **functions.php** ( optional ) - loaded if the template is activated when the plugin starts. If you don't edit this file, do not include it. Be careful not to declare any PHP function or class that is already declared in the original file.
+* **settings.php** ( optional ) - loaded only in the admin area if the template is activated. If you don't edit this file, do not include it. Be careful not to declare any PHP function or class that is already declared in the original file.
 
 In the *style.css* file, include the comment area ( with /* */ ) at the top of the file with the following entries.
 
@@ -177,6 +176,7 @@ function FetchTweets_AddSampleTemplateDirPath( $arrDirPaths ) {
 	
 }`
 
+You can check an example template [here](https://github.com/michaeluno/fetch-tweets-sample-template).
 
 == Frequently Asked Questions ==
 
@@ -210,7 +210,7 @@ It could be that your host disables WP Cron. In that case, try the intense cachi
 
 == Changelog ==
 
-= 2.2.1 =
+= 2.2.1 - 04/26/2014 =
 - Rephrased a label of an option item.
 - Made larger profile image sizes set in the template setting page take effect in preview pages.
 
