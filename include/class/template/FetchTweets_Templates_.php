@@ -265,6 +265,19 @@ abstract class FetchTweets_Templates_ {
 			
 	}
 	
+	/**
+	 * 
+	 * @since			2.3.0
+	 */
+	public function getDefaultTemplateName() {
+		
+		$arrDefaultTemplate = empty( $GLOBALS['oFetchTweets_Option']->aOptions['arrDefaultTemplate'] ) || ! file_exists( $GLOBALS['oFetchTweets_Option']->aOptions['arrDefaultTemplate']['strCSSPath'] )
+			? $this->findDefaultTemplateDetails()
+			: $GLOBALS['oFetchTweets_Option']->aOptions['arrDefaultTemplate'] + self::$aStructure_Template;
+		return $arrDefaultTemplate['strName'];
+		
+	}
+	
 	public function getDefaultTemplateSlug() {
 		
 		$arrDefaultTemplate = empty( $GLOBALS['oFetchTweets_Option']->aOptions['arrDefaultTemplate'] ) || ! file_exists( $GLOBALS['oFetchTweets_Option']->aOptions['arrDefaultTemplate']['strCSSPath'] )

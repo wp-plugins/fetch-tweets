@@ -6,7 +6,7 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 	// public function setUp() {
 	public function start_FetchTweets_PostType() {
 
-		$_oOption = $GLOBALS['oFetchTweets_Option'];
+		$this->oOption = $GLOBALS['oFetchTweets_Option'];
 
 		$this->setPostTypeArgs(
 			array(			// argument - for the array structure, refer to http://codex.wordpress.org/Function_Reference/register_post_type#Arguments
@@ -40,7 +40,7 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 				// 'capabilities' => array(
 					// 'create_posts' => false,
 				// ),			
-				'exclude_from_search' => ! $_oOption->aOptions['search']['is_searchable'],
+				'exclude_from_search' => ! $this->oOption->aOptions['search']['is_searchable'],
 			)		
 		);
 
@@ -124,9 +124,10 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 	public function columns_fetch_tweets( $aHeaderColumns ) {	// columns_{post type slug}
 		
 		return	array(
-			'cb'				=> '<input type="checkbox" />',	// Checkbox for bulk actions. 
-			'title'				=> __( 'Rule Name', 'fetch-tweets' ),		// Post title. Includes "edit", "quick edit", "trash" and "view" links. If $mode (set from $_REQUEST['mode']) is 'excerpt', a post excerpt is included between the title and links.
-			'tweettype'			=> __( 'Tweet Type', 'fetch-tweets' ),
+			'cb'				=>	'<input type="checkbox" />',	// Checkbox for bulk actions. 
+			'title'				=>	__( 'Rule Name', 'fetch-tweets' ),		// Post title. Includes "edit", "quick edit", "trash" and "view" links. If $mode (set from $_REQUEST['mode']) is 'excerpt', a post excerpt is included between the title and links.
+			'tweettype'			=>	__( 'Tweet Type', 'fetch-tweets' ),
+			'template'			=>	__( 'Template',	'fetch-tweets' ),
 			// 'author'			=> __( 'Author', 'fetch-tweets' ),		// Post author.
 			'fetch_tweets_tag'	=> __( 'Tags', 'fetch-tweets' ),	// Tags for the post. 
 			'code'				=> __( 'Shortcode / PHP Code', 'fetch-tweets' ),
@@ -164,7 +165,7 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 		return join( ', ', $_aOutput );
 		
 	}
-	public function cell_fetch_tweets_tweettype( $sCell, $iPostID ) {
+	public function cell_fetch_tweets_tweettype( $sCell, $iPostID ) {	// cell_{post type slug}_{column key}
 		
 		switch ( get_post_meta( $iPostID, 'tweet_type', true ) ) {
 			case 'search':
@@ -184,6 +185,16 @@ abstract class FetchTweets_PostType_ extends FetchTweets_AdminPageFramework_Post
 		}
 
 	}
+	
+	public function cell_fetch_tweets_template( $sCell, $iPostID ) {	// cell_{post type slug}_{column key}
+		
+		$_sTemplateSlug = get_post_meta( $iPostID, 'fetch_tweets_template', true );
+		return isset( $this->oOption->aOptions['arrTemplates'][ $_sTemplateSlug ]['strName'] )
+			? $this->oOption->aOptions['arrTemplates'][ $_sTemplateSlug ]['strName']
+			: $GLOBALS['oFetchTweets_Templates']->getDefaultTemplateName();
+		
+	}
+	
 	public function cell_fetch_tweets_code( $sCell, $iPostID ) {
 		return '<p>'
 				. '<span>[fetch_tweets id="' . $iPostID . '"]</span>' . '<br />'
