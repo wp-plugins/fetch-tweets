@@ -1,6 +1,6 @@
 <?php
 
-abstract class FetchTweets_WidgetByTag_ extends FetchTweets_Widget_ {
+abstract class FetchTweets_WidgetByTag_ extends FetchTweets_Widget_Base {
 	
 	public static function registerWidget() {
 		return register_widget( 'FetchTweets_WidgetByTag' );	// the class name - get_class( self ) does not work.

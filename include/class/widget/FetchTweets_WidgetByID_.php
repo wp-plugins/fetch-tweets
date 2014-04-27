@@ -1,6 +1,6 @@
 <?php
 
-abstract class FetchTweets_WidgetByID_ extends FetchTweets_Widget_ {
+abstract class FetchTweets_WidgetByID_ extends FetchTweets_Widget_Base {
 
 
 	public static function registerWidget() {

@@ -1,6 +1,6 @@
 <?php
 
-abstract class FetchTweets_Widget_ extends WP_Widget {
+abstract class FetchTweets_Widget_Base extends WP_Widget {
 
 	protected $aStructure_FormElements = array(
 		'title'			=> null,
