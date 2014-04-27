@@ -211,6 +211,7 @@ It could be that your host disables WP Cron. In that case, try the intense cachi
 == Changelog ==
 
 = 2.3.0 =
+- Added some more status items in the rate limit status table in the setting page.
 - Added the `Template` column in the rule listing table.
 - Added the `border-radius` property to the profile image element in the built-in templates.
 - Added the ability to create a rule by tweet ID.
