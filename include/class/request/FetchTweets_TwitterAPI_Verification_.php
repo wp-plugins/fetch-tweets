@@ -71,7 +71,7 @@ abstract class FetchTweets_TwitterAPI_Verification_ {
 				. "</h3>" . PHP_EOL
 				. "<table class='form-table auth-status'>" . PHP_EOL
 					. "<tbody>" . PHP_EOL
-					. self::_getRateLimitRows( $aStatus['resources'] )
+					. self::_getRateLimitRows( isset( $aStatus['resources'] ) ? $aStatus['resources'] : array() )
 					. "</tbody>" . PHP_EOL
 				. "</table>" . PHP_EOL;
 				
