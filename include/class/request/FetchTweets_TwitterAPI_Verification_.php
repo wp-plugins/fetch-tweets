@@ -64,7 +64,7 @@ abstract class FetchTweets_TwitterAPI_Verification_ {
 		/**
 		 * 
 		 */
-		private function _printRateLimitStatuses( $aStatus ) {
+		static private function _printRateLimitStatuses( $aStatus ) {
 			
 			echo "<h3>" . PHP_EOL
 					. __( 'Request Limits', 'fetch-tweets' ) . PHP_EOL
