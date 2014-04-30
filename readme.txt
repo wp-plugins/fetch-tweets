@@ -212,7 +212,7 @@ It could be that your host disables WP Cron. In that case, try the intense cachi
 
 == Changelog ==
 
-= 2.3.0 =
+= 2.3.0 - 05/01/2014 =
 - Changed to display an error message for tweets of not authorized accounts.
 - Added some more status items in the rate limit status table in the setting page.
 - Added the `Template` column in the rule listing table.
