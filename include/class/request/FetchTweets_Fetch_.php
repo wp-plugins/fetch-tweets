@@ -78,7 +78,11 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByTweetID {
 			return;
 		}
 		if ( isset( $_aTweets['errors'][ 0 ]['message'], $_aTweets['errors'][ 0 ]['code'] ) ) {
-			echo '<strong>Fetch Tweets</strong>: ' . $_aTweets['errors'][ 0 ]['message'] . ' Code:' . $_aTweets['errors'][ 0 ]['code'];			
+			echo '<strong>Fetch Tweets</strong>: ' . $_aTweets['errors'][ 0 ]['message'] . ' ' . __( 'Code', 'fetch-tweets' ) . ':' . $_aTweets['errors'][ 0 ]['code'];	
+			return;
+		}
+		else if ( isset( $_aTweets['error'], $_aTweets['request'] ) && $_aTweets['error'] && is_string( $_aTweets['error'] ) ) {
+			echo '<strong>Fetch Tweets</strong>: ' . $_aTweets['error'];	
 			return;
 		}
 

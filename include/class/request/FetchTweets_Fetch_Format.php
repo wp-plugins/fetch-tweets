@@ -25,24 +25,30 @@ abstract class FetchTweets_Fetch_Format extends FetchTweets_Fetch_APIRequest {
 	 * Sorts tweet array elements.
 	 * 
 	 */
-	protected function _sortTweetArrays( & $arrTweets, $strOrderedBy='descending' ) {
-		switch( strtolower( $strOrderedBy ) ) {
+	protected function _sortTweetArrays( & $aTweets, $sOrderedBy='descending' ) {
+		switch( strtolower( $sOrderedBy ) ) {
 			case 'ascending':
-				uasort( $arrTweets, array( $this, '_sortByTimeAscending' ) );
+				uasort( $aTweets, array( $this, '_sortByTimeAscending' ) );
 				break;
 			case 'random':
-				shuffle( $arrTweets );
+				shuffle( $aTweets );
 			case 'descending':
 			default:
-				uasort( $arrTweets, array( $this, '_sortByTimeDescending' ) );
+				uasort( $aTweets, array( $this, '_sortByTimeDescending' ) );
 				break;	
 		}
 	}	
 		public function _sortByTimeDescending( $a, $b ) {	// callback for the uasort() method.
-			return ( int ) $b['created_at'] - ( int ) $a['created_at'];
+			if ( isset( $a['created_at'], $b['created_at'] ) ) {
+				return ( int ) $b['created_at'] - ( int ) $a['created_at'];
+			}
+			return 0;
 		}			
 		public function _sortByTimeAscending( $a, $b ) {	// callback for the uasort() method.
-			return ( int ) $a['created_at'] - ( int ) $b['created_at'];
+			if ( isset( $a['created_at'], $b['created_at'] ) ) {
+				return ( int ) $a['created_at'] - ( int ) $b['created_at'];
+			}
+			return 0;			
 		}			
 	
 	/**

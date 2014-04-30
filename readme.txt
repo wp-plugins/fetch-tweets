@@ -24,12 +24,14 @@ If you are a theme developer, you can easily customize the template for the twee
 * **Fetching Timeline** - by specifying the user name, the timeline can be fetched and displayed as well as your account's home timeline.
 * **Search Results** - by specifying the search keyword, the results can be fetched and displayed.
 * **Lists**	- tweet timeline for members of the specified list can be fetched and displayed.
+* **Custom API Query** - if you are a developer and familiar with Twitter API, you can directly specify the query url to send to Twitter.
+* **Tweet ID** - you can fetch tweets by Tweet ID.
 * **Mashups** - you can display the combined results from multiple rule sets of your choosing.
 * **Widget** - tweets can be displayed in the widgets that the plugin provides.
 * **Shortcode** - with the shortcode, the fetched tweets can be displayed in posts and pages.
 * **PHP Code** - with the PHP function, the fetched tweets can be embedded in the templates.
 * **Custom Templates** - you can change the design by modifying/creating the template file.
-* **Background Cache Renewal** - it renews the caches in the background so it will prevent the page load from suddenly getting stuck for fetching external sources. 
+* **Background Cache Renewal** - it renews the caches in the background so it will prevent the page load from suddenly getting stuck for fetching external sources.
 * **Embedded Media** - urls of media elements can be automatically converted to embedded elements.
  
 == Installation ==
@@ -211,11 +213,13 @@ It could be that your host disables WP Cron. In that case, try the intense cachi
 == Changelog ==
 
 = 2.3.0 =
+- Changed to display an error message for tweets of not authorized accounts.
 - Added some more status items in the rate limit status table in the setting page.
 - Added the `Template` column in the rule listing table.
 - Added the `border-radius` property to the profile image element in the built-in templates.
 - Added the ability to create a rule by tweet ID.
-- Tweaked the styling of the `debug` template.
+- Tweaked the styling of the `debug` template and added a screen-shot.
+- Updated the [Admin Page Framework](http://wordpress.org/plugins/admin-page-framework/) library to v3.0.5 which includes patches for issues with [WordPress MU](https://codex.wordpress.org/WordPress_MU).
 
 = 2.2.1 - 04/26/2014 =
 - Rephrased a label of an option item.
