@@ -212,6 +212,9 @@ It could be that your host disables WP Cron. In that case, try the intense cachi
 
 == Changelog ==
 
+= 2.3.1 - =
+- Changed not to retrieve oembed element in the front end to prevent delays in page load.
+
 = 2.3.0 - 05/01/2014 =
 - Changed to display an error message for tweets of not authorized accounts.
 - Added some more status items in the rate limit status table in the setting page.

@@ -56,34 +56,73 @@ abstract class FetchTweets_Fetch_Format extends FetchTweets_Fetch_APIRequest {
 	 * 
 	 * @since			1.x
 	 * @since			1.3.3			Added the ability to eliminate duplicated items for mash up results.
+	 * @since			2.3.1			
 	 */
-	protected function _formatTweetArrays( & $arrTweets, $intProfileImageSize, $fTwitterMedia=true, $fExternalMedia=true ) {
+	protected function _formatTweetArrays( & $aTweets, $aArgs ) {
+				
+		// To prevent duplicate
+		$_aTweetIDs = array();
 		
-		$arrTweetIDs = array();
-		
-		foreach( $arrTweets as $intIndex => &$arrTweet ) {
+		foreach( $aTweets as &$_aTweet ) {
 			
-			if ( ! is_array( $arrTweet ) ) continue;
+			if ( ! is_array( $_aTweet ) ) continue;
 			
-			if ( in_array( $arrTweet[ 'id_str' ], $arrTweetIDs ) ) continue;
-			$arrTweetIDs[] = $arrTweet[ 'id_str' ];
+			// Consider the tweet array is a mush-up.
+			if ( in_array( $_aTweet[ 'id_str' ], $_aTweetIDs ) ) continue;
+			$_aTweetIDs[] = $_aTweet[ 'id_str' ];
 										
 			// Check if it is a re-tweet.
-			if ( isset( $arrTweet['retweeted_status']['text'] ) ) 				
-				$arrTweet['retweeted_status'] = $this->formatTweetArray( $arrTweet['retweeted_status'], $intProfileImageSize, $fTwitterMedia, $fExternalMedia );
+			if ( isset( $_aTweet['retweeted_status']['text'] ) ) {
+				$_aTweet['retweeted_status'] = $this->formatTweetArray( $_aTweet['retweeted_status'], $aArgs['avatar_size'] );
+			}			
 			
-			$arrTweet = $this->formatTweetArray( $arrTweet, $intProfileImageSize, $fTwitterMedia, $fExternalMedia );
+			$_aTweet = $this->formatTweetArray( $_aTweet, $aArgs['avatar_size'] );
 						
+		}
+				
+		// Sort by time - the array is passed as reference.
+		$this->_sortTweetArrays( $aTweets, $aArgs['sort'] ); 
+
+		// Truncate the array.
+		if ( $aArgs['count'] && is_numeric( $aArgs['count'] ) ) {
+			array_splice( $aTweets, $aArgs['count'] );
+		}
+		
+		// Take care of embedded media - do this after truncating the array as this is slow.
+		foreach ( $aTweets as &$__aTweet ) {
+			$this->_replceEmbeddedMedia( $__aTweet, $aArgs['twitter_media'], $aArgs['external_media'] );
 		}
 		
 	}
+		/**
+		 * Replaces the media links to an embedded element.
+		 * 
+		 * @since			2.3.1
+		 */
+		protected function _replceEmbeddedMedia( & $aTweet, $fTwitterMedia, $fExternalMedia ) {
+			
+			// Insert external media files at the bottom of the tweet.
+			if ( $fExternalMedia ) {
+				$aTweet['text'] .= isset( $aTweet['entities']['embed_external_media'] )
+					? $aTweet['entities']['embed_external_media']	// the plugin inserts this element in the background
+					: '';	//	$this->getExternalMedia( $aTweet['entities']['urls'] );
+			}
+				
+			// Insert twitter media files at the bottom of the tweet. 
+			if ( $fTwitterMedia ) {
+				$aTweet['text'] .= isset( $aTweet['entities']['embed_twitter_media'] )
+					? $aTweet['entities']['embed_twitter_media']	// the plugin inserts this element in the background
+					: '';	// $this->getTwitterMedia( $aTweet['entities']['media'] );
+			}			
+			
+		}
 	
 		/**
 		 * 
 		 * @remark			The profile image size won't be passed unless the call is made from a widget or shortcode with direct argument.
 		 * In other words, for preview pages, the profile image url needs to be taken cared of separately.
 		 */
-		protected function formatTweetArray( $arrTweet, $intProfileImageSize=48, $fTwitterMedia=true, $fExternalMedia=true ) {
+		protected function formatTweetArray( $arrTweet, $intProfileImageSize=48 ) {
 			
 			// Avoid undefined index warnings.
 			$arrTweet = $arrTweet + array( 
@@ -109,19 +148,7 @@ abstract class FetchTweets_Fetch_Format extends FetchTweets_Fetch_APIRequest {
 			$arrTweet['text'] = $this->makeClickableMedia( $arrTweet['text'], $arrTweet['entities']['media'] );	
 			$arrTweet['text'] = $this->makeClickableHashTags( $arrTweet['text'], $arrTweet['entities']['hashtags'] );	
 			$arrTweet['text'] = $this->makeClickableUsers( $arrTweet['text'], $arrTweet['entities']['user_mentions'] );
-			
-			// Insert external media files at the bottom of the tweet.
-			if ( $fExternalMedia )
-				$arrTweet['text'] .= isset( $arrTweet['entities']['embed_external_media'] )
-					? $arrTweet['entities']['embed_external_media']
-					: $this->getExternalMedia( $arrTweet['entities']['urls'] );
-				
-			// Insert twitter media files at the bottom of the tweet. 
-			if ( $fTwitterMedia ) 
-				$arrTweet['text'] .= isset( $arrTweet['entities']['embed_twitter_media'] )
-					? $arrTweet['entities']['embed_twitter_media']
-					: $this->getTwitterMedia( $arrTweet['entities']['media'] );
-						
+									
 			// Adjust the profile image size.
 			$arrTweet['user']['profile_image_url'] = $this->adjustProfileImageSize( $arrTweet['user']['profile_image_url'], $intProfileImageSize );
 			$arrTweet['user']['profile_image_url_https'] = $this->adjustProfileImageSize( $arrTweet['user']['profile_image_url_https'], $intProfileImageSize );
@@ -285,7 +312,7 @@ abstract class FetchTweets_Fetch_Format extends FetchTweets_Fetch_APIRequest {
 			if ( empty( $strEmbed ) ) continue;
 			
 			$arrOutput[] = "<div class='fetch-tweets-external-media'>"
-				. $strEmbed
+					. $strEmbed
 				. "</div>";
 
 		}

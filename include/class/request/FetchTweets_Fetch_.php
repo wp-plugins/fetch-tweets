@@ -87,16 +87,8 @@ abstract class FetchTweets_Fetch_ extends FetchTweets_Fetch_ByTweetID {
 		}
 
 		// Format the tweet response array.
-		$this->_formatTweetArrays( $_aTweets, $aArgs['avatar_size'], $aArgs['twitter_media'], $aArgs['external_media'] ); // the array is passed as reference.
+		$this->_formatTweetArrays( $_aTweets, $aArgs ); // the array is passed as reference.
 	
-		// Sort by time - the array is passed as reference.
-		$this->_sortTweetArrays( $_aTweets, $aArgs['sort'] ); 
-
-		// Truncate the array.
-		if ( $aArgs['count'] && is_numeric( $aArgs['count'] ) ) {
-			array_splice( $_aTweets, $aArgs['count'] );
-		}
-
 		/* Include the template to render the output - this method is also called from filter callbacks( which requires a return value ) but go ahead and render the output. */		
 		$this->_includeTemplate( $_aTweets, $aArgs, $this->oOption->aOptions );
  		

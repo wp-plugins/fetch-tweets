@@ -47,7 +47,7 @@ abstract class FetchTweets_Fetch_APIRequest extends FetchTweets_Fetch_Cache {
 // FetchTweets_Debug::logArray( 'cache is used: ' . $strRequestURI );
 			return ( array ) $this->oBase64->decode( $arrTransient['data'] );
 			
-		}
+		} 
 		
 		
 		return $this->_isTwitterAPIRequest( $strRequestURI )
