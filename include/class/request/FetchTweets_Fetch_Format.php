@@ -97,6 +97,9 @@ abstract class FetchTweets_Fetch_Format extends FetchTweets_Fetch_APIRequest {
 		/**
 		 * Replaces the media links to an embedded element.
 		 * 
+		 * This is supposed to be called from the front-end. So if the external embedded media element does not exist in the response array, do nothing. 
+		 * The background caching system will take care of it.
+		 * 
 		 * @since			2.3.1
 		 */
 		protected function _replceEmbeddedMedia( & $aTweet, $fTwitterMedia, $fExternalMedia ) {
@@ -105,14 +108,14 @@ abstract class FetchTweets_Fetch_Format extends FetchTweets_Fetch_APIRequest {
 			if ( $fExternalMedia ) {
 				$aTweet['text'] .= isset( $aTweet['entities']['embed_external_media'] )
 					? $aTweet['entities']['embed_external_media']	// the plugin inserts this element in the background
-					: '';	//	$this->getExternalMedia( $aTweet['entities']['urls'] );
+					: '';
 			}
 				
 			// Insert twitter media files at the bottom of the tweet. 
 			if ( $fTwitterMedia ) {
 				$aTweet['text'] .= isset( $aTweet['entities']['embed_twitter_media'] )
 					? $aTweet['entities']['embed_twitter_media']	// the plugin inserts this element in the background
-					: '';	// $this->getTwitterMedia( $aTweet['entities']['media'] );
+					: $this->getTwitterMedia( $aTweet['entities']['media'] );
 			}			
 			
 		}
@@ -294,29 +297,29 @@ abstract class FetchTweets_Fetch_Format extends FetchTweets_Fetch_APIRequest {
 	 * @remark			The supported providers depend on the WordPress oEmbed class. It has a filter for the providers so it can be customized.
 	 * @since			1.2.0
 	 */ 
-	protected function getExternalMedia( $arrURLs ) {
+	protected function getExternalMedia( $aURLs ) {
 
 		// There are urls in the tweet text. So they need to be converted into hyper links.
-		$arrOutput = array();
-		foreach( ( array ) $arrURLs as $arrURLDetails ) {
+		$_aOutput = array();
+		foreach( ( array ) $aURLs as $__aURLDetails ) {
 			
-			$arrURLDetails = $arrURLDetails + array(	// avoid undefined index warnings.
+			$__aURLDetails = $__aURLDetails + array(	// avoid undefined index warnings.
 				'url' => null,
 				'expanded_url' => null,
 				'display_url' => null,
 			);
 
-			if ( empty( $arrURLDetails['expanded_url'] ) ) continue;
+			if ( empty( $__aURLDetails['expanded_url'] ) ) continue;
 			
-			$strEmbed = $this->oEmbed->get_html( $arrURLDetails['expanded_url'], array( 'discover' => false, ) );
-			if ( empty( $strEmbed ) ) continue;
+			$_sEmbed = $this->oEmbed->get_html( $__aURLDetails['expanded_url'], array( 'discover' => false, ) );
+			if ( empty( $_sEmbed ) ) continue;
 			
-			$arrOutput[] = "<div class='fetch-tweets-external-media'>"
-					. $strEmbed
+			$_aOutput[] = "<div class='fetch-tweets-external-media'>"
+					. $_sEmbed
 				. "</div>";
 
 		}
-		return implode( PHP_EOL, $arrOutput );
+		return implode( PHP_EOL, $_aOutput );
 	
 	}
 	
