@@ -47,27 +47,34 @@ function getTwitterProfileImageURLBySize( $sProfileImageURLNormal, $iImageSize )
 		
 	// Parts
 	$_aURLParts = parse_url( $sProfileImageURLNormal );
-	$_aPathParts = pathinfo( $_aURLParts['path'] );
+	$_aPathParts = pathinfo( $_aURLParts['path'] ) + array( 'extension' => null );
 
 	// Path
 	$_sPathPartWOFileName = preg_replace( '/[^\/]*$/', '', $_aURLParts['path'] );	// remove sub-string after the last slash
 	
-	// File name
+	// File name without extension.
 	$_sFileNameWOExt = preg_replace( '/_[^_]*$/', '', $_aPathParts['filename'] );	// remove sub-string after the last underscore including the underscore.
+	
+	// File name suffix
+	$_sSuffix = '';
 	if ( $iImageSize <= 24 ) {
-		$_sFileNameWOExt .= '_mini';
+		$_sSuffix = '_mini';
 	} else if ( $iImageSize <= 48 ) {
-		$_sFileNameWOExt .= '_normal';
+		$_sSuffix = '_normal';
 	} else if ( $iImageSize <= 73 ) {
-		$_sFileNameWOExt .= '_bigger';
+		$_sSuffix = '_bigger';
 	} 
+	if ( ! $_aPathParts['extension'] ) {
+		$_sSuffix = '';
+	}
 	
 	// Result
 	return $_aURLParts['scheme'] . "://"
 		. $_aURLParts['host']
 		. $_sPathPartWOFileName
 		. $_sFileNameWOExt
-		. '.' . $_aPathParts['extension'];
+		. $_sSuffix
+		. ( $_aPathParts['extension'] ? '.' . $_aPathParts['extension'] : '' );
 		
 }
 endif;

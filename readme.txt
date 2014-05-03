@@ -212,7 +212,10 @@ It could be that your host disables WP Cron. In that case, try the intense cachi
 
 == Changelog ==
 
-= 2.3.1 - =
+= 2.3.2 =
+- Fixed a bug that some profile images without the extension were not shown.
+
+= 2.3.1 - 05/03/2014 =
 - Changed not to retrieve oembed element in the front end to prevent delays in page load.
 
 = 2.3.0 - 05/01/2014 =
