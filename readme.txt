@@ -212,6 +212,9 @@ It could be that your host disables WP Cron. In that case, try the intense cachi
 
 == Changelog ==
 
+= 2.3.3 =
+- Added the visibility options for media elements to the widget forms.
+
 = 2.3.2 - 05/04/2014 =
 - Fixed a bug that some profile images without the file extension in the url were not shown.
 

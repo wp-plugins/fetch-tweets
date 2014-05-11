@@ -60,7 +60,7 @@ abstract class FetchTweets_Fetch_Format extends FetchTweets_Fetch_APIRequest {
 	 */
 	protected function _formatTweetArrays( & $aTweets, $aArgs ) {
 				
-		// To prevent duplicate
+		// To prevent duplicates.
 		$_aTweetIDs = array();
 		
 		foreach( $aTweets as &$_aTweet ) {
