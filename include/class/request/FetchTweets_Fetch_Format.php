@@ -63,16 +63,25 @@ abstract class FetchTweets_Fetch_Format extends FetchTweets_Fetch_APIRequest {
 		// To prevent duplicates.
 		$_aTweetIDs = array();
 		
-		foreach( $aTweets as &$_aTweet ) {
+		foreach( $aTweets as $__iIndex => &$_aTweet ) {
 			
-			if ( ! is_array( $_aTweet ) ) continue;
+			if ( ! is_array( $_aTweet ) ) {
+				continue;
+			}
 			
 			// Consider the tweet array is a mush-up.
-			if ( in_array( $_aTweet[ 'id_str' ], $_aTweetIDs ) ) continue;
+			if ( in_array( $_aTweet[ 'id_str' ], $_aTweetIDs ) ) {
+				unset( $aTweets[ $__iIndex ] );
+				continue;
+			}
 			$_aTweetIDs[] = $_aTweet[ 'id_str' ];
 										
 			// Check if it is a re-tweet.
-			if ( isset( $_aTweet['retweeted_status']['text'] ) ) {
+			if ( isset( $_aTweet['retweeted_status']['text'] ) ) {				
+				if ( isset( $aArgs['include_rts'] ) && ! $aArgs['include_rts'] ) {
+					unset( $aTweets[ $__iIndex ] );
+					continue;
+				}				
 				$_aTweet['retweeted_status'] = $this->formatTweetArray( $_aTweet['retweeted_status'], $aArgs['avatar_size'] );
 			}			
 			
@@ -110,12 +119,12 @@ abstract class FetchTweets_Fetch_Format extends FetchTweets_Fetch_APIRequest {
 					? $aTweet['entities']['embed_external_media']	// the plugin inserts this element in the background
 					: '';
 			}
-				
+		
 			// Insert twitter media files at the bottom of the tweet. 
 			if ( $fTwitterMedia ) {
 				$aTweet['text'] .= isset( $aTweet['entities']['embed_twitter_media'] )
 					? $aTweet['entities']['embed_twitter_media']	// the plugin inserts this element in the background
-					: $this->getTwitterMedia( $aTweet['entities']['media'] );
+					: $this->getTwitterMedia( isset( $aTweet['entities']['media'] ) ? $aTweet['entities']['media'] : array() );
 			}			
 			
 		}

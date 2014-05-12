@@ -213,6 +213,8 @@ It could be that your host disables WP Cron. In that case, try the intense cachi
 == Changelog ==
 
 = 2.3.3 =
+- Fixed an issue that when the `include retweet` option is unchecked, the count parameter was not accurately reflected in the `search` rule type.
+- Fixed an undefined index warning that occurred by specifying an excessive value in the count parameter. 
 - Added the visibility options for media elements to the widget forms.
 
 = 2.3.2 - 05/04/2014 =
