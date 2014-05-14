@@ -212,6 +212,9 @@ It could be that your host disables WP Cron. In that case, try the intense cachi
 
 == Changelog ==
 
+= 2.3.4 =
+- Fixed an issue on some non GNU systems, like Solaris, that a fatal error occurred when the plugin is loaded.
+
 = 2.3.3 - 05/14/2014 =
 - Fixed an issue that when the `include retweet` option is unchecked, the count parameter was not accurately reflected in the `search` rule type.
 - Fixed an undefined index warning that occurred by specifying an excessive value in the count parameter. 

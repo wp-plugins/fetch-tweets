@@ -55,20 +55,7 @@ final class FetchTweets_AutoLoad {
 	 */
 	protected function composeClassArray( $sClassDirPath, $aAllowedExtensions, $aRecursiveOptions ) {
 		
-		$sClassDirPath = rtrim( $sClassDirPath, '\\/' ) . DIRECTORY_SEPARATOR;	// ensures the trailing (back/)slash exists.
-		$_aFilePaths = $aRecursiveOptions['is_recursive']
-			? $this->doRecursiveGlob( $sClassDirPath . '*.' . $this->getGlobPatternExtensionPart( $aAllowedExtensions ), GLOB_BRACE, $aRecursiveOptions['exclude_dirs'] )
-			: ( array ) glob( $sClassDirPath . '*.' . $this->getGlobPatternExtensionPart( $aAllowedExtensions ), GLOB_BRACE );
-		$_aFilePaths = array_filter( $_aFilePaths );	// drop non-value elements.
-		/*
-		 * Now the structure of $_aFilePaths looks like:
-			array
-			  0 => string '.../class/MyClass.php'
-			  1 => string '.../class/MyClass2.php'
-			  2 => string '.../class/MyClass3.php'
-			  ...
-		 * 
-		 */		 
+		$_aFilePaths = $this->getFilePaths( $sClassDirPath, $aAllowedExtensions, $aRecursiveOptions );
 		$_aClasses = array();
 		foreach( $_aFilePaths as $_sFilePath ) {
 			$_aClasses[ pathinfo( $_sFilePath, PATHINFO_FILENAME ) ] = $_sFilePath;	// the file name without extension will be assigned to the key
@@ -77,6 +64,46 @@ final class FetchTweets_AutoLoad {
 		return $_aClasses;
 			
 	}
+	
+		/**
+		 * Returns an array of scanned file paths.
+		 * 
+		 * The returning array structure looks like this:
+			array
+			  0 => string '.../class/MyClass.php'
+			  1 => string '.../class/MyClass2.php'
+			  2 => string '.../class/MyClass3.php'
+			  ...
+		 * 
+		 * @since			2.3.4
+		 */
+		protected function getFilePaths( $sClassDirPath, $aAllowedExtensions, $aRecursiveOptions ) {
+			
+			$sClassDirPath = rtrim( $sClassDirPath, '\\/' ) . DIRECTORY_SEPARATOR;	// ensures the trailing (back/)slash exists. 
+			
+			if ( defined( 'GLOB_BRACE' ) ) {	// in some OSes this flag constant is not available.
+				$_aFilePaths = $aRecursiveOptions['is_recursive']
+					? $this->doRecursiveGlob( $sClassDirPath . '*.' . $this->getGlobPatternExtensionPart( $aAllowedExtensions ), GLOB_BRACE, $aRecursiveOptions['exclude_dirs'] )
+					: ( array ) glob( $sClassDirPath . '*.' . $this->getGlobPatternExtensionPart( $aAllowedExtensions ), GLOB_BRACE );
+				return array_filter( $_aFilePaths );	// drop non-value elements.	
+			} 
+				
+			// For the Solaris operation system.
+			$_aFilePaths = array();
+			foreach( $aAllowedExtensions as $__sAllowedExtension ) {
+								
+				$__aFilePaths = $aRecursiveOptions['is_recursive']
+					? $this->doRecursiveGlob( $sClassDirPath . '*.' . $__sAllowedExtension, 0, $aRecursiveOptions['exclude_dirs'] )
+					: ( array ) glob( $sClassDirPath . '*.' . $__sAllowedExtension );
+
+				$_aFilePaths = array_merge( $__aFilePaths, $_aFilePaths );
+				
+			}
+			$_aFilePaths = array_filter( $_aFilePaths );
+			return array_unique( $_aFilePaths );
+			
+		}
+	
 		/**
 		 * Composes the file pattern of the file extension part used for the glob() function with the given file extensions.
 		 */
@@ -89,9 +116,9 @@ final class FetchTweets_AutoLoad {
 		/**
 		 * The recursive version of the glob() function.
 		 */
-		protected function doRecursiveGlob( $sPathPatten, $iFlags=0, $asExcludeDirs=array() ) {
+		protected function doRecursiveGlob( $sPathPatten, $nFlags=0, $asExcludeDirs=array() ) {
 
-			$_aFiles = glob( $sPathPatten, $iFlags );	
+			$_aFiles = glob( $sPathPatten, $nFlags );	
 			$_aFiles = is_array( $_aFiles ) ? $_aFiles : array();	// glob() can return false.
 			$_aDirs = glob( dirname( $sPathPatten ) . DIRECTORY_SEPARATOR . '*', GLOB_ONLYDIR|GLOB_NOSORT );
 			$_aDirs = is_array( $_aDirs ) ? $_aDirs : array();
@@ -99,14 +126,13 @@ final class FetchTweets_AutoLoad {
 
 				if ( in_array( $_sDirPath, ( array ) $asExcludeDirs ) ) continue;
 				
-				$_aFiles = array_merge( $_aFiles, $this->doRecursiveGlob( $_sDirPath . DIRECTORY_SEPARATOR . basename( $sPathPatten ), $iFlags, $asExcludeDirs ) );
+				$_aFiles = array_merge( $_aFiles, $this->doRecursiveGlob( $_sDirPath . DIRECTORY_SEPARATOR . basename( $sPathPatten ), $nFlags, $asExcludeDirs ) );
 				
 			}
 		
 			return $_aFiles;
 			
-		}
-		
+		}		
 	
 	/**
 	 * Performs registration of the callback.
