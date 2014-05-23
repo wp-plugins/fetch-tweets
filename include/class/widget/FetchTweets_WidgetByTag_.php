@@ -24,6 +24,14 @@ abstract class FetchTweets_WidgetByTag_ extends FetchTweets_Widget_Base {
 	protected function echoTweets( $aInstance ) {
 		
 		$aInstance = $aInstance + $this->_aStructure_FormElements;
+
+		if ( ! count( $aInstance['selected_tag_slugs'] ) ) {
+			echo "<p><strong>Fetch Tweets</strong>: " 
+					. __( 'At least one tag needs to be selected in the widget form.', 'fetch-tweets' )
+				. "</p>";
+			return;
+		}
+
 		fetchTweets( 
 			array( 	
 				'tag_field_type'		=>	'slug',

@@ -18,25 +18,24 @@ abstract class FetchTweets_Templates_ {
 	// public $arrTemplateDirs = array();	// stores the template directory paths where the plugin loads templates.
 	// public $arrTemplates = array(); // stores each template information.
 	
-	public static $aStructure_Template = array(
-		// v1 							v2
-		'strCSSPath'		=> null,	// 'css_path'	=> null,
-		'strDirPath'		=> null,	// 'dir_path'	=> null,
-		'strFunctionPath'	=> null,	// 'function_path'	=> null,
-		'strTemplatePath'	=> null,	// 'template_path'	=> null,
-		'strSettingsPath'	=> null,	// 'settings_path'	=> null,
-		'strThumbnailPath'	=> null,	// 'thumbnail_path'	=> null,
-		'strName'			=> null,	// 'name'	=> null,
-		'strSlug'			=> null,	// 'slug'	=> null,
-		'strDescription'	=> null,	// 'description'	=> null,
-		'strTextDomain'		=> null,	// 'text_domain'	=> null,
-		'strDomainPath'		=> null,	// 'domain_path'	=> null,
-		'strVersion'		=> null,	// 'version'	=> null,
-		'strAuthor'			=> null,	// 'author'	=> null,
-		'strAuthorURI'		=> null,	// 'author_uri'	=> null,
-		'fIsActive'			=> null,	// 'is_active'	=> null,
-		'fIsDefault'		=> null,	// 'is_default'	=> null,
-		'intIndex'			=> null,	// 'index'	=> null,
+	public static $aStructure_Template = array(				
+		'strCSSPath'		=> null,
+		'strDirPath'		=> null,
+		'strFunctionPath'	=> null,
+		'strTemplatePath'	=> null,
+		'strSettingsPath'	=> null,
+		'strThumbnailPath'	=> null,
+		'strName'			=> null,
+		'strSlug'			=> null,
+		'strDescription'	=> null,
+		'strTextDomain'		=> null,
+		'strDomainPath'		=> null,
+		'strVersion'		=> null,
+		'strAuthor'			=> null,
+		'strAuthorURI'		=> null,
+		'fIsActive'			=> null,
+		'fIsDefault'		=> null,
+		'intIndex'			=> null,
 	);
 	
 	public function getActiveTemplates() {
@@ -134,9 +133,9 @@ abstract class FetchTweets_Templates_ {
 			if ( ! file_exists( $strDirPath . DIRECTORY_SEPARATOR . 'template.php' ) ) continue;
 
 			$arrTemplates[ md5( $strDirPath ) ] = array(
-					'strCSSPath' => $strDirPath . '/style.css',
+					'strCSSPath' => $strDirPath . DIRECTORY_SEPARATOR . 'style.css',
 					'strDirPath' => $strDirPath,
-					'strFunctionPath' => file_exists( $strDirPath . DIRECTORY_SEPARATOR . 'functions.php' ) ? $strDirPath . DIRECTORY_SEPARATOR . 'functions.php' : null,					
+					'strFunctionPath' => file_exists( $strDirPath . DIRECTORY_SEPARATOR . 'functions.php' ) ? $strDirPath . DIRECTORY_SEPARATOR . 'functions.php' : null,			
 					'strTemplatePath' => file_exists( $strDirPath . DIRECTORY_SEPARATOR . 'template.php' ) ? $strDirPath . DIRECTORY_SEPARATOR . 'template.php' : null,					
 					'strSettingsPath' => file_exists( $strDirPath . DIRECTORY_SEPARATOR . 'settings.php' ) ? $strDirPath . DIRECTORY_SEPARATOR . 'settings.php' : null,	// this is optional.
 					'strThumbnailPath' => $this->getScreenshotPath( $strDirPath ),	// it's not a url.
@@ -229,8 +228,6 @@ abstract class FetchTweets_Templates_ {
 			if ( ! $arrTemplate['fIsActive'] ) continue;
 			
 			wp_register_style( "fetch-tweets-{$arrTemplate['strSlug']}", FetchTweets_WPUtilities::getSRCFromPath( $arrTemplate['strCSSPath'] ) );		// relative path the WordPress installed path.
-			// wp_register_style( "fetch-tweets-{$arrTemplate['strSlug']}", '/' . FetchTweets_Utilities::getRelativePath( ABSPATH, $arrTemplate['strCSSPath'] ) );		// relative path the WordPress installed path.
-			// wp_register_style( "fetch-tweets-{$arrTemplate['strSlug']}", site_url() . "?fetch_tweets_style={$arrTemplate['strSlug']}" );
 			wp_enqueue_style( "fetch-tweets-{$arrTemplate['strSlug']}" );		
 			
 		}

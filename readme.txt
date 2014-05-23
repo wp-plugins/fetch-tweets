@@ -212,6 +212,9 @@ It could be that your host disables WP Cron. In that case, try the intense cachi
 
 == Changelog ==
 
+= 2.3.5 =
+- Added error messages to be displayed in the widget outputs when no rule or tag is selected.
+
 = 2.3.4 - 05/15/2014 =
 - Fixed an issue on some non GNU systems, like Solaris, that a fatal error occurred when the plugin is loaded.
 

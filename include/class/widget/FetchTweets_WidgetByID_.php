@@ -20,6 +20,14 @@ abstract class FetchTweets_WidgetByID_ extends FetchTweets_Widget_Base {
 	protected function echoTweets( $aInstance ) {
 		
 		$aInstance = $aInstance + $this->_aStructure_FormElements;
+		
+		if ( ! count( $aInstance['selected_ids'] ) ) {
+			echo "<p><strong>Fetch Tweets</strong>: " 
+					. __( 'At least one rule needs to be selected in the widget form.', 'fetch-tweets' )
+				. "</p>";
+			return;
+		}		
+		
 		fetchTweets( 
 			array( 	// $aArgs
 				'ids'					=>	$aInstance['selected_ids'],
