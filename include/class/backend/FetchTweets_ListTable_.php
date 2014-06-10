@@ -17,11 +17,12 @@ if ( ! class_exists( 'WP_List_Table' ) ) require_once( ABSPATH . 'wp-admin/inclu
 
 class FetchTweets_ListTable_ extends WP_List_Table {
     
-
-    public function __construct( $arrData, $strDefaultTemplateSlug ){
+	/**
+	 * Sets up properties and hooks.
+	 */
+    public function __construct( $aData ){
               
-		$this->arrData = $arrData;
-		$this->strDefaultTemplateSlug = $strDefaultTemplateSlug;
+		$this->arrData = $aData;
 		
         //Set parent defaults
 		$this->arrArgs = array(
@@ -147,14 +148,13 @@ class FetchTweets_ListTable_ extends WP_List_Table {
         
     }
     
+	/**
+	 * Deals with the bulk actions.
+	 * 
+	 * Called from outside.
+	 */
     public function process_bulk_action() {
 		
-// echo '<h3>Template Options before Updating</h3>';
-// echo '<pre>'. print_r( $GLOBALS['oFetchTweets_Option']->aOptions['arrTemplates'], true ) . '</pre>';	
-
-// echo '<h3>Set Data</h3>';
-// echo '<pre>'. print_r( $this->arrData, true ) . '</pre>';	
-
 		if ( ! isset( $_REQUEST['template'] ) ) return;
 		
         switch( strtolower( $this->current_action() ) ){
@@ -199,24 +199,12 @@ class FetchTweets_ListTable_ extends WP_List_Table {
         }   
 
 		// Save the options.
-		// unset( $GLOBALS['oFetchTweets_Option']->aOptions['arrTemplates'] );	// just in case.
 		$GLOBALS['oFetchTweets_Option']->saveOptions();
 
-// echo '<h3>List Data Array</h3>';
-// echo '<pre>'. print_r( $this->arrData, true ) . '</pre>';	
-// echo '<h3>Template Options</h3>';
-// echo '<pre>'. print_r( $GLOBALS['oFetchTweets_Option']->aOptions['arrTemplates'], true ) . '</pre>';	
-	
-		        
     }
 
     function prepare_items() {
-		
-// echo '<h3>List Data Array</h3>';
-// echo '<pre>'. print_r( $this->arrData, true ) . '</pre>';	
-// echo '<h3>Template Options</h3>';
-// echo '<pre>'. print_r( $GLOBALS['oFetchTweets_Option']->aOptions['arrTemplates'], true ) . '</pre>';	
-	
+			
         /**
          * Set how many records per page to show
          */

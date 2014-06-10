@@ -31,5 +31,40 @@ final class FetchTweets_WPUtilities {
 		return esc_url( $sHref );
 		
 	}
+	
+	/**
+	 * Returns the file path by checking if the given path is a file.
+	 * 
+	 * If fails, it attempts to check with the relative path to ABSPATH.
+	 * 
+	 * This is necessary when some users build the WordPress site locally and immigrate to the production site.
+	 * In that case, the stored absolute path won't work so it needs to be converted to the one that works in the new environment.
+	 * 
+	 * @since			2.3.5
+	 */
+	public static function getReadableFilePath( $sFilePath, $sRelativePathToABSPATH='' ) {
+		
+		if ( @is_file( $sFilePath ) ) {
+			return $sFilePath;
+		}
+		
+		if ( ! $sRelativePathToABSPATH ) {
+			return false;
+		}
+		
+		// try with the relative path.
+		$_sAbsolutePath = realpath( trailingslashit( ABSPATH ) . $sRelativePathToABSPATH );
+		if ( ! $_sAbsolutePath ) {
+			return false;
+		}
+		
+		if ( @is_file( $_sAbsolutePath ) ) {
+			return $_sAbsolutePath;
+		}
+		
+		return false;		
+		
+	}	
+	
 
 }

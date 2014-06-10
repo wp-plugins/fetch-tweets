@@ -37,8 +37,7 @@ abstract class FetchTweets_AdminPage_Start extends FetchTweets_AdminPageFramewor
 		public function _replyToProcessBulkActionForTemplateListTable() {
 
 			$this->oTemplateListTable = new FetchTweets_ListTable(
-				$GLOBALS['oFetchTweets_Templates']->getActiveTemplates() + $GLOBALS['oFetchTweets_Templates']->getUploadedTemplates(),
-				$GLOBALS['oFetchTweets_Templates']->getDefaultTemplateSlug()
+				$GLOBALS['oFetchTweets_Templates']->getActiveTemplates() + $GLOBALS['oFetchTweets_Templates']->getUploadedTemplates()
 			);
 			$this->oTemplateListTable->process_bulk_action();
 			

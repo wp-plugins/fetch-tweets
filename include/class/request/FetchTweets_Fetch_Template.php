@@ -33,62 +33,68 @@ abstract class FetchTweets_Fetch_Template extends FetchTweets_Fetch_Format {
 		
 	}
 	
-		protected function _getTemplateSlug( $arrPostIDs, $strTemplateSlug='' ) {
+		protected function _getTemplateSlug( $aPostIDs, $sTemplateSlug='' ) {
 
 			// Return the one defined in the caller argument.
-			if ( $strTemplateSlug && isset( $this->oOption->aOptions['arrTemplates'][ $strTemplateSlug ] ) )
-				return $this->_checkNecessaryFileExists( $strTemplateSlug );
+			if ( $sTemplateSlug && isset( $this->oOption->aOptions['arrTemplates'][ $sTemplateSlug ] ) )
+				return $this->_checkNecessaryFileExists( $sTemplateSlug );
 			
 			// Return the one defined in the custom post rule.
-			if ( isset( $arrPostIDs[ 0 ] ) )
-				$strTemplateSlug = get_post_meta( $arrPostIDs[ 0 ], 'fetch_tweets_template', true );
+			if ( isset( $aPostIDs[ 0 ] ) )
+				$sTemplateSlug = get_post_meta( $aPostIDs[ 0 ], 'fetch_tweets_template', true );
 
-			$strTemplateSlug = $this->_checkNecessaryFileExists( $strTemplateSlug );
+			$sTemplateSlug = $this->_checkNecessaryFileExists( $sTemplateSlug );
 			
 			// Find the default template slug.
 			if ( 
-				empty( $strTemplateSlug ) 
-				|| ! isset( $this->oOption->aOptions['arrTemplates'][ $strTemplateSlug ] ) 
+				empty( $sTemplateSlug ) 
+				|| ! isset( $this->oOption->aOptions['arrTemplates'][ $sTemplateSlug ] ) 
 			)
 				return $GLOBALS['oFetchTweets_Templates']->getDefaultTemplateSlug();
 			
 			// Something wrong happened.
-			return $strTemplateSlug;
+			return $sTemplateSlug;
 			
 		}
-			protected function _checkNecessaryFileExists( $strTemplateSlug ) {
+			/**
+			 * Check if the necessary files are present. Otherwise, return the default template slug.
+			 */
+			protected function _checkNecessaryFileExists( $sTemplateSlug ) {
 				
-				// Check if the necessary file is present. Otherwise, return the default template slug.
 				if ( 
-					( ! empty( $strTemplateSlug ) || $strTemplateSlug != '' ) 
+					( ! empty( $sTemplateSlug ) || $sTemplateSlug != '' ) 
 					&& ( 
-						! isset( $this->oOption->aOptions['arrTemplates'][ $strTemplateSlug ] )	// this happens when the options have been reset.
-						|| ! file_exists( $this->oOption->aOptions['arrTemplates'][ $strTemplateSlug ]['strDirPath'] . '/template.php' )
-						|| ! file_exists( $this->oOption->aOptions['arrTemplates'][ $strTemplateSlug ]['strDirPath'] . '/style.css' )
+						! isset( $this->oOption->aOptions['arrTemplates'][ $sTemplateSlug ] )	// this happens when the options have been reset.
+						|| ! @is_file( $this->oOption->aOptions['arrTemplates'][ $sTemplateSlug ]['strDirPath'] . '/template.php' )
+						|| ! @is_file( $this->oOption->aOptions['arrTemplates'][ $sTemplateSlug ]['strDirPath'] . '/style.css' )
 					)
 				)
 					return $GLOBALS['oFetchTweets_Templates']->getDefaultTemplateSlug();		
 				
-				return $strTemplateSlug;
+				return $sTemplateSlug;
 				
 			}
+		
+		/**
+		 * Returns the path of the specified template.
+		 * 
+		 */
+		protected function _getTemplatePath( $aPostIDs, $sTemplateSlug ) {
 			
-		protected function _getTemplatePath( $arrPostIDs, $strTemplateSlug ) {
-			
-			if ( empty( $strTemplateSlug ) && isset( $arrPostIDs[ 0 ] ) ) {
-				$strTemplateSlug = get_post_meta( $arrPostIDs[ 0 ], 'fetch_tweets_template', true );
+			if ( empty( $sTemplateSlug ) && isset( $aPostIDs[ 0 ] ) ) {
+				$sTemplateSlug = get_post_meta( $aPostIDs[ 0 ], 'fetch_tweets_template', true );
 			}
 			
-			if ( empty( $strTemplateSlug ) || ! isset( $this->oOption->aOptions['arrTemplates'][ $strTemplateSlug ] ) ) {
+			if ( empty( $sTemplateSlug ) || ! isset( $this->oOption->aOptions['arrTemplates'][ $sTemplateSlug ] ) ) {
 				return $GLOBALS['oFetchTweets_Templates']->getDefaultTemplatePath();
 			}
 				
-			$strTemplatePath = $this->oOption->aOptions['arrTemplates'][ $strTemplateSlug ]['strTemplatePath'];
-			$strTemplatePath = ( ! $strTemplatePath || ! file_exists( $strTemplatePath ) )
-				? dirname( $this->oOption->aOptions['arrTemplates'][ $strTemplateSlug ]['strCSSPath'] ) . '/template.php'
-				: $strTemplatePath;
+			$_sTemplatePath = $this->oOption->aOptions['arrTemplates'][ $sTemplateSlug ]['strTemplatePath'];
+			$_sTemplatePath = ( ! $_sTemplatePath || ! @is_file( $_sTemplatePath ) )
+				? dirname( $this->oOption->aOptions['arrTemplates'][ $sTemplateSlug ]['strCSSPath'] ) . '/template.php'
+				: $_sTemplatePath;
 				
-			return $strTemplatePath;			
+			return $_sTemplatePath;			
 			
 		}	
 	

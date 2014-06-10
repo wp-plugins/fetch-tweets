@@ -106,22 +106,6 @@ abstract class FetchTweets_AdminPage_Template extends FetchTweets_AdminPage_Exte
 		echo '<div class="ftws_extension_container">' . $strOut . '</div>';
 		
 	}
-	protected function getTemplateArray( $strDefaultTemplateSlug ) {
-				
-		return $GLOBALS['oFetchTweets_Templates']->getActiveTemplates() + $GLOBALS['oFetchTweets_Templates']->getUploadedTemplates();
-				
-		$arrActiveTemplates = $GLOBALS['oFetchTweets_Templates']->getActiveTemplates();
-		$arrUploadedTemplates = $GLOBALS['oFetchTweets_Templates']->getUploadedTemplates();
-		$arrData = $arrActiveTemplates + $arrUploadedTemplates;
-		// $arrData = $GLOBALS['oFetchTweets_Option']->aOptions['arrTemplates'] + $GLOBALS['oFetchTweets_Templates']->getTemplates();
-		foreach ( $arrData as $arrDatum ) 	// set all default flags to false.
-			$arrDatum['fIsDefault'] = false;		
-			
-		$arrData[ $strDefaultTemplateSlug ]['fIsDefault'] = true;	// set the default template.
-		$arrData[ $strDefaultTemplateSlug ]['fIsActive'] = true;	// set the default template to be activated.
-		
-		return $arrData;
-			
-	}	
+	
 					
 }

@@ -185,5 +185,5 @@ final class FetchTweets_Utilities {
 			: implode( ',', $_aElements )
 		;
 	}
-	
+		
 }

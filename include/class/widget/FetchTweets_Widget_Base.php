@@ -71,10 +71,10 @@ abstract class FetchTweets_Widget_Base extends WP_Widget {
 		$aInstance['template'] = isset( $aInstance['template'] ) 
 			? $aInstance['template']
 			: $GLOBALS['oFetchTweets_Templates']->getDefaultTemplateSlug();
-		$aIDs = $this->_getFieldValues( 'id' );
-		$aNames = $this->_getFieldValues( 'name' );
+		$_aIDs = $this->_getFieldValues( 'id' );
+		$_aNames = $this->_getFieldValues( 'name' );
 		
-		$this->echoFormElements( $aInstance, $aIDs, $aNames );
+		$this->echoFormElements( $aInstance, $_aIDs, $_aNames );
 		
 	}
 		
