@@ -6,8 +6,8 @@
  * @copyright   Copyright (c) 2013, Michael Uno
  * @authorurl	http://michaeluno.jp
  * @since		2.1
+ * @deprecated  2.3.5
  */
-
 final class FetchTweets_AutoLoad {
 	
 	/**
@@ -147,8 +147,9 @@ final class FetchTweets_AutoLoad {
 		 * Responds to the PHP auto-loader and includes the passed class based on the previously stored path associated with the class name in the constructor.
 		 */
 		public function replyToAutoLoader( $sCalledUnknownClassName ) {			
-			if ( array_key_exists( $sCalledUnknownClassName, $this->_aClasses ) &&  file_exists( $this->_aClasses[ $sCalledUnknownClassName ] ) ) 
-				include_once( $this->_aClasses[ $sCalledUnknownClassName ] );
+			if ( array_key_exists( $sCalledUnknownClassName, $this->_aClasses ) &&  file_exists( $this->_aClasses[ $sCalledUnknownClassName ] ) ) {
+				include( $this->_aClasses[ $sCalledUnknownClassName ] );
+            }
 		}
 	
 }

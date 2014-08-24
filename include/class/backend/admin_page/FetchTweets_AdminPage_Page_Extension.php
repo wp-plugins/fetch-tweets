@@ -1,49 +1,16 @@
 <?php
-abstract class FetchTweets_AdminPage_Template extends FetchTweets_AdminPage_Extension {
-		
-	protected $arrColumnOption = array (
-		'strClassAttr' 				=>	'fetch_tweets_multiple_columns',
-		'strClassAttrGroup' 		=>	'fetch_tweets_multiple_columns_box',
-		'strClassAttrRow' 			=>	'fetch_tweets_multiple_columns_row',
-		'strClassAttrCol' 			=>	'fetch_tweets_multiple_columns_col',
-		'strClassAttrFirstCol' 		=>	'fetch_tweets_multiple_columns_first_col',
-	);	
-	protected $arrColumnInfoDefault = array (	// this will be modified as the items get rendered
-		'fIsRowTagClosed'	=>	False,
-		'numCurrRowPos'		=>	0,
-		'numCurrColPos'		=> 	0,
-	);	
-	
-	/*
-	 * Template Page
-	 */ 
-	public function do_before_fetch_tweets_templates() {
+/**
+ * Defines the extension page.
+ */
+abstract class FetchTweets_AdminPage_Page_Extension extends FetchTweets_AdminPage_Form_AddRuleByList {
+				
+	public function do_before_fetch_tweets_extensions() {	// do_before_ + page slug
 		$this->setPageTitleVisibility( false );
 	}
-	public function do_fetch_tweets_templates_list_template_table() {	// do_ + page slug + tab slug
-			
-		$this->oTemplateListTable->prepare_items();
-		?>
-        <form id="template-filter" method="get">
-            <!-- For plugins, we also need to ensure that the form posts back to our current page -->
-            <input type="hidden" name="page" value="<?php echo isset( $_REQUEST['page'] ) ? $_REQUEST['page'] : 'fetch_tweets_templates'; ?>" />
-            <input type="hidden" name="tab" value="<?php echo isset( $_REQUEST['tab'] ) ? $_REQUEST['tab'] : 'list_template_table'; ?>" />
-            <input type="hidden" name="post_type" value="<?php echo isset( $_REQUEST['post_type'] ) ? $_REQUEST['post_type'] : FetchTweets_Commons::PostTypeSlug; ?>" />
-            <!-- Now we can render the completed list table -->
-            <?php $this->oTemplateListTable->display() ?>
-        </form>		
-		<?php
-	
-// echo "<h3>Properties</h3>";			
-// echo $this->oDebug->getArray( $this->oProp );
-			
-	}
-	public function do_fetch_tweets_templates_get_templates() {
-		
-		echo "<p>" . sprintf( __( 'Want your template to be listed here? Send the file to %1$s.', 'fetch-tweets' ), 'wpplugins@michaeluno.jp' ) . "</p>";
-
+	public function do_fetch_tweets_extensions_get_extensions() {
+				
 		$oExtensionLoader = new FetchTweets_Extensions();
-		$arrFeedItems = $oExtensionLoader->fetchFeed( 'http://feeds.feedburner.com/MiunosoftFetchTweetsTemplate' );
+		$arrFeedItems = $oExtensionLoader->fetchFeed( 'http://feeds.feedburner.com/MiunosoftFetchTweetsExtension' );
 		if ( empty( $arrFeedItems ) ) {
 			echo "<h3>" . __( 'No extension has been found.', 'fetch-tweets' ) . "</h3>";
 			return;
@@ -53,6 +20,8 @@ abstract class FetchTweets_AdminPage_Template extends FetchTweets_AdminPage_Exte
 		$intMaxCols = 4;
 		$this->arrColumnInfo = $this->arrColumnInfoDefault;
 		foreach( $arrFeedItems as $strTitle => $arrItem ) {
+			
+			if ( ! isset( $arrItem['title'] ) ) continue;
 			
 			// Increment the position
 			$this->arrColumnInfo['numCurrColPos']++;
@@ -106,6 +75,5 @@ abstract class FetchTweets_AdminPage_Template extends FetchTweets_AdminPage_Exte
 		echo '<div class="ftws_extension_container">' . $strOut . '</div>';
 		
 	}
-	
-					
+			
 }
