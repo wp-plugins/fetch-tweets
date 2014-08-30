@@ -7,6 +7,13 @@
  * @since		2.1			Fixed a bug that the first item always gets deleted when retrieving from the transient.
  * @description	Creates links for the user.
 */
+
+/**
+ * Creates links for the user.
+ * 
+ * @since		1.0.0
+ * @since		2.1			Fixed a bug that the first item always gets deleted when retrieving from the transient.
+ */
 abstract class FetchTweets_UserAds_ {
 
 	// Properties		
@@ -88,7 +95,7 @@ abstract class FetchTweets_UserAds_ {
 		
 		// Prepare the feed items
 		if ( ! isset( $this->arrFeedItems[ $strURLID ] ) ) {
-			$this->arrFeedItems[ $strURLID ] = ( array ) get_transient( $this->strTransientPrefix . $strURLID );
+			$this->arrFeedItems[ $strURLID ] = FetchTweets_WPUtilities::getTransient( $this->strTransientPrefix . $strURLID, array() );
 			$this->arrFeedItems[ $strURLID ] = array_filter( $this->arrFeedItems[ $strURLID ] );	// casting array causes the 0 key
 		}	
 		
@@ -234,7 +241,7 @@ abstract class FetchTweets_UserAds_ {
 		
 	}	
 	
-	function setupTransients() {
+	public function setupTransients() {
 		
 		$this->initializeFeeds();
 		// $this->getTopBanner();
@@ -246,5 +253,6 @@ abstract class FetchTweets_UserAds_ {
 		// $this->get160xN();
 		// $this->get250xN();
 		
-	}
+	}    
+
 }

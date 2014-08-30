@@ -7,7 +7,7 @@
  * @authorurl	http://michaeluno.jp
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  * @since		1.3.5
- * 
+ * @deprecated
 */
 
 final class FetchTweets_Transient {

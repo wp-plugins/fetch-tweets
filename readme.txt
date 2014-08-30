@@ -214,6 +214,11 @@ It could be that your host disables WP Cron. In that case, try the `intense` cac
 
 == Changelog ==
 
+= 2.3.7 - 08/31/2014 =
+- Fixed a bug that caused infinite function calls after resetting options as of v2.3.6.
+- Fixed an issue that response data were not cached properly with sites that enables object caching.
+- Updated the [Admin Page Framework](http://wordpress.org/plugins/admin-page-framework/) library.
+
 = 2.3.6 - 08/27/2014 =
 - Added an option to enable/disable separator lines for the `Single` template.
 - Added the ability to display an alternative profile image if the first set one fails to load in the built-in templates.
@@ -226,8 +231,9 @@ It could be that your host disables WP Cron. In that case, try the `intense` cac
 - Optimized the performance.
 - Tweaked the built-in templates to escape certain strings in HTML attributes.
 - Added warning messages to be displayed in the widget outputs when no rule or tag is selected.
-- Fixed an issue that excessive API requests could be made in a single page load when multiple shortcodes or plugin PHP functions are used in the page.
+- Added the ability to prevent excessive API requests could be made in a single page load when multiple shortcodes or plugin PHP functions are used in the page.
 - Fixed an issue that tweets displayed with tags could not be formatted properly.
+- Updated the [Admin Page Framework](http://wordpress.org/plugins/admin-page-framework/) library.
 
 = 2.3.4 - 05/15/2014 =
 - Fixed an issue on some non GNU systems, like Solaris, that a fatal error occurred when the plugin is loaded.
