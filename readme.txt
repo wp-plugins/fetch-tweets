@@ -4,7 +4,7 @@ Donate link: http://en.michaeluno.jp/donate
 Tags: twitter, twitter widget, tweets, tweet, widget, widgets, post, posts, page, pages, custom post type, API, Twitter API, REST, oAuth, shortcode, sidebar, plugin, template
 Requires at least: 3.3
 Tested up to: 4.0
-Stable tag: 2.3.5
+Stable tag: 2.3.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Fetches and displays tweets from twitter.com with the Twitter API.
@@ -214,8 +214,12 @@ It could be that your host disables WP Cron. In that case, try the `intense` cac
 
 == Changelog ==
 
-= 2.3.8 =
+= 2.3.8 -
+- Added the Follow button visibility option for the `Plain` template.
+- Allowed 0 to be set for the `count` option.
+- Optimized the caching mechanism to save the server memory usage.
 - Optimized the process of loading template files.
+- Fixed a bug that caches were not saved for the rules created by Home timeline (via Add Rule by Timeline).
 - Fixed a PHP undefined constant warning in the admin area.
 
 = 2.3.7 - 08/31/2014 =
