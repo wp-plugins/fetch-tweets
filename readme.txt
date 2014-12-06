@@ -4,7 +4,7 @@ Donate link:        http://en.michaeluno.jp/donate
 Tags:               twitter, twitter widget, tweets, tweet, widget, widgets, post, posts, page, pages, custom post type, API, Twitter API, REST, oAuth, shortcode, sidebar, plugin, template
 Requires at least:  3.3
 Tested up to:       4.0.1
-Stable tag:         2.3.9
+Stable tag:         2.4.0
 License:            GPLv2 or later
 License URI:        http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -124,6 +124,22 @@ In order to set multiple tags, pass them with commas as the delimiter. e.g.
 
 `<?php fetchTweets( array( 'id' => 678, twitter_media="0" external_media="1" ) ); ?>`
 
+- **get** - [2.4.0+] true (1) / false (0). Converts URL query key-values of the HTTP GET method into the functiom/shortcode arguments.
+
+`[fetch_tweets get="1" ]`
+
+`<?php fetchTweets( array( 'get' => true, ) ); ?>`
+
+Then access the page that has the shortcode or the page by passing the arguments in the url.
+
+`
+http://your-site.domain/page-slug/?screen_name=miunosoft
+`
+
+`
+http://your-site.domain/page-slug/?q=wordpress
+`
+
 = How to Create Own Template =
 
 **Step 1**
@@ -215,9 +231,15 @@ It could be that your host disables WP Cron. In that case, try the `intense` cac
 
 == Changelog ==
 
+= 2.4.0 - 12/06/2014 =
+- Added a contact form in the plugin setting page.
+- Added the `get` argument for the shortcode and the PHP function that converts URL query key-values to the shortcode/function parameters.
+- Changed the media elements to be displayed outsize the container of the tweet text container and made the text enclosed in `p` tags, defined in the templates.
+- Updated the [Admin Page Framework](http://wordpress.org/plugins/admin-page-framework/) library.
+
 = 2.3.9 - 11/30/2014 =
 - Fixed an issue that templates could not be automatically detected when the user moves the site or changes the plugin directory name.
-- Fixed a PHP warning occurred in the background: call_user_func_array() function.call-user-func-array: First argument is expected to be a valid callback, 'FetchTweets_oEmbed::_strip_newlines' was given in ...plugin.php on line 214.
+- Fixed a PHP warning occurred occasionally in the background: call_user_func_array() function.call-user-func-array: First argument is expected to be a valid callback, 'FetchTweets_oEmbed::_strip_newlines' was given in ...plugin.php on line 214.
 
 = 2.3.8 - 10/16/2014 =
 - Added the Follow button visibility option for the `Plain` template.

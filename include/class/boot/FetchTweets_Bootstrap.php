@@ -49,9 +49,6 @@ final class FetchTweets_Bootstrap {
         // 5. Set up deactivation hook.
         register_deactivation_hook( $this->_sFilePath, array( $this, '_replyToDoWhenPluginDeactivates' ) );
         
-        // 6. Set up localization.
-        $this->_localize();
-        
         // 7. Check requirements.
         if ( $this->_bIsAdmin ) {
             add_action( 'admin_init', array( $this, '_replyToCheckRequirements' ) );
@@ -126,13 +123,13 @@ final class FetchTweets_Bootstrap {
         new FetchTweets_Requirements( 
             $this->_sFilePath,
             array(
-                'php' => array(
-                    'version' => '5.2.4',
-                    'error' => 'The plugin requires the PHP version %1$s or higher.',
+                'php'       => array(
+                    'version'   => '5.2.4',
+                    'error'     => 'The plugin requires the PHP version %1$s or higher.',
                 ),
                 'wordpress' => array(
-                    'version' => '3.3',
-                    'error' => 'The plugin requires the WordPress version %1$s or higher.',
+                    'version'   => '3.3',
+                    'error'     => 'The plugin requires the WordPress version %1$s or higher.',
                 ),
                 'functions' => array(
                     'curl_version' => sprintf( __( 'The plugin requires the %1$s to be installed.', 'fetch-tweets' ), 'the cURL library' ),
@@ -180,7 +177,9 @@ final class FetchTweets_Bootstrap {
     public function _replyToLoadPluginComponents() {
         
         // All the necessary classes have been already loaded.
-                
+        // 1. Set up localization.
+        $this->_localize();
+        
         // 2. Option Object - the instantiation will handle the initial set-up
         FetchTweets_Option::getInstance();
 
@@ -189,7 +188,8 @@ final class FetchTweets_Bootstrap {
         
         // 4. Admin pages
         if ( $this->_bIsAdmin ) {
-            new FetchTweets_AdminPage( FetchTweets_Commons::$sAdminKey, $this->_sFilePath );        
+            new FetchTweets_AdminPage( FetchTweets_Commons::$sAdminKey, $this->_sFilePath );
+            new FetchTweets_AdminPage_Contact( '', $this->_sFilePath );
         }
         
         // 5. Post Type - no need to check is_admin() because posts of custom post type can be accessed from the front-end.
@@ -329,7 +329,9 @@ final class FetchTweets_Bootstrap {
         private function _getTweetType() {
 
             // If the GET 'tweet_type' query value is set, use it.
-            if ( isset( $_GET['tweet_type'] ) && $_GET['tweet_type'] ) return $_GET['tweet_type'];
+            if ( isset( $_GET['tweet_type'] ) && $_GET['tweet_type'] ) { 
+                return $_GET['tweet_type']; 
+            }
         
             // If the 'action' query value is edit, search for the meta field value which previously set when it is saved.
             if ( isset( $_GET['action'], $_GET['post'] ) && $_GET['action'] == 'edit' ) {
