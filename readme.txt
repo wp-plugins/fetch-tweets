@@ -4,7 +4,7 @@ Donate link:        http://en.michaeluno.jp/donate
 Tags:               twitter, twitter widget, tweets, tweet, widget, widgets, post, posts, page, pages, custom post type, API, Twitter API, REST, oAuth, shortcode, sidebar, plugin, template
 Requires at least:  3.3
 Tested up to:       4.0.1
-Stable tag:         2.4.1
+Stable tag:         2.4.2
 License:            GPLv2 or later
 License URI:        http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -230,6 +230,14 @@ It could be that your host disables WP Cron. In that case, try the `intense` cac
 5. ***Authentication***
 
 == Changelog ==
+
+= 2.4.2 - 01/12/2015 =
+- Fixed an issue that custom arguments could not be set in the `fetchTweeets()` function and the plugin shortcode.
+- Fixed an issue that a `fetch-tweets` template directory could not be loaded in child themes.
+- Fixed a bug that template names were not listed properly in the rule listing table in one of the plugin setting pages.
+- Removed the underlines of hyper links in the `Plain` and `Single` templates which appeared in the Twenty Fifteenth theme.
+- Changed the timing of plugin localization to the `init` action hook from `plugins_loaded`.
+- Updated the [Admin Page Framework](http://en.michaeluno.jp/admin-page-framework/) library.
 
 = 2.4.1 - 12/06/2014 =
 - Fixed the PHP Warning: `strlen() expects parameter 1 to be string...` occured in the `fetchTweets()` function introduced in v2.4.0.
