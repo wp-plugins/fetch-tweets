@@ -11,30 +11,32 @@ License URI:        http://www.gnu.org/licenses/gpl-2.0.html
 Fetches and displays tweets from twitter.com with the Twitter API.
 
 == Description ==
-It enables to display tweets anywhere you want such as in the sidebar, posts, and pages. It does not rely on JavaScript so the tweets will be displayed for visitors disabling JavaScript in their browsers. Not only can you show your own tweets but also the mashed up results of multiple user's timelines.
+It displays tweets in the sidebar, posts, and pages. It does not rely on JavaScript so the tweets will be displayed to visitors disabling JavaScript in their browsers. Not only can you show your own tweets but also the mashed up results of multiple user's timelines.
 
 It is easy to set up for WordPress beginners. It does not require you to provide authentication keys. 
 
-Media files are automatically displayed such as YouTube videos and photos posted in tweets. You can disable them with the setting. 
+Media files are automatically displayed such as YouTube videos and photos posted in tweets. You can disable them with the setting.
 
 It allows developers to write additional add-ons and templates. One of the extensions, [Feeder](http://en.michaeluno.jp/fetch-tweets/extensions/feeder/), supports feeds so you can subscribe your favorite person’s tweets as RSS, which has become harder as the Twitter API was upgraded and the previous version no longer support tweet feed without authentication keys. With this addon, if you are a programmer, you can import the tweet data as JSON to your application by making the WordPress as own Twitter API server.
 
 If you are a theme developer, you can easily customize the template for the tweet outputs. Just copy the existing template and modify the copied files and rename the template name. Then place the copied folder into the theme folder. And there you go! Your own template will be listed in the plugin’s setting page. This way, when the plugin updates, you won’t loose your modifications.
 
 <h4>Features</h4>
-* **Fetching Timeline** - by specifying the user name, the timeline can be fetched and displayed as well as your account's home timeline.
-* **Search Results** - by specifying the search keyword, the results can be fetched and displayed.
-* **Lists**	- tweet timeline for members of the specified list can be fetched and displayed.
-* **Custom API Query** - if you are a developer and familiar with Twitter API, you can directly specify the query url to send to Twitter.
-* **Tweet ID** - you can fetch tweets by Tweet ID.
-* **Mashups** - you can display the combined results from multiple rule sets of your choosing.
-* **Widget** - tweets can be displayed in the widgets that the plugin provides.
-* **Shortcode** - with the shortcode, the fetched tweets can be displayed in posts and pages.
-* **PHP Code** - with the PHP function, the fetched tweets can be embedded in the templates.
-* **Custom Templates** - you can change the design by modifying/creating the template file.
-* **Background Cache Renewal** - it renews the caches in the background so it will prevent the page load from suddenly getting stuck for fetching external sources.
-* **Embedded Media** - urls of media elements can be automatically converted to embedded elements.
- 
+- **Fetching Timeline** - by specifying the user name, the timeline can be fetched and displayed as well as your account's home timeline.
+- **Search Results** - by specifying the search keyword, the results can be fetched and displayed.
+- **Lists**	- tweet timeline for members of the specified list can be fetched and displayed.
+- **Custom API Query** - if you are a developer and familiar with Twitter API, you can directly specify the query url to send to Twitter.
+- **Tweet ID** - you can fetch tweets by Tweet ID.
+- **Mashups** - you can display the combined results from multiple rule sets of your choosing.
+- **Widget** - tweets can be displayed in the widgets that the plugin provides.
+- **Shortcode** - with the shortcode, the fetched tweets can be displayed in posts and pages.
+- **PHP Code** - with the PHP function, the fetched tweets can be embedded in the templates.
+- **Custom Templates** - you can change the design by modifying/creating the template file.
+- **Background Cache Renewal** - it renews the caches in the background so it will prevent the page load from suddenly getting stuck for fetching external sources.
+- **Embedded Media** - urls of media elements can be automatically converted to embedded elements.
+- **URL Query** - show tweets by setting a url query key such as `?screen_name=yourscreenamehere` to dynamically display tweets.
+- **Server-side Processing** - the outputs of tweets are handled server-side. This means even your visitors turn off JavaScript in their browsers, tweets will be visible and search engines can catch those contents.
+  
 == Installation ==
 
 = Install = 
@@ -201,25 +203,34 @@ An example template is available [here](https://github.com/michaeluno/fetch-twee
 
 == Frequently Asked Questions ==
 
-= Do I need API keys to use the plugin ? =
-They are not necessary as of v1.3.0. Just click on the *Connect* button in the Authentication page of the plugin and it will redirect you to the Twitter's authentication page. Then you log in to Twitter there and authorize the plugin.
+<h4>How to Set up</h4>
+<h5><strong>Do I need API keys to use the plugin?</strong></h5>
+They are not necessary as of v1.3.0. Just click on the **Connect** button in the `Authentication` (`Dashboard` -> `Fetch Tweets` -> `Settings` -> `Authentication`) page of the plugin. It will redirect you to the Twitter's authentication page. Then you log in to Twitter there and authorize the plugin.
 
-Though you can use your own keys with the existing method. In that case, click on the *Set Keys Manually* button that redirects you to the page to set the keys manually.
+<h5><strong>Can I use own API Application keys for authentication?</strong></h5>
+Yes. Click on the *Set Keys Manually* button in the **Authentication** tab. It will redirects you to the page to set the keys manually.
 
-If you set authentication keys manually, you need to create an application to access the Twitter API [here](https://dev.twitter.com/apps). Then create *consumer key*, *consumer secret*, *access token*, and *access token secret*. Without these, you won't be able to fetch tweets.
+If you do this, you need to create an application to access the Twitter API [here](https://dev.twitter.com/apps). Then create *consumer key*, *consumer secret*, *access token*, and *access token secret*. Without these, you won't be able to fetch tweets.
 
-= How can I create my own template file? =
+<h4>Customizing Outputs</h4>
+<h5><strong>How can I create my own template file?</strong></h5>
 See the How to Create Own Template section of the **[Other Notes](http://wordpress.org/plugins/fetch-tweets/other_notes/)** page.
 
-= How do I display tweets with a certain hashtag from a specific user? =
+<h4>Techniques</h4>
+<h5><strong>How do I display tweets with a certain hashtag from a specific user?</strong></h5>
 
-* Go to Dashboard -> Fetch Tweets -> Add Rule by Search.
-* Type `#HASHTAG AND from:SCREENNAME` in the Search Keyword meta box option field. Change the part, `#HASHTAG`, to your searching hash tag and the part, `SCREENNAME`, to the account's screen name to fetch tweets from.
-* Create a rule by pressing the Publish button.
+- Go to Dashboard -> Fetch Tweets -> Add Rule by Search.
+- Type `#HASHTAG AND from:SCREENNAME` in the Search Keyword meta box option field. Change the part, `#HASHTAG`, to your searching hash tag and the part, `SCREENNAME`, to the account's screen name to fetch tweets from.
+- Create a rule by pressing the Publish button.
 
-= Why don't tweets update? =
+<h4>Troubleshooting</h4>
+<h5><strong>Why don't tweets update?</strong></h5>
 
 It could be that your host disables WP Cron. In that case, try the `intense` caching mode which can be configured via `Dashboard` -> `Fetch Tweets` -> `Settings` -> `General` -> `Cache Settings` -> `Caching Mode`.
+
+<h5><strong>I get the error "WordPress database error: [Lost connection to MySQL server during query]"?</strong></h5>
+
+Increase the value set to `max_allowed_packet` in the MySQL server configuration file. (for [instruction](https://dev.mysql.com/doc/refman/5.5/en/packet-too-large.html))
 
 == Screenshots ==
 
@@ -230,6 +241,9 @@ It could be that your host disables WP Cron. In that case, try the `intense` cac
 5. ***Authentication***
 
 == Changelog ==
+
+= 2.4.4 - 01/16/2015 =
+- Tweaked the styling of built-in templates.
 
 = 2.4.3 - 01/15/2015 =
 - Removed the `!important` notations from the CSS files of the built-in templates.
