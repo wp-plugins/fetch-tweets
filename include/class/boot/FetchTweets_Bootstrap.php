@@ -108,11 +108,11 @@ final class FetchTweets_Bootstrap {
             
             $_sPluginDir = dirname( $this->_sFilePath );
             
-            include( $_sPluginDir . '/include/library/admin-page-framework/fetch-tweets-admin-page-framework.min.php' );
+            include( $_sPluginDir . '/include/library/admin-page-framework/admin-page-framework.php' );
             require( $_sPluginDir . '/include/library/TwitterOAuth/twitteroauth.php' );
             
-            $_aClassFiles = array();
-            $_aAdminClassFiles = array();
+            $_aClassFiles       = array();
+            $_aAdminClassFiles  = array();
             include( $_sPluginDir . '/include/fetch-tweets-include-class-file-list.php' );
             if ( $this->_bIsAdmin ) {
                 include( $_sPluginDir . '/include/fetch-tweets-include-class-file-list-admin.php' );
@@ -172,7 +172,7 @@ final class FetchTweets_Bootstrap {
     public function _replyToSetUpLocalization() {
         
         load_plugin_textdomain( 
-            FetchTweets_Commons::TextDomain, 
+            FetchTweets_Commons::TEXT_DOMAIN, 
             false, 
             dirname( plugin_basename( $this->_sFilePath ) ) . '/language/'
         );
